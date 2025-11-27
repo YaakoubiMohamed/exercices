@@ -1,0 +1,156 @@
+<div class="home-container">
+  <header class="hero">
+    <h1> Exercices Angular 20</h1>
+    <p class="subtitle">Maîtrisez les meilleures pratiques d'Angular 20</p>
+    <p class="description">
+      Collection d'exercices progressifs pour apprendre les signals, le nouveau control flow,
+      les reactive forms, HttpClient et bien plus encore !
+    </p>
+  </header>
+
+  <section class="key-concepts">
+    <h2>📚 Concepts couverts</h2>
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <div class="concept-icon">⚡</div>
+        <h3>Signals</h3>
+        <p>Gestion d'état réactive moderne</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">🔄</div>
+        <h3>Computed Signals</h3>
+        <p>Calculs dérivés automatiques</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">🏗️</div>
+        <h3>Standalone Components</h3>
+        <p>Architecture modulaire simplifiée</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">✨</div>
+        <h3>Nouveau Control Flow</h3>
+        <p>&#64;for, &#64;if, &#64;else, &#64;switch</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon"></div>
+        <h3>Reactive Forms</h3>
+        <p>Formulaires typés et validation</p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">🌐</div>
+        <h3>HttpClient & RxJS</h3>
+        <p>Appels API et observables</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="exercises-section">
+    <h2> Exercices disponibles</h2>
+    
+    <div class="exercises-grid">
+      @for (exercise of exercises; track exercise.id) {
+        <div class="exercise-card" 
+             [class.disabled]="exercise.route === '/exercice3' || exercise.route === '/exercice4' || exercise.route === '/exercice5'">
+          <div class="exercise-header">
+            <span class="exercise-icon">{{ exercise.icon }}</span>
+            <span class="difficulty-badge" [class]="getDifficultyClass(exercise.difficulty)">
+              {{ exercise.difficulty }}
+            </span>
+          </div>
+          
+          <h3>{{ exercise.title }}</h3>
+          <p class="exercise-description">{{ exercise.description }}</p>
+          
+          <div class="topics">
+            @for (topic of exercise.topics; track topic) {
+              <span class="topic-tag">{{ topic }}</span>
+            }
+          </div>
+          
+          @if (exercise.route === '/exercice1' || exercise.route === '/exercice2' || exercise.route === '/exercice3' || exercise.route === '/exercice6') {
+            <a [routerLink]="exercise.route" class="btn-start">
+              Commencer l'exercice →
+            </a>
+          } @else {
+            <button class="btn-start disabled" disabled>
+              Bientôt disponible
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="demos-section">
+    <h2>🎓 Démonstrations Pédagogiques</h2>
+    <p class="section-subtitle">Comprenez les avantages des Signals avec des exemples concrets</p>
+    
+    <div class="demos-grid">
+      <div class="demo-card">
+        <div class="demo-icon">⚡</div>
+        <h3>Signals vs Traditional</h3>
+        <p class="demo-description">
+          Comparaison côte à côte : voyez la différence entre l'approche traditionnelle 
+          avec ChangeDetectorRef et la simplicité des signals
+        </p>
+        <div class="demo-highlights">
+          <span class="highlight-item">✨ Code plus simple</span>
+          <span class="highlight-item"> Meilleures performances</span>
+          <span class="highlight-item">🔄 Réactivité automatique</span>
+        </div>
+        <a routerLink="/demos/signals" class="btn-demo">
+          Voir la démo →
+        </a>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-icon">🔄</div>
+        <h3>Computed Signals</h3>
+        <p class="demo-description">
+          Découvrez la puissance des computed signals avec un exemple de panier d'achat : 
+          calculs automatiques et cascade de mises à jour
+        </p>
+        <div class="demo-highlights">
+          <span class="highlight-item"> Calculs dérivés</span>
+          <span class="highlight-item">⚙️ Mise à jour auto</span>
+          <span class="highlight-item">💡 Performance optimale</span>
+        </div>
+        <a routerLink="/demos/computed-signals" class="btn-demo">
+          Voir la démo →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="resources">
+    <h2>📖 Ressources</h2>
+    <div class="resources-grid">
+      <a href="https://angular.dev" target="_blank" class="resource-link">
+        <span>📘</span>
+        <div>
+          <strong>Documentation Angular</strong>
+          <p>Documentation officielle Angular 20</p>
+        </div>
+      </a>
+      <a href="https://angular.dev/guide/signals" target="_blank" class="resource-link">
+        <span>⚡</span>
+        <div>
+          <strong>Guide des Signals</strong>
+          <p>Tout savoir sur les signals</p>
+        </div>
+      </a>
+      <a href="./td.md" class="resource-link">
+        <span></span>
+        <div>
+          <strong>Énoncés détaillés</strong>
+          <p>Consultez le fichier td.md</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>💡 <strong>Conseil :</strong> Commencez par l'exercice 1 et progressez séquentiellement</p>
+    <p>Chaque exercice introduit de nouveaux concepts et s'appuie sur les précédents</p>
+  </footer>
+</div>

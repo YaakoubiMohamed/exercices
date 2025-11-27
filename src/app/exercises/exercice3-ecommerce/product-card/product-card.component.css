@@ -1,0 +1,139 @@
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.category-badge.electronics {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.category-badge.clothing {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.category-badge.books {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.category-badge.food {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.product-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #2c3e50;
+}
+
+.description {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #27ae60;
+  margin: 0;
+}
+
+.add-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.quantity-input {
+  width: 70px;
+  padding: 0.5rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.btn-add {
+  flex: 1;
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-add:hover {
+  background: #2980b9;
+}
+
+.stock {
+  font-size: 0.85rem;
+  display: block;
+}
+
+.in-stock {
+  color: #27ae60;
+}
+
+.low-stock {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.out-of-stock {
+  background: #fee;
+  color: #e74c3c;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+  margin: 0;
+  margin-top: auto;
+}

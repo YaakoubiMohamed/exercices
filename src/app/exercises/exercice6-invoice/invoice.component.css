@@ -1,0 +1,254 @@
+.invoice-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.invoice-container > h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.customer-section,
+.items-section,
+.calculations-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.add-item-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr auto;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-name,
+.input-quantity,
+.input-price {
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-name:focus,
+.input-quantity:focus,
+.input-price:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.btn-add {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-add:hover {
+  background: #229954;
+}
+
+.items-list {
+  min-height: 100px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s;
+}
+
+.item-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.item-details {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-total {
+  font-weight: 700;
+  color: #27ae60;
+  font-size: 1.1rem;
+  min-width: 100px;
+  text-align: right;
+}
+
+.btn-remove {
+  background: #e74c3c;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.3s;
+}
+
+.btn-remove:hover {
+  background: #c0392b;
+}
+
+.empty-state {
+  text-align: center;
+  color: #95a5a6;
+  padding: 2rem;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.vat-input {
+  margin-bottom: 1.5rem;
+}
+
+.vat-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.input-vat {
+  width: 150px;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-vat:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.summary {
+  background: #ecf0f1;
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.summary-row:first-child {
+  padding-top: 0;
+}
+
+.summary-row.subtotal {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #bdc3c7;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.summary-row.vat {
+  color: #e67e22;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.summary-row.total {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 3px solid #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .invoice-container {
+    padding: 1rem;
+  }
+
+  .add-item-form {
+    grid-template-columns: 1fr;
+  }
+
+  .item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .item-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,45 @@
+<app-ecommerce-nav></app-ecommerce-nav>
+
+<div class="products-container">
+  <header class="products-header">
+    <h2>🛍️ Catalogue de Produits</h2>
+    <p class="subtitle">{{ productCount() }} produit(s) disponible(s)</p>
+  </header>
+  
+  <div class="filters">
+    <div class="filter-group">
+      <label for="category">Catégorie :</label>
+      <select id="category" (change)="onCategoryChange($event)" class="filter-select">
+        <option value="">Toutes les catégories</option>
+        <option value="electronics">💻 Électronique</option>
+        <option value="clothing">👕 Vêtements</option>
+        <option value="books">📚 Livres</option>
+        <option value="food">🍽️ Alimentation</option>
+      </select>
+    </div>
+    
+    <div class="filter-group search-group">
+      <label for="search">Rechercher :</label>
+      <input 
+        id="search"
+        type="search" 
+        placeholder="Nom ou description..." 
+        (input)="onSearch($event)"
+        class="filter-search">
+    </div>
+  </div>
+  
+  <div class="product-grid">
+    @for (product of filteredProducts(); track product.id) {
+      <app-product-card 
+        [product]="product"
+        (addToCart)="onAddToCart($event)" />
+    } @empty {
+      <div class="empty-state">
+        <p class="empty-icon">🔍</p>
+        <p class="empty-text">Aucun produit trouvé</p>
+        <p class="empty-hint">Essayez de modifier vos filtres de recherche</p>
+      </div>
+    }
+  </div>
+</div>

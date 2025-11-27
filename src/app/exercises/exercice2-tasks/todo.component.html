@@ -1,0 +1,120 @@
+<div class="todo-container">
+  <h1>✅ Gestionnaire de Tâches</h1>
+
+  <!-- Statistiques -->
+  <div class="stats-header">
+    <div class="stat-card">
+      <span class="stat-value">{{ taskService.stats().total }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ taskService.stats().completed }}</span>
+      <span class="stat-label">Terminées</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ taskService.stats().pending }}</span>
+      <span class="stat-label">En cours</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ taskService.stats().completionRate.toFixed(0) }}%</span>
+      <span class="stat-label">Progression</span>
+    </div>
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <div class="add-task-section">
+    <h2>Nouvelle tâche</h2>
+    
+    <!-- TODO: Implémenter le formulaire -->
+    <div class="form-group">
+      <input 
+        type="text"
+        [(ngModel)]="newTaskTitle"
+        placeholder="Titre de la tâche..."
+        class="input-title">
+    </div>
+
+    <div class="form-group">
+      <textarea 
+        [(ngModel)]="newTaskDescription"
+        placeholder="Description (optionnelle)..."
+        rows="3"
+        class="input-description"></textarea>
+    </div>
+
+    <div class="form-row">
+      <select [(ngModel)]="newTaskPriority" class="input-priority">
+        <option value="low">🟢 Basse</option>
+        <option value="medium">🟡 Moyenne</option>
+        <option value="high">🔴 Haute</option>
+      </select>
+
+      <button class="btn-add" (click)="addTask()">
+        ➕ Ajouter
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters">
+    <button 
+      class="filter-btn"
+      [class.active]="activeFilter() === 'all'"
+      (click)="setFilter('all')">
+      Toutes
+    </button>
+    <button 
+      class="filter-btn"
+      [class.active]="activeFilter() === 'pending'"
+      (click)="setFilter('pending')">
+      En cours
+    </button>
+    <button 
+      class="filter-btn"
+      [class.active]="activeFilter() === 'completed'"
+      (click)="setFilter('completed')">
+      Terminées
+    </button>
+  </div>
+
+  <!-- Liste des tâches -->
+  <div class="tasks-list">
+    @for (task of displayedTasks(); track task.id) {
+      <div class="task-card" 
+           [class.completed]="task.completed"
+           [class.priority-high]="task.priority === 'high'"
+           [class.priority-medium]="task.priority === 'medium'"
+           [class.priority-low]="task.priority === 'low'">
+        
+        <input 
+          type="checkbox" 
+          [checked]="task.completed"
+          (change)="toggleTask(task.id)"
+          class="task-checkbox">
+        
+        <div class="task-content">
+          <h4 class="task-title">{{ task.title }}</h4>
+          @if (task.description) {
+            <p class="task-description">{{ task.description }}</p>
+          }
+          <div class="task-meta">
+            <span class="priority-badge" [class]="task.priority">
+              @if (task.priority === 'high') { 🔴 Haute }
+              @if (task.priority === 'medium') { 🟡 Moyenne }
+              @if (task.priority === 'low') { 🟢 Basse }
+            </span>
+            <span class="task-date">{{ task.createdAt | date:'short':'':'fr' }}</span>
+          </div>
+        </div>
+        
+        <div class="task-actions">
+          <button class="btn-delete" (click)="deleteTask(task.id)">
+            ✖
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <p class="empty-state">Aucune tâche pour le moment</p>
+    }
+  </div>
+</div>

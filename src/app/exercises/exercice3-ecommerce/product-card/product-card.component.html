@@ -1,0 +1,41 @@
+<div class="card">
+  @if (product().imageUrl) {
+    <img [src]="product().imageUrl" [alt]="product().name" class="product-image">
+  }
+  
+  <div class="card-body">
+    <span class="category-badge" [class]="product().category">
+      @if (product().category === 'electronics') { 💻 Électronique }
+      @if (product().category === 'clothing') { 👕 Vêtements }
+      @if (product().category === 'books') { 📚 Livres }
+      @if (product().category === 'food') { 🍽️ Alimentation }
+    </span>
+    
+    <h3 class="product-title">{{ product().name }}</h3>
+    <p class="description">{{ product().description }}</p>
+    <p class="price">{{ product().price | currency:'EUR':'symbol':'1.2-2':'fr' }}</p>
+    
+    @if (product().stock > 0) {
+      <div class="add-section">
+        <input 
+          type="number" 
+          [(ngModel)]="quantity"
+          min="1" 
+          [max]="product().stock"
+          class="quantity-input">
+        <button (click)="onAddClick()" class="btn-add">
+          🛒 Ajouter
+        </button>
+      </div>
+      <small class="stock">
+        @if (product().stock <= 5) {
+          <span class="low-stock">⚠️ Plus que {{ product().stock }} en stock</span>
+        } @else {
+          <span class="in-stock">✓ En stock ({{ product().stock }})</span>
+        }
+      </small>
+    } @else {
+      <p class="out-of-stock">❌ Rupture de stock</p>
+    }
+  </div>
+</div>

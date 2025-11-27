@@ -1,0 +1,205 @@
+<div class="demo-container">
+  <header class="demo-header">
+    <h2> Signals vs Traditional - Comparison</h2>
+    <p class="subtitle">Découvrez les avantages des signals pour la réactivité</p>
+    <div class="legend">
+      <span class="legend-item"><span class="flash-indicator"></span> = Détection de changement déclenchée</span>
+    </div>
+  </header>
+
+  <div class="comparison-grid">
+    <!-- LEFT: Traditional Way (Without Signals) -->
+    <section class="demo-card traditional" [class.flash-animation]="traditionalFlash()">
+      <div class="card-header">
+        <h3>❌ Sans Signals (Ancienne méthode)</h3>
+        <span class="badge old">Traditionnel</span>
+      </div>
+      
+      <div class="detection-tracker manual">
+        <div class="tracker-label">
+          <span>🔧 Détections Globales</span>
+          <span class="tracker-count">{{ traditionalDetectionCount }}</span>
+        </div>
+        <p class="tracker-note">⚠️ Angular vérifie tout le composant à chaque événement</p>
+      </div>
+      
+      <div class="code-preview">
+        <pre><code>// Propriété classique
+traditionalCounter = 0;
+
+increment() {{'{'}}>
+  this.traditionalCounter++;
+  // ⚠️ Angular vérifie TOUT
+  // le composant (Zone.js)
+{{'}'}}</code></pre>
+      </div>
+      
+      <div class="counter-display">
+        <h4>Compteur: {{ traditionalCounter }}</h4>
+      </div>
+      
+      <div class="button-group">
+        <button (click)="decrementTraditional()" class="btn btn-minus">-</button>
+        <button (click)="resetTraditional()" class="btn btn-reset">Reset</button>
+        <button (click)="incrementTraditional()" class="btn btn-plus">+</button>
+      </div>
+      
+      <div class="issues">
+        <h4>⚠️ Problèmes:</h4>
+        <ul>
+          <li>Change detection vérifie TOUT le composant</li>
+          <li>Moins performant (vérifie même ce qui n'a pas changé)</li>
+          <li>Dépend de Zone.js (overhead)</li>
+          <li>Pas de réactivité fine-grained</li>
+          <li>Calculs inutiles à chaque événement</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RIGHT: With Signals (Modern) -->
+    <section class="demo-card signals" [class.flash-animation]="signalFlash()">
+      <div class="card-header">
+        <h3>✅ Avec Signals (Nouvelle méthode)</h3>
+        <span class="badge new">Angular 20</span>
+      </div>
+      
+      <div class="detection-tracker auto">
+        <div class="tracker-label">
+          <span>⚡ Détections Automatiques</span>
+          <span class="tracker-count">{{ signalDetectionCount() }}</span>
+        </div>
+        <p class="tracker-note">✅ Mise à jour automatique - Aucune action requise!</p>
+      </div>
+      
+      <div class="code-preview">
+        <pre><code>// Signal
+      <div class="counter-display">
+        <h4>Compteur: {{ signalCounter() }}</h4>
+      </div>{{'{'}}
+  // ✓ Mise à jour automatique de l'UI!
+  this.signalCounter.update(c => c + 1);
+{{'}'}}</code></pre>
+      </div>
+      
+      <div class="counter-display highlight">
+        <h4>Compteur: {{ signalCounter() }}</h4>
+      </div>
+      
+      <div class="button-group">
+        <button (click)="decrementSignal()" class="btn btn-minus">-</button>
+        <button (click)="resetSignal()" class="btn btn-reset">Reset</button>
+        <button (click)="incrementSignal()" class="btn btn-plus">+</button>
+      </div>
+      
+      <div class="benefits">
+        <h4>✅ Avantages:</h4>
+        <ul>
+          <li>Réactivité fine-grained (met à jour UNIQUEMENT ce qui change)</li>
+          <li>Performances optimales (pas de vérifications inutiles)</li>
+          <li>Pas besoin de Zone.js</li>
+          <li>Code plus simple et prévisible</li>
+          <li>Typage fort avec TypeScript</li>
+          <li>Future de Angular (zoneless apps)</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="visual-explanation">
+    <h3>🎬 Ce qui se passe visuellement</h3>
+    <div class="flow-diagram">
+      <div class="flow-column">
+        <h4>❌ Approche Traditionnelle</h4>
+        <div class="flow-steps">
+          <div class="flow-step">1️⃣ Clic sur bouton</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step">2️⃣ Modification de la propriété</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step warning">3️⃣ ⚠️ Zone.js détecte l'événement</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step manual">4️⃣ Vérifie TOUT le composant</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step">5️⃣ UI mise à jour (overhead!)</div>
+        </div>
+      </div>
+      
+      <div class="flow-column">
+        <h4>✅ Approche Signals</h4>
+        <div class="flow-steps">
+          <div class="flow-step">1️⃣ Clic sur bouton</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step">2️⃣ Signal.update()</div>
+          <div class="arrow">↓</div>
+          <div class="flow-step success">3️⃣ ✅ UI mise à jour automatiquement!</div>
+          <div class="spacer"></div>
+          <div class="spacer"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="explanation">
+    <h3>💡 Pourquoi les Signals sont meilleurs ?</h3>
+    <div class="explanation-grid">
+      <div class="explanation-card">
+        <div class="icon"></div>
+        <h4>Réactivité Fine-Grained</h4>
+        <p>Les signals permettent à Angular de savoir exactement quelle partie de l'UI doit être mise à jour, sans recalculer tout le composant.</p>
+      </div>
+      
+      <div class="explanation-card">
+        <div class="icon"></div>
+        <h4>Performance</h4>
+        <p>Pas besoin de Zone.js ni de change detection globale. Seuls les éléments qui dépendent du signal sont mis à jour.</p>
+      </div>
+      
+      <div class="explanation-card">
+        <div class="icon"></div>
+        <h4>Prévisibilité</h4>
+        <p>La réactivité est garantie. Impossible d'avoir une UI désynchronisée car chaque modification déclenche automatiquement la mise à jour.</p>
+      </div>
+      
+      <div class="explanation-card">
+        <div class="icon"></div>
+        <h4>Simplicité</h4>
+        <p>Code plus court, plus lisible, moins de boilerplate. Pas besoin d'injecter des services ou d'appeler des méthodes manuellement.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="code-comparison">
+    <h3> Comparaison de Code</h3>
+    <div class="comparison-table">
+      <div class="table-row header">
+        <div>Aspect</div>
+        <div>Sans Signals</div>
+        <div>Avec Signals</div>
+      </div>
+      <div class="table-row">
+        <div><strong>Déclaration</strong></div>
+        <div><code>counter = 0;</code></div>
+        <div><code>counter = signal(0);</code></div>
+      </div>
+      <div class="table-row">
+        <div><strong>Lecture</strong></div>
+        <div><code>this.counter</code></div>
+        <div><code>this.counter()</code></div>
+      </div>
+      <div class="table-row">
+        <div><strong>Mise à jour</strong></div>
+        <div><code>this.counter++; this.cdr.markForCheck();</code></div>
+        <div><code>this.counter.update(c => c + 1);</code></div>
+      </div>
+      <div class="table-row">
+        <div><strong>Template</strong></div>
+        <div><code>{{ "{{ counter }}" }}</code></div>
+        <div><code>{{ "{{ counter() }}" }}</code></div>
+      </div>
+      <div class="table-row">
+        <div><strong>Dépendances</strong></div>
+        <div>ChangeDetectorRef requis</div>
+        <div>Aucune dépendance</div>
+      </div>
+    </div>
+  </section>
+</div>

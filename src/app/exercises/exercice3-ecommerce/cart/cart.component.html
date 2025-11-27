@@ -1,0 +1,159 @@
+<app-ecommerce-nav></app-ecommerce-nav>
+
+<div class="cart-container">
+  <header class="cart-header">
+    <h2>🛒 Panier d'Achat</h2>
+    <p class="item-count">{{ cartService.itemCount() }} article(s)</p>
+  </header>
+  
+  @if (cartService.items().length === 0) {
+    <div class="empty-cart">
+      <p class="empty-icon">🛍️</p>
+      <p class="empty-text">Votre panier est vide</p>
+      <a routerLink="/exercice3/products" class="btn-continue-shopping">
+        Continuer les achats
+      </a>
+    </div>
+  } @else {
+    <div class="cart-content">
+      <!-- Liste des articles -->
+      <section class="cart-items-section">
+        <h3>Articles</h3>
+        
+        <div class="cart-items">
+          @for (item of cartService.items(); track item.product.id) {
+            <div class="cart-item">
+              @if (item.product.imageUrl) {
+                <img [src]="item.product.imageUrl" 
+                     [alt]="item.product.name"
+                     class="item-image">
+              }
+              
+              <div class="item-details">
+                <h4 class="item-name">{{ item.product.name }}</h4>
+                <p class="item-description">{{ item.product.description }}</p>
+                <p class="item-price">{{ item.product.price | currency:'EUR':'symbol':'1.2-2':'fr' }} / unité</p>
+              </div>
+              
+              <div class="quantity-control">
+                <label for="qty-{{ item.product.id }}">Quantité :</label>
+                <input 
+                  type="number"
+                  id="qty-{{ item.product.id }}"
+                  [value]="item.quantity"
+                  min="1"
+                  [max]="item.product.stock"
+                  (change)="updateQuantity(item.product.id, $event)"
+                  class="quantity-input">
+                <small class="stock-info">Max: {{ item.product.stock }}</small>
+              </div>
+              
+              <div class="item-total">
+                <p class="total-label">Total:</p>
+                <p class="total-amount">
+                  {{ item.product.price * item.quantity | currency:'EUR':'symbol':'1.2-2':'fr' }}
+                </p>
+              </div>
+              
+              <button 
+                class="btn-remove" 
+                (click)="removeItem(item.product.id)"
+                title="Supprimer">
+                🗑️
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+      
+      <!-- Résumé et paiement -->
+      <aside class="cart-summary-section">
+        <!-- Code promo -->
+        <div class="promo-section">
+          <h3>💳 Code Promo</h3>
+          
+          <form [formGroup]="promoForm" (ngSubmit)="applyPromoCode()" class="promo-form">
+            <input 
+              type="text" 
+              formControlName="code"
+              placeholder="CODE PROMO"
+              class="promo-input">
+            <button 
+              type="submit" 
+              [disabled]="promoForm.invalid"
+              class="btn-apply">
+              Appliquer
+            </button>
+          </form>
+          
+          @if (promoMessage()) {
+            <p class="promo-message" 
+               [class.success]="promoMessage().includes('✅')"
+               [class.error]="promoMessage().includes('❌')">
+              {{ promoMessage() }}
+            </p>
+          }
+          
+          @if (promoForm.controls.code.errors?.['pattern'] && promoForm.controls.code.touched) {
+            <small class="error-hint">Uniquement lettres majuscules et chiffres</small>
+          }
+          
+          <button class="btn-hint" (click)="togglePromoHint()">
+            💡 Voir les codes disponibles
+          </button>
+          
+          @if (showPromoHint()) {
+            <div class="promo-hints">
+              <p><strong>WELCOME10</strong> - 10% dès 50€</p>
+              <p><strong>SAVE20</strong> - 20% dès 100€</p>
+              <p><strong>STUDENT15</strong> - 15% sans minimum</p>
+            </div>
+          }
+        </div>
+        
+        <!-- Résumé financier -->
+        <div class="cart-summary">
+          <h3> Résumé</h3>
+          
+          <div class="summary-line">
+            <span>Sous-total HT</span>
+            <span>{{ cartService.summary().subtotal | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+          </div>
+          
+          @if (cartService.summary().discount > 0) {
+            <div class="summary-line discount">
+              <span>💰 Remise</span>
+              <span class="discount-amount">
+                -{{ cartService.summary().discount | currency:'EUR':'symbol':'1.2-2':'fr' }}
+              </span>
+            </div>
+          }
+          
+          <div class="summary-line">
+            <span>TVA (20%)</span>
+            <span>{{ cartService.summary().tax | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+          </div>
+          
+          <div class="summary-line total">
+            <strong>TOTAL TTC</strong>
+            <strong class="total-price">
+              {{ cartService.summary().total | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            </strong>
+          </div>
+          
+          <button class="btn-checkout">
+            ✓ Valider la commande
+          </button>
+          
+          <button class="btn-clear" (click)="clearCart()">
+            Vider le panier
+          </button>
+          
+          <a routerLink="/exercice3/products" class="link-continue">
+            ← Continuer les achats
+          </a>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

@@ -1,16 +1,41 @@
-# Exercices
+# Exercices Angular 20 - Formation Best Practices
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
+Ce projet contient des exercices progressifs pour maîtriser Angular 20 et ses meilleures pratiques.
 
-## Development server
+## 📚 Documentation des Exercices
 
-To start a local development server, run:
+Consultez le fichier **[td.md](./td.md)** pour accéder à tous les exercices détaillés :
+
+1. **Exercice 1** - Calculateur de Notes avec Signals
+2. **Exercice 2** - Gestionnaire de Tâches avec Services
+3. **Exercice 3** - E-Commerce avec Reactive Forms
+4. **Exercice 4** - Application Météo avec HttpClient
+5. **Exercice 5** - Authentification et Guards
+
+Chaque exercice comprend :
+-  Objectifs pédagogiques
+- 📋 Énoncé détaillé
+- 🔧 Modèles de code
+- ✅ Critères de réussite
+
+##  Démarrage Rapide
+
+### Prérequis
+- Node.js 18+ et npm
+- Angular CLI 20.3.8
+
+### Installation
+```bash
+npm install
+```
+
+### Lancer le serveur de développement
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ouvrez votre navigateur à `http://localhost:4200/`. L'application se recharge automatiquement à chaque modification.
 
 ## Code scaffolding
 
