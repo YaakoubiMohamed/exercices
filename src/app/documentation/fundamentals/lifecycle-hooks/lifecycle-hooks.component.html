@@ -1,0 +1,322 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Lifecycle Hooks</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🔄 Lifecycle Hooks</h1>
+      <p class="doc-subtitle">Comprendre le cycle de vie des composants Angular</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📋 Qu'est-ce qu'un Lifecycle Hook ?</h2>
+      <div class="definition-box">
+        <p>Les <strong>lifecycle hooks</strong> sont des méthodes spéciales qui permettent de s'insérer dans des moments clés du cycle de vie d'un composant Angular. Ils offrent la visibilité sur les moments importants et la capacité d'agir lorsque ces moments se produisent.</p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Ordre d'Exécution</h2>
+      <div class="timeline">
+        <div class="timeline-phase initialization">
+          <h3>📥 Phase d'Initialisation</h3>
+          <div class="phase-hooks">
+            <div class="hook-item">
+              <span class="hook-number">1</span>
+              <span class="hook-name">ngOnChanges</span>
+              <span class="hook-badge multiple">Multiple</span>
+            </div>
+            <div class="hook-item">
+              <span class="hook-number">2</span>
+              <span class="hook-name">ngOnInit</span>
+              <span class="hook-badge once">Une fois</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-phase change-detection">
+          <h3>🔍 Phase de Détection</h3>
+          <div class="phase-hooks">
+            <div class="hook-item">
+              <span class="hook-number">3</span>
+              <span class="hook-name">ngDoCheck</span>
+              <span class="hook-badge multiple">Multiple</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-phase content">
+          <h3>📦 Phase du Contenu</h3>
+          <div class="phase-hooks">
+            <div class="hook-item">
+              <span class="hook-number">4</span>
+              <span class="hook-name">ngAfterContentInit</span>
+              <span class="hook-badge once">Une fois</span>
+            </div>
+            <div class="hook-item">
+              <span class="hook-number">5</span>
+              <span class="hook-name">ngAfterContentChecked</span>
+              <span class="hook-badge multiple">Multiple</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-phase view">
+          <h3>👁️ Phase de la Vue</h3>
+          <div class="phase-hooks">
+            <div class="hook-item">
+              <span class="hook-number">6</span>
+              <span class="hook-name">ngAfterViewInit</span>
+              <span class="hook-badge once">Une fois</span>
+            </div>
+            <div class="hook-item">
+              <span class="hook-number">7</span>
+              <span class="hook-name">ngAfterViewChecked</span>
+              <span class="hook-badge multiple">Multiple</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-phase cleanup">
+          <h3>🧹 Phase de Nettoyage</h3>
+          <div class="phase-hooks">
+            <div class="hook-item">
+              <span class="hook-number">8</span>
+              <span class="hook-name">ngOnDestroy</span>
+              <span class="hook-badge once">Une fois</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔧 Détail des Hooks</h2>
+      <div class="hooks-list">
+        @for (hook of hooks; track hook.name) {
+          <div class="hook-card" [ngClass]="hook.phase.toLowerCase().replace(' ', '-')">
+            <div class="hook-header">
+              <div class="hook-title">
+                <span class="hook-order">{{ hook.order }}</span>
+                <h3>{{ hook.name }}</h3>
+              </div>
+              <div class="hook-badges">
+                <span class="phase-badge">{{ hook.phase }}</span>
+                <span class="frequency-badge" [class.once]="hook.calledOnce">
+                  {{ hook.calledOnce ? '1×' : '∞' }}
+                </span>
+              </div>
+            </div>
+            <p class="hook-description">{{ hook.description }}</p>
+            <div class="hook-details">
+              <div class="detail-item">
+                <strong>⏱️ Timing:</strong>
+                <span>{{ hook.timing }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>💡 Use Case:</strong>
+                <span>{{ hook.useCase }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Démonstration Interactive</h2>
+      <div class="demo-box">
+        <div class="demo-controls">
+          <button (click)="simulateChange()" class="demo-button">Simuler un Changement</button>
+          <button (click)="clearLogs()" class="demo-button secondary">Effacer les Logs</button>
+        </div>
+        <div class="demo-counter">
+          <strong>Counter:</strong> {{ counter }}
+        </div>
+        <div class="logs-container">
+          <h4>📝 Logs des Lifecycle Hooks:</h4>
+          @if (logs.length === 0) {
+            <p class="no-logs">Aucun log pour le moment. Cliquez sur les boutons pour voir les hooks en action!</p>
+          } @else {
+            <div class="logs-list">
+              @for (log of logs; track log) {
+                <div class="log-entry">{{ log }}</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💻 Exemples de Code</h2>
+      <div class="code-examples">
+        <div class="code-card">
+          <h4>ngOnInit - Initialisation</h4>
+          <pre><code>import {{ '{' }} Component, OnInit {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent implements OnInit {{ '{' }}
+  data: any;
+
+  ngOnInit(): void {{ '{' }}
+    // Appels API
+    this.loadData();
+    
+    // Souscriptions
+    this.dataService.getData().subscribe(data => {{ '{' }}
+      this.data = data;
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+        </div>
+
+        <div class="code-card">
+          <h4>ngOnDestroy - Nettoyage</h4>
+          <pre><code>import {{ '{' }} Component, OnDestroy {{ '}' }} from '@angular/core';
+import {{ '{' }} Subscription {{ '}' }} from 'rxjs';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent implements OnDestroy {{ '{' }}
+  private subscription = new Subscription();
+
+  ngOnDestroy(): void {{ '{' }}
+    // Unsubscribe
+    this.subscription.unsubscribe();
+    
+    // Détacher listeners
+    window.removeEventListener('resize', this.onResize);
+    
+    // Cleanup
+    this.cleanup();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+        </div>
+
+        <div class="code-card">
+          <h4>ngOnChanges - Changements @Input</h4>
+          <pre><code>import {{ '{' }} Component, OnChanges, Input, SimpleChanges {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent implements OnChanges {{ '{' }}
+  @Input() user: User;
+
+  ngOnChanges(changes: SimpleChanges): void {{ '{' }}
+    if (changes['user']) {{ '{' }}
+      console.log('Previous:', changes['user'].previousValue);
+      console.log('Current:', changes['user'].currentValue);
+      this.updateUserData();
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}</code></pre>
+        </div>
+
+        <div class="code-card">
+          <h4>ngAfterViewInit - Accès à la Vue</h4>
+          <pre><code>import {{ '{' }} Component, AfterViewInit, ViewChild, ElementRef {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent implements AfterViewInit {{ '{' }}
+  @ViewChild('myCanvas') canvas: ElementRef;
+
+  ngAfterViewInit(): void {{ '{' }}
+    // Vue complètement initialisée
+    const ctx = this.canvas.nativeElement.getContext('2d');
+    this.drawChart(ctx);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚡ Performance et Bonnes Pratiques</h2>
+      <div class="performance-grid">
+        <div class="perf-card good">
+          <h3>✓ Recommandations</h3>
+          <ul>
+            <li><strong>ngOnInit:</strong> Utiliser pour l'initialisation au lieu du constructor</li>
+            <li><strong>ngOnDestroy:</strong> TOUJOURS nettoyer les souscriptions</li>
+            <li><strong>ngAfterViewInit:</strong> Manipuler le DOM uniquement ici</li>
+            <li>Utiliser les interfaces pour la sécurité du typage</li>
+            <li>Éviter les opérations coûteuses dans les hooks fréquents</li>
+          </ul>
+        </div>
+
+        <div class="perf-card warning">
+          <h3>⚠️ À Éviter</h3>
+          <ul>
+            <li><strong>ngDoCheck:</strong> Éviter les opérations coûteuses (appelé très souvent)</li>
+            <li><strong>ngAfterViewChecked:</strong> Ne pas modifier l'état (cause errors)</li>
+            <li>Ne pas faire d'appels API dans ngDoCheck</li>
+            <li>Oublier de unsubscribe dans ngOnDestroy (memory leaks)</li>
+            <li>Modifier les bindings dans AfterView hooks</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔍 Constructor vs ngOnInit</h2>
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Constructor</th>
+              <th>ngOnInit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Moment</strong></td>
+              <td>Création de l'instance</td>
+              <td>Après initialisation des inputs</td>
+            </tr>
+            <tr>
+              <td><strong>@Input disponible</strong></td>
+              <td>❌ Non</td>
+              <td>✅ Oui</td>
+            </tr>
+            <tr>
+              <td><strong>Usage recommandé</strong></td>
+              <td>Injection de dépendances</td>
+              <td>Initialisation, appels API</td>
+            </tr>
+            <tr>
+              <td><strong>Testabilité</strong></td>
+              <td>Peut compliquer les tests</td>
+              <td>Meilleure pour les tests</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/components/lifecycle" target="_blank" class="resource-link">
+          📖 Guide Lifecycle Hooks
+        </a>
+        <a href="https://angular.dev/api/core/OnInit" target="_blank" class="resource-link">
+          🔧 API Reference
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/pipes" class="nav-btn prev">
+        ← Pipes
+      </a>
+      <a routerLink="/documentation/fundamentals/input-output" class="nav-btn next">
+        Input/Output →
+      </a>
+    </nav>
+  </article>
+</div>

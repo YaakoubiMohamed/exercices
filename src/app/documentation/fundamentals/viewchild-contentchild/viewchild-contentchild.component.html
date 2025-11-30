@@ -1,0 +1,330 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">ViewChild & ContentChild</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🔍 ViewChild & ContentChild</h1>
+      <p class="doc-subtitle">Accéder aux éléments enfants et au contenu projeté</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📋 Query Decorators</h2>
+      <div class="definition-box">
+        <p>Les décorateurs de requête permettent d'accéder aux éléments du DOM, composants enfants, et contenu projeté depuis le code TypeScript. Ils sont essentiels pour la manipulation avancée des vues.</p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Les 4 Query Decorators</h2>
+      <div class="decorators-grid">
+        @for (decorator of decorators; track decorator.name) {
+          <div class="decorator-card">
+            <h3>{{ decorator.name }}</h3>
+            <div class="decorator-meta">
+              <span class="scope-badge">{{ decorator.scope }}</span>
+              <span class="timing-badge">{{ decorator.timing }}</span>
+            </div>
+            <p class="description">{{ decorator.description }}</p>
+            <div class="usecase">
+              <strong>Use Case:</strong> {{ decorator.useCase }}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>👁️ @ViewChild - Accès à un Élément</h2>
+      <div class="code-section">
+        <h3>Accéder à un Élément DOM</h3>
+        <pre><code>import {{ '{' }} Component, ViewChild, ElementRef, AfterViewInit {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-my-component',
+  template: `
+    &lt;input #nameInput type="text"&gt;
+    &lt;button (click)="focusInput()"&gt;Focus&lt;/button&gt;
+  `
+{{ '}' }})
+export class MyComponent implements AfterViewInit {{ '{' }}
+  &#64;ViewChild('nameInput') inputElement!: ElementRef&lt;HTMLInputElement&gt;;
+  
+  ngAfterViewInit() {{ '{' }}
+    // Vue initialisée, élément accessible
+    console.log(this.inputElement.nativeElement.value);
+  {{ '}' }}
+  
+  focusInput() {{ '{' }}
+    this.inputElement.nativeElement.focus();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+
+        <h3>Accéder à un Composant Enfant</h3>
+        <pre><code>import {{ '{' }} Component, ViewChild, AfterViewInit {{ '}' }} from '@angular/core';
+import {{ '{' }} ChildComponent {{ '}' }} from './child.component';
+
+@Component({{ '{' }}
+  selector: 'app-parent',
+  template: `
+    &lt;app-child&gt;&lt;/app-child&gt;
+    &lt;button (click)="callChildMethod()"&gt;Call Child&lt;/button&gt;
+  `
+{{ '}' }})
+export class ParentComponent implements AfterViewInit {{ '{' }}
+  &#64;ViewChild(ChildComponent) childComponent!: ChildComponent;
+  
+  ngAfterViewInit() {{ '{' }}
+    // Accès aux propriétés/méthodes du composant enfant
+    console.log(this.childComponent.data);
+  {{ '}' }}
+  
+  callChildMethod() {{ '{' }}
+    this.childComponent.doSomething();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>👁️👁️ @ViewChildren - Accès à Plusieurs Éléments</h2>
+      <div class="code-section">
+        <pre><code>import {{ '{' }} Component, ViewChildren, QueryList, AfterViewInit {{ '}' }} from '@angular/core';
+import {{ '{' }} ItemComponent {{ '}' }} from './item.component';
+
+@Component({{ '{' }}
+  selector: 'app-list',
+  template: `
+    &#64;for (item of items; track item.id) {{ '{' }}
+      &lt;app-item [data]="item"&gt;&lt;/app-item&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class ListComponent implements AfterViewInit {{ '{' }}
+  items = [{{ '{' }}id: 1{{ '}' }}, {{ '{' }}id: 2{{ '}' }}, {{ '{' }}id: 3{{ '}' }}];
+  
+  &#64;ViewChildren(ItemComponent) itemComponents!: QueryList&lt;ItemComponent&gt;;
+  
+  ngAfterViewInit() {{ '{' }}
+    // Itérer sur tous les composants
+    this.itemComponents.forEach(item => {{ '{' }}
+      console.log(item.data);
+    {{ '}' }});
+    
+    // Accéder au premier/dernier
+    const first = this.itemComponents.first;
+    const last = this.itemComponents.last;
+    
+    // Écouter les changements
+    this.itemComponents.changes.subscribe(list => {{ '{' }}
+      console.log('List changed:', list.length);
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📦 @ContentChild - Accès au Contenu Projeté</h2>
+      <div class="code-section">
+        <pre><code>import {{ '{' }} Component, ContentChild, AfterContentInit, ElementRef {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-card',
+  template: `
+    &lt;div class="card"&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class CardComponent implements AfterContentInit {{ '{' }}
+  &#64;ContentChild('cardTitle') titleElement!: ElementRef;
+  
+  ngAfterContentInit() {{ '{' }}
+    // Contenu projeté initialisé
+    if (this.titleElement) {{ '{' }}
+      console.log('Title:', this.titleElement.nativeElement.textContent);
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+&lt;app-card&gt;
+  &lt;h2 #cardTitle&gt;Mon Titre&lt;/h2&gt;
+  &lt;p&gt;Contenu de la card&lt;/p&gt;
+&lt;/app-card&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📦📦 @ContentChildren - Plusieurs Contenus Projetés</h2>
+      <div class="code-section">
+        <pre><code>import {{ '{' }} Component, ContentChildren, QueryList, AfterContentInit {{ '}' }} from '@angular/core';
+import {{ '{' }} TabComponent {{ '}' }} from './tab.component';
+
+@Component({{ '{' }}
+  selector: 'app-tabs',
+  template: `
+    &lt;div class="tabs"&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class TabsComponent implements AfterContentInit {{ '{' }}
+  &#64;ContentChildren(TabComponent) tabs!: QueryList&lt;TabComponent&gt;;
+  
+  ngAfterContentInit() {{ '{' }}
+    // Accéder à tous les tabs projetés
+    this.tabs.forEach((tab, index) => {{ '{' }}
+      tab.index = index;
+      tab.isActive = index === 0; // Premier tab actif
+    {{ '}' }});
+  {{ '}' }}
+  
+  selectTab(index: number) {{ '{' }}
+    this.tabs.forEach((tab, i) => {{ '{' }}
+      tab.isActive = i === index;
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+&lt;app-tabs&gt;
+  &lt;app-tab title="Tab 1"&gt;Content 1&lt;/app-tab&gt;
+  &lt;app-tab title="Tab 2"&gt;Content 2&lt;/app-tab&gt;
+  &lt;app-tab title="Tab 3"&gt;Content 3&lt;/app-tab&gt;
+&lt;/app-tabs&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚙️ Options des Query Decorators</h2>
+      <div class="options-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Exemple</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>read</code></td>
+              <td>Type</td>
+              <td>Spécifie le type à lire de l'élément</td>
+              <td><code>&#64;ViewChild('el', {{ '{' }}read: ElementRef{{ '}' }})</code></td>
+            </tr>
+            <tr>
+              <td><code>static</code></td>
+              <td>boolean</td>
+              <td>Query résolu avant change detection (ngOnInit vs ngAfterViewInit)</td>
+              <td><code>&#64;ViewChild('el', {{ '{' }}static: true{{ '}' }})</code></td>
+            </tr>
+            <tr>
+              <td><code>descendants</code></td>
+              <td>boolean</td>
+              <td>Inclure tous les descendants (pour ContentChild)</td>
+              <td><code>&#64;ContentChildren(Item, {{ '{' }}descendants: true{{ '}' }})</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Différences View vs Content</h2>
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>ViewChild/ViewChildren</th>
+              <th>ContentChild/ContentChildren</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Cible</strong></td>
+              <td>Template du composant</td>
+              <td>Contenu projeté (ng-content)</td>
+            </tr>
+            <tr>
+              <td><strong>Timing</strong></td>
+              <td>ngAfterViewInit / ngAfterViewChecked</td>
+              <td>ngAfterContentInit / ngAfterContentChecked</td>
+            </tr>
+            <tr>
+              <td><strong>Use Case</strong></td>
+              <td>Propre template, composants enfants</td>
+              <td>Contenu venant du parent</td>
+            </tr>
+            <tr>
+              <td><strong>Visibilité</strong></td>
+              <td>Éléments définis dans le template</td>
+              <td>Éléments passés entre les balises</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Accéder aux ViewChild dans ngAfterViewInit</li>
+            <li>Accéder aux ContentChild dans ngAfterContentInit</li>
+            <li>Utiliser le ! (non-null assertion) ou undefined pour le typage</li>
+            <li>Préférer les template references (#ref) aux sélecteurs CSS</li>
+            <li>Utiliser QueryList.changes pour détecter les ajouts/suppressions</li>
+            <li>Typer correctement les ElementRef: ElementRef&lt;HTMLInputElement&gt;</li>
+          </ul>
+        </div>
+
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Accéder aux query dans ngOnInit (undefined)</li>
+            <li>Modifier le DOM directement sans ElementRef</li>
+            <li>Oublier implements AfterViewInit/AfterContentInit</li>
+            <li>Utiliser static: true sans raison (anti-pattern)</li>
+            <li>Manipuler massivement le DOM (préférer Angular)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/api/core/ViewChild" target="_blank" class="resource-link">
+          📖 API ViewChild
+        </a>
+        <a href="https://angular.dev/api/core/ContentChild" target="_blank" class="resource-link">
+          📦 API ContentChild
+        </a>
+        <a href="https://angular.dev/api/core/QueryList" target="_blank" class="resource-link">
+          📋 API QueryList
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/content-projection" class="nav-btn prev">
+        ← Content Projection
+      </a>
+      <a routerLink="/documentation" class="nav-btn next">
+        Plan de Cours →
+      </a>
+    </nav>
+  </article>
+</div>

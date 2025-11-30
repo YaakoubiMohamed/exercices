@@ -1,0 +1,151 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Histoire et Évolution</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>📜 Histoire et Évolution d'Angular</h1>
+      <p class="doc-subtitle">De AngularJS 1.0 à Angular 20</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>🌱 Les Débuts : AngularJS (2010)</h2>
+      <div class="history-box">
+        <p>
+          <strong>AngularJS</strong> a été créé en 2009 par <strong>Miško Hevery</strong> chez Google.
+          Initialement un projet personnel, il est devenu un framework officiel de Google en 2010.
+        </p>
+        <p>
+          AngularJS a révolutionné le développement web avec le <strong>two-way data binding</strong>,
+          permettant de synchroniser automatiquement le modèle et la vue.
+        </p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 La Grande Réécriture : Angular 2+ (2016)</h2>
+      <div class="rewrite-box">
+        <h3>Pourquoi une réécriture complète ?</h3>
+        <ul>
+          <li><strong>Performance :</strong> AngularJS souffrait de problèmes de performance sur les grandes applications</li>
+          <li><strong>Mobile :</strong> Nécessité d'un support mobile natif</li>
+          <li><strong>Modernité :</strong> Adoption de TypeScript et des standards ECMAScript</li>
+          <li><strong>Architecture :</strong> Passage à une architecture component-based</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📅 Timeline des Versions Majeures</h2>
+      <div class="timeline">
+        @for (version of versions; track version.version) {
+          <div class="timeline-item">
+            <div class="timeline-marker">
+              <span class="year">{{ version.year }}</span>
+            </div>
+            <div class="timeline-content">
+              <h3>{{ version.version }}</h3>
+              <h4>{{ version.name }}</h4>
+              <ul>
+                @for (highlight of version.highlights; track highlight) {
+                  <li>{{ highlight }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Philosophie de Version</h2>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <h3>⏰ Release Cadence</h3>
+          <p>Nouvelle version majeure tous les <strong>6 mois</strong></p>
+          <p class="note">Prévisibilité pour les équipes de développement</p>
+        </div>
+        <div class="philosophy-card">
+          <h3>🛡️ Long-Term Support (LTS)</h3>
+          <p>Support de <strong>18 mois</strong> pour chaque version majeure</p>
+          <p class="note">6 mois active + 12 mois security fixes</p>
+        </div>
+        <div class="philosophy-card">
+          <h3>🔄 Semantic Versioning</h3>
+          <p>MAJOR.MINOR.PATCH</p>
+          <p class="note">Breaking changes uniquement en versions majeures</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🚀 Innovations Clés</h2>
+      <div class="innovations">
+        <div class="innovation-item">
+          <span class="innovation-icon">⚡</span>
+          <div>
+            <h3>Ivy (Angular 9, 2020)</h3>
+            <p>Nouveau moteur de rendu : bundle size réduit de 40%, compilation plus rapide</p>
+          </div>
+        </div>
+        <div class="innovation-item">
+          <span class="innovation-icon">🎯</span>
+          <div>
+            <h3>Standalone Components (Angular 14, 2022)</h3>
+            <p>Simplification : plus besoin de NgModules pour la plupart des cas d'usage</p>
+          </div>
+        </div>
+        <div class="innovation-item">
+          <span class="innovation-icon">📡</span>
+          <div>
+            <h3>Signals (Angular 16, 2023)</h3>
+            <p>Nouvelle primitive de réactivité pour une gestion d'état plus simple et performante</p>
+          </div>
+        </div>
+        <div class="innovation-item">
+          <span class="innovation-icon">✨</span>
+          <div>
+            <h3>Nouveau Control Flow (Angular 17, 2023)</h3>
+            <p>Nouvelle syntaxe de contrôle de flux plus intuitive et performante</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📊 État Actuel (2025)</h2>
+      <div class="current-state">
+        <div class="stat-card">
+          <div class="stat-number">15+</div>
+          <div class="stat-label">Années d'existence</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">20+</div>
+          <div class="stat-label">Versions majeures</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1M+</div>
+          <div class="stat-label">Développeurs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Google</div>
+          <div class="stat-label">Support officiel</div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/intro/what-is-angular" class="nav-btn prev">
+        ← Qu'est-ce qu'Angular ?
+      </a>
+      <a routerLink="/documentation/intro/architecture" class="nav-btn next">
+        Architecture →
+      </a>
+    </nav>
+  </article>
+</div>

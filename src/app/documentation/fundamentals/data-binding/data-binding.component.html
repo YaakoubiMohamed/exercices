@@ -1,0 +1,285 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Data Binding</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🔗 Data Binding</h1>
+      <p class="doc-subtitle">Communication entre composant et template</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📊 Les 4 Types de Data Binding</h2>
+      <div class="binding-types">
+        <div class="binding-card interpolation">
+          <div class="binding-icon">{{ '{' }}{{ '{' }} {{ '}' }}{{ '}' }}</div>
+          <h3>Interpolation</h3>
+          <p class="binding-direction">Component → Template</p>
+          <p>Affiche une valeur dans le HTML</p>
+          <code>&lt;h1&gt;{{ '{' }}{{ '{' }} title {{ '}' }}{{ '}' }}&lt;/h1&gt;</code>
+        </div>
+
+        <div class="binding-card property">
+          <div class="binding-icon">[property]</div>
+          <h3>Property Binding</h3>
+          <p class="binding-direction">Component → Template</p>
+          <p>Lie une propriété DOM à une valeur</p>
+          <code>&lt;img [src]="imageUrl"&gt;</code>
+        </div>
+
+        <div class="binding-card event">
+          <div class="binding-icon">(event)</div>
+          <h3>Event Binding</h3>
+          <p class="binding-direction">Template → Component</p>
+          <p>Écoute un événement DOM</p>
+          <code>&lt;button (click)="save()"&gt;</code>
+        </div>
+
+        <div class="binding-card twoway">
+          <div class="binding-icon">[(ngModel)]</div>
+          <h3>Two-way Binding</h3>
+          <p class="binding-direction">Component ↔ Template</p>
+          <p>Synchronisation bidirectionnelle</p>
+          <code>&lt;input [(ngModel)]="name"&gt;</code>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Demo Interactive</h2>
+      <div class="demo-box">
+        <div class="demo-item">
+          <h4>1. Interpolation {{ '{' }}{{ '{' }} {{ '}' }}{{ '}' }}</h4>
+          <div class="demo-result">
+            <p>Message: {{ message }}</p>
+            <p>Count: {{ count }}</p>
+          </div>
+        </div>
+
+        <div class="demo-item">
+          <h4>2. Property Binding [property]</h4>
+          <button [disabled]="count === 0">Button</button>
+          <div [style.color]="selectedColor">Texte coloré</div>
+          <div class="demo-result">
+            <p>Button disabled: {{ count === 0 }}</p>
+            <p>Color: {{ selectedColor }}</p>
+          </div>
+        </div>
+
+        <div class="demo-item">
+          <h4>3. Event Binding (event)</h4>
+          <button (click)="increment()" class="demo-button">Incrémenter</button>
+          <div class="demo-result">
+            <p>Clics: {{ count }}</p>
+          </div>
+        </div>
+
+        <div class="demo-item">
+          <h4>4. Two-way Binding [(ngModel)]</h4>
+          <input [(ngModel)]="inputValue" placeholder="Tapez ici" class="demo-input">
+          <div class="demo-result">
+            <p>Valeur: {{ inputValue }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Flow de Données</h2>
+      <div class="flow-diagram">
+        <div class="flow-section">
+          <h3>One-way: Component → Template</h3>
+          <div class="flow-box">
+            <div class="flow-item component">
+              <strong>Component</strong>
+              <code>title = 'Hello';</code>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item template">
+              <strong>Template</strong>
+              <code>{{ '{' }}{{ '{' }} title {{ '}' }}{{ '}' }}</code>
+              <code>[value]="title"</code>
+            </div>
+          </div>
+          <p class="flow-note">Les données circulent uniquement du composant vers le template</p>
+        </div>
+
+        <div class="flow-section">
+          <h3>One-way: Template → Component</h3>
+          <div class="flow-box">
+            <div class="flow-item template">
+              <strong>Template</strong>
+              <code>(click)="save()"</code>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item component">
+              <strong>Component</strong>
+              <code>save() &#123; ... &#125;</code>
+            </div>
+          </div>
+          <p class="flow-note">Les événements remontent du template vers le composant</p>
+        </div>
+
+        <div class="flow-section">
+          <h3>Two-way: Component ↔ Template</h3>
+          <div class="flow-box bidirectional">
+            <div class="flow-item component">
+              <strong>Component</strong>
+              <code>name = 'John';</code>
+            </div>
+            <div class="flow-arrow-two">↔</div>
+            <div class="flow-item template">
+              <strong>Template</strong>
+              <code>[(ngModel)]="name"</code>
+            </div>
+          </div>
+          <p class="flow-note">Synchronisation automatique dans les deux sens</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚡ Performance et Change Detection</h2>
+      <div class="performance-box">
+        <div class="perf-card">
+          <h3>✅ Performant</h3>
+          <ul>
+            <li>Property binding vers propriétés primitives</li>
+            <li>Event handlers simples</li>
+            <li>Utilisation de pipes purs</li>
+            <li>OnPush change detection strategy</li>
+          </ul>
+        </div>
+
+        <div class="perf-card warning">
+          <h3>⚠️ À Éviter</h3>
+          <ul>
+            <li>Appels de fonctions dans l'interpolation</li>
+            <li>Expressions complexes dans les templates</li>
+            <li>Manipulation d'objets mutables</li>
+            <li>Too many bindings sur une page</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📝 Exemples Pratiques</h2>
+      <div class="examples">
+        <div class="example-card">
+          <h4>Binding de Classe CSS</h4>
+          <pre><code>&lt;!-- Classe unique --&gt;
+&lt;div [class.active]="isActive"&gt;&lt;/div&gt;
+
+&lt;!-- Plusieurs classes --&gt;
+&lt;div [ngClass]="&#123;
+  'active': isActive,
+  'disabled': !isEnabled,
+  'highlight': isHighlighted
+&#125;"&gt;&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="example-card">
+          <h4>Binding de Style</h4>
+          <pre><code>&lt;!-- Style unique --&gt;
+&lt;div [style.color]="textColor"&gt;&lt;/div&gt;
+&lt;div [style.width.px]="widthValue"&gt;&lt;/div&gt;
+
+&lt;!-- Plusieurs styles --&gt;
+&lt;div [ngStyle]="&#123;
+  'color': textColor,
+  'font-size': fontSize + 'px',
+  'background': bgColor
+&#125;"&gt;&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="example-card">
+          <h4>Event Binding avec $event</h4>
+          <pre><code>&lt;input (input)="onInput($event)"&gt;
+&lt;button (click)="onClick($event)"&gt;
+
+// Component
+onInput(event: Event): void &#123;
+  const input = event.target as HTMLInputElement;
+  console.log(input.value);
+&#125;
+
+onClick(event: MouseEvent): void &#123;
+  console.log(event.clientX, event.clientY);
+&#125;</code></pre>
+        </div>
+
+        <div class="example-card">
+          <h4>Custom Two-way Binding</h4>
+          <pre><code>&lt;!-- Parent --&gt;
+&lt;app-counter [(value)]="count"&gt;&lt;/app-counter&gt;
+
+// Child Component
+&#64;Input() value: number = 0;
+&#64;Output() valueChange = new EventEmitter&lt;number&gt;();
+
+increment() &#123;
+  this.value++;
+  this.valueChange.emit(this.value);
+&#125;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Utiliser property binding au lieu d'interpolation pour les propriétés</li>
+            <li>Typer les paramètres des event handlers</li>
+            <li>Garder les expressions simples</li>
+            <li>Utiliser pipes pour les transformations</li>
+            <li>Unsubscribe dans ngOnDestroy pour les Observables</li>
+          </ul>
+        </div>
+
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Logique complexe dans les bindings</li>
+            <li>Appels de méthodes coûteuses dans les templates</li>
+            <li>Mutations dans les event handlers qui déclenchent change detection</li>
+            <li>Oublier d'unsubscribe (memory leaks)</li>
+            <li>Trop de bindings sur un seul élément</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/templates/binding" target="_blank" class="resource-link">
+          📖 Guide Data Binding
+        </a>
+        <a href="https://angular.dev/guide/templates/two-way-binding" target="_blank" class="resource-link">
+          🔄 Two-way Binding
+        </a>
+        <a href="https://angular.dev/best-practices/runtime-performance" target="_blank" class="resource-link">
+          ⚡ Runtime Performance
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/templates" class="nav-btn prev">
+        ← Templates
+      </a>
+      <a routerLink="/documentation" class="nav-btn next">
+        Plan de Cours →
+      </a>
+    </nav>
+  </article>
+</div>

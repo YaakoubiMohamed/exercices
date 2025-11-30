@@ -1,0 +1,441 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Performance</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Optimisation des Performance</h1>
+            <p class="lead text-muted">
+                L'optimisation des performances est essentielle pour offrir une expérience utilisateur fluide.
+                Angular propose de nombreuses techniques pour améliorer la vitesse de chargement, la réactivité et
+                l'efficacité de vos applications.
+            </p>
+        </header>
+
+        <!-- Change Detection -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Change Detection Optimization</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 30%">Stratégie</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (strategy of changeDetectionStrategies; track strategy.name) {
+                        <tr>
+                            <td><code>{{ strategy.name }}</code></td>
+                            <td>{{ strategy.description }}</td>
+                            <td><span class="badge bg-success">{{ strategy.impact }}</span></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">OnPush Strategy</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Component, Input, ChangeDetectionStrategy {{ '}' }} from '&#64;angular/core';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    &lt;div class="card"&gt;
+      &lt;h3&gt;{{ '{{' }} user.name {{ '}}' }}&lt;/h3&gt;
+      &lt;p&gt;{{ '{{' }} user.email {{ '}}' }}&lt;/p&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserCardComponent {{ '{' }}
+  &#64;Input() user!: User;
+{{ '}' }}
+
+// Change detection se déclenche uniquement si:
+// 1. Référence de l'input change
+// 2. Event du composant ou enfant
+// 3. Observable avec AsyncPipe émet
+// 4. ChangeDetectorRef.markForCheck() appelé
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Signals (Optimal)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Component, signal, computed {{ '}' }} from '&#64;angular/core';
+
+&#64;Component({{ '{' }}
+  selector: 'app-counter',
+  // Pas besoin de changeDetection avec signals
+  template: `
+    &lt;div&gt;
+      &lt;p&gt;Count: {{ '{{' }} count() {{ '}}' }}&lt;/p&gt;
+      &lt;p&gt;Double: {{ '{{' }} doubled() {{ '}}' }}&lt;/p&gt;
+      &lt;button (click)="increment()"&gt;+&lt;/button&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class CounterComponent {{ '{' }}
+  count = signal(0);
+  doubled = computed(() => this.count() * 2);
+
+  increment() {{ '{' }}
+    this.count.update(c => c + 1);
+  {{ '}' }}
+{{ '}' }}
+
+// Les signals déclenchent automatiquement
+// la change detection de façon granulaire
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Techniques d'optimisation -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Techniques d'Optimisation</h2>
+
+            <div class="row g-4">
+                @for (technique of optimizationTechniques; track technique.title) {
+                <div class="col-md-6">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <i class="bi bi-lightning-charge me-2"></i>
+                            {{ technique.title }}
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">{{ technique.description }}</p>
+                            <div class="code-example small">
+                                <pre><code class="language-typescript">{{ technique.example }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Lazy Loading et Code Splitting -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Lazy Loading et Code Splitting</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.routes.ts - Lazy loading</span>
+                </div>
+                <pre><code class="language-typescript">export const routes: Routes = [
+  // Eager loading (chargé au démarrage)
+  {{ '{' }} path: '', component: HomeComponent {{ '}' }},
+  
+  // Lazy loading de composants
+  {{ '{' }}
+    path: 'admin',
+    loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
+  {{ '}' }},
+  
+  // Lazy loading de routes enfants
+  {{ '{' }}
+    path: 'products',
+    loadChildren: () => import('./products/product.routes').then(m => m.PRODUCT_ROUTES)
+  {{ '}' }},
+  
+  // Preloading strategy
+  {{ '{' }}
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    data: {{ '{' }} preload: true {{ '}' }}
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Résultat :</strong> Le bundle initial est réduit de 40-60%, améliorant le First Contentful Paint
+                (FCP).
+            </div>
+        </section>
+
+        <!-- Virtual Scrolling -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Virtual Scrolling pour Grandes Listes</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Installation et configuration</span>
+                </div>
+                <pre><code class="language-bash"># Installer CDK
+npm install &#64;angular/cdk
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">virtual-scroll.component.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} ScrollingModule {{ '}' }} from '&#64;angular/cdk/scrolling';
+
+&#64;Component({{ '{' }}
+  selector: 'app-virtual-scroll',
+  standalone: true,
+  imports: [ScrollingModule],
+  template: `
+    &lt;cdk-virtual-scroll-viewport itemSize="50" class="viewport"&gt;
+      &lt;div *cdkVirtualFor="let item of items" class="item"&gt;
+        {{ '{{' }} item.name {{ '}}' }}
+      &lt;/div&gt;
+    &lt;/cdk-virtual-scroll-viewport&gt;
+  `,
+  styles: [`
+    .viewport {{ '{' }}
+      height: 400px;
+      overflow: auto;
+    {{ '}' }}
+    .item {{ '{' }}
+      height: 50px;
+      padding: 10px;
+    {{ '}' }}
+  `]
+{{ '}' }})
+export class VirtualScrollComponent {{ '{' }}
+  items = Array.from({{ '{' }} length: 10000 {{ '}' }}, (_, i) => ({{ '{' }}
+    id: i,
+    name: `Item ${{ '{' }}i{{ '}' }}`
+  {{ '}' }}));
+{{ '}' }}
+
+// Au lieu de rendre 10000 éléments DOM,
+// seuls ~10 éléments visibles sont rendus
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Optimisation des Bundles -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Optimisation des Bundles</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Technique</th>
+                            <th>Configuration</th>
+                            <th>Gain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Production Build</strong></td>
+                            <td><code>ng build --configuration production</code></td>
+                            <td>60-80% réduction</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AOT Compilation</strong></td>
+                            <td>Activé par défaut en production</td>
+                            <td>Compile les templates à l'avance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tree Shaking</strong></td>
+                            <td>Automatique avec webpack</td>
+                            <td>Supprime le code non utilisé</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Minification</strong></td>
+                            <td>Automatique en production</td>
+                            <td>20-30% réduction</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Compression Gzip/Brotli</strong></td>
+                            <td>Configuration serveur</td>
+                            <td>70-80% réduction</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">JSON</span>
+                    <span class="file-name">angular.json - Budget configuration</span>
+                </div>
+                <pre><code class="language-json">{{ '{' }}
+  "budgets": [
+    {{ '{' }}
+      "type": "initial",
+      "maximumWarning": "500kb",
+      "maximumError": "1mb"
+    {{ '}' }},
+    {{ '{' }}
+      "type": "anyComponentStyle",
+      "maximumWarning": "6kb",
+      "maximumError": "10kb"
+    {{ '}' }}
+  ]
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Outils de Mesure -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Outils de Mesure de Performance</h2>
+
+            <div class="row g-4">
+                @for (tool of performanceTools; track tool.name) {
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-speedometer2 text-primary me-2"></i>
+                                {{ tool.name }}
+                            </h5>
+                            <p class="card-text mb-3">{{ tool.description }}</p>
+                            <div class="alert alert-light small mb-0">
+                                <strong>Usage :</strong> {{ tool.usage }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Images et Assets -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Optimisation des Images</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">HTML</span>
+                    <span class="file-name">NgOptimizedImage directive</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} NgOptimizedImage {{ '}' }} from '&#64;angular/common';
+
+&#64;Component({{ '{' }}
+  imports: [NgOptimizedImage],
+  template: `
+    &lt;!-- Images optimisées automatiquement --&gt;
+    &lt;img
+      ngSrc="hero.jpg"
+      width="400"
+      height="300"
+      priority
+      alt="Hero image"
+    /&gt;
+    
+    &lt;!-- Lazy loading automatique --&gt;
+    &lt;img
+      ngSrc="product.jpg"
+      width="200"
+      height="200"
+      loading="lazy"
+      alt="Product"
+    /&gt;
+  `
+{{ '}' }})
+</code></pre>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Avantages :</strong> Génère automatiquement srcset, lazy load, preconnect, et prévient
+                Cumulative Layout Shift (CLS).
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser OnPush change detection</li>
+                                <li>Lazy load les feature modules</li>
+                                <li>Utiliser trackBy avec *ngFor/&#64;for</li>
+                                <li>Virtual scroll pour grandes listes (&gt;100)</li>
+                                <li>Optimiser les images (NgOptimizedImage)</li>
+                                <li>Analyser les bundles régulièrement</li>
+                                <li>Utiliser Signals pour réactivité fine</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Logique complexe dans templates</li>
+                                <li>Fonctions dans templates (recalcul à chaque CD)</li>
+                                <li>Subscriptions sans unsubscribe</li>
+                                <li>Render de milliers d'éléments sans virtual scroll</li>
+                                <li>Images non optimisées</li>
+                                <li>Importer des modules complets (lodash)</li>
+                                <li>Négliger les budgets de bundle</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/best-practices/runtime-performance" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular - Runtime Performance
+                </a>
+                <a href="https://web.dev/angular" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Web.dev - Angular Performance
+                </a>
+                <a href="https://developer.chrome.com/docs/lighthouse" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-speedometer2 me-2"></i>Lighthouse Documentation
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/best-practices/state-management" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: State Management
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/" class="btn btn-primary">
+                        Retour Accueil<i class="bi bi-house ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

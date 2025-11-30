@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export type ProductCategory = 'electronics' | 'clothing' | 'books' | 'food';
 
@@ -14,7 +15,7 @@ export interface Product {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private products = signal<Product[]>([
+  private productsSubject = new BehaviorSubject<Product[]>([
     {
       id: 1,
       name: 'MacBook Pro',
@@ -125,19 +126,23 @@ export class ProductService {
     }
   ]);
   
-  readonly allProducts = this.products.asReadonly();
+  readonly allProducts$: Observable<Product[]> = this.productsSubject.asObservable();
+  
+  getAllProducts(): Product[] {
+    return this.productsSubject.value;
+  }
   
   getProductsByCategory(category: ProductCategory): Product[] {
-    return this.products().filter(p => p.category === category);
+    return this.productsSubject.value.filter(p => p.category === category);
   }
   
   getProductById(id: number): Product | undefined {
-    return this.products().find(p => p.id === id);
+    return this.productsSubject.value.find(p => p.id === id);
   }
   
   searchProducts(query: string): Product[] {
     const lowerQuery = query.toLowerCase();
-    return this.products().filter(p => 
+    return this.productsSubject.value.filter(p => 
       p.name.toLowerCase().includes(lowerQuery) ||
       p.description.toLowerCase().includes(lowerQuery)
     );

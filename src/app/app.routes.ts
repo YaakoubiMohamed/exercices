@@ -41,11 +41,7 @@ export const routes: Routes = [
     loadComponent: () => import('./exercises/exercice6-invoice/invoice.component.js').then(m => m.InvoiceComponent)
   },
   {
-    path: 'demos/signals',
-    loadComponent: () => import('./demos/signals/counter-demo.component.js').then(m => m.CounterDemoComponent)
-  },
-  {
-    path: 'demos/computed-signals',
-    loadComponent: () => import('./demos/computed-signals/computed-demo.component.js').then(m => m.ComputedDemoComponent)
+    path: 'documentation',
+    loadChildren: () => import('./documentation/doc.routes.js').then(m => m.DOC_ROUTES)
   }
 ];

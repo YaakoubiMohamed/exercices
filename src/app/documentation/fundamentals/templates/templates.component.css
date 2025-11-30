@@ -1,0 +1,313 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.syntax-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.syntax-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.syntax-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.syntax-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.syntax-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 1.15rem;
+}
+
+.syntax-code {
+  display: inline-block;
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.syntax-description {
+  color: #7f8c8d;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.syntax-example {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.syntax-example strong {
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.syntax-example pre {
+  margin: 0.5rem 0 0 0;
+  overflow-x: auto;
+}
+
+.syntax-example code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #667eea;
+  line-height: 1.5;
+}
+
+.feature-box {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.feature-box > p {
+  color: #2c3e50;
+  line-height: 1.8;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.05rem;
+}
+
+.code-example {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.code-block {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.code-block h4 {
+  margin: 0 0 0.75rem 0;
+  color: #667eea;
+  font-size: 0.95rem;
+}
+
+.code-block pre {
+  background: #2c3e50;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.code-block code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.note-box {
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(241, 196, 15, 0.1));
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #f39c12;
+}
+
+.note-box strong {
+  color: #f39c12;
+}
+
+.note-box ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+}
+
+.note-box li {
+  color: #2c3e50;
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.binding-examples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.binding-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+}
+
+.binding-item h4 {
+  margin: 0 0 0.75rem 0;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.binding-item pre {
+  background: #2c3e50;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.binding-item code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.event-category {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.event-category h4 {
+  margin: 0 0 0.75rem 0;
+  color: #667eea;
+  font-size: 1rem;
+}
+
+.event-category pre {
+  background: #2c3e50;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.event-category code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.two-way-example {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.reference-examples {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+}
+
+.reference-examples h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.reference-examples pre {
+  background: #2c3e50;
+  padding: 1.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.reference-examples code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.best-practices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.practice-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #e0e0e0;
+}
+
+.practice-card.good {
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.05), rgba(46, 204, 113, 0.05));
+  border-left-color: #27ae60;
+}
+
+.practice-card.bad {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.05), rgba(192, 57, 43, 0.05));
+  border-left-color: #e74c3c;
+}
+
+.practice-card h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.practice-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.practice-card li {
+  padding: 0.5rem 0;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.practice-card.good li::before {
+  content: '✓ ';
+  color: #27ae60;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.practice-card.bad li::before {
+  content: '✗ ';
+  color: #e74c3c;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.practice-card code {
+  background: rgba(0,0,0,0.05);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .syntax-grid,
+  .code-example,
+  .binding-examples,
+  .events-grid,
+  .two-way-example,
+  .best-practices {
+    grid-template-columns: 1fr;
+  }
+}

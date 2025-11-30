@@ -2,7 +2,7 @@
   <nav class="main-nav">
     <div class="nav-container">
       <a routerLink="/home" class="nav-logo">
-         {{ title() }}
+         {{ title }}
       </a>
       <div class="nav-links">
         <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
@@ -20,17 +20,9 @@
         <a routerLink="/exercice6" routerLinkActive="active" class="nav-link">
           Exercice 6
         </a>
-        <div class="nav-dropdown">
-          <span class="nav-link">Démos 🎓</span>
-          <div class="dropdown-content">
-            <a routerLink="/demos/signals" routerLinkActive="active" class="dropdown-link">
-              Signals vs Traditional
-            </a>
-            <a routerLink="/demos/computed-signals" routerLinkActive="active" class="dropdown-link">
-              Computed Signals
-            </a>
-          </div>
-        </div>
+        <a routerLink="/documentation" routerLinkActive="active" class="nav-link nav-link-doc">
+          📚 Documentation
+        </a>
       </div>
     </div>
   </nav>

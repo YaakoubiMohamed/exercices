@@ -1,0 +1,413 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Route Guards</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Route Guards</h1>
+            <p class="lead text-muted">
+                Les Guards permettent de contrôler l'accès aux routes en fonction de conditions spécifiques.
+                Ils sont utilisés pour l'authentification, les autorisations, la validation de formulaires, et le
+                chargement de données.
+            </p>
+        </header>
+
+        <!-- Types de Guards -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Guards</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Guard</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (guard of guardTypes; track guard.type) {
+                        <tr>
+                            <td><code>{{ guard.type }}</code></td>
+                            <td>{{ guard.description }}</td>
+                            <td>{{ guard.useCase }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Functional Guards -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Functional Guards (Recommandé)</h2>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Depuis Angular 15, les functional guards sont la méthode recommandée car ils sont plus simples,
+                testables et réutilisables.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">CanActivate Guard</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">auth.guard.ts</span>
+                        </div>
+                        <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} AuthService {{ '}' }} from './auth.service';
+
+export const authGuard = () => {{ '{' }}
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) {{ '{' }}
+    return true;
+  {{ '}' }}
+
+  // Rediriger vers login
+  return router.createUrlTree(['/login']);
+{{ '}' }};
+
+// Utilisation dans routes
+{{ '{' }}
+  path: 'dashboard',
+  component: DashboardComponent,
+  canActivate: [authGuard]
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">CanActivateChild Guard</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">admin.guard.ts</span>
+                        </div>
+                        <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} AuthService {{ '}' }} from './auth.service';
+
+export const adminGuard = () => {{ '{' }}
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.hasRole('admin')) {{ '{' }}
+    return true;
+  {{ '}' }}
+
+  return router.createUrlTree(['/unauthorized']);
+{{ '}' }};
+
+// Protège toutes les routes enfants
+{{ '{' }}
+  path: 'admin',
+  canActivateChild: [adminGuard],
+  children: [...]
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">CanDeactivate Guard</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">unsaved-changes.guard.ts</span>
+                        </div>
+                        <pre><code class="language-typescript">import {{ '{' }} CanDeactivateFn {{ '}' }} from '&#64;angular/router';
+
+export interface CanComponentDeactivate {{ '{' }}
+  canDeactivate: () => boolean;
+{{ '}' }}
+
+export const unsavedChangesGuard: CanDeactivateFn&lt;CanComponentDeactivate&gt; = 
+  (component) => {{ '{' }}
+    if (component.canDeactivate) {{ '{' }}
+      return component.canDeactivate();
+    {{ '}' }}
+    return true;
+  {{ '}' }};
+
+// Dans le composant
+export class FormComponent implements CanComponentDeactivate {{ '{' }}
+  formChanged = signal(false);
+
+  canDeactivate(): boolean {{ '{' }}
+    if (this.formChanged()) {{ '{' }}
+      return confirm('Quitter sans sauvegarder?');
+    {{ '}' }}
+    return true;
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">CanMatch Guard</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">feature-flag.guard.ts</span>
+                        </div>
+                        <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} FeatureFlagService {{ '}' }} from './feature-flag.service';
+
+export const featureFlagGuard = (featureName: string) => {{ '{' }}
+  return () => {{ '{' }}
+    const featureFlags = inject(FeatureFlagService);
+    return featureFlags.isEnabled(featureName);
+  {{ '}' }};
+{{ '}' }};
+
+// Empêche le chargement de la route
+{{ '{' }}
+  path: 'beta-feature',
+  component: BetaComponent,
+  canMatch: [featureFlagGuard('beta')]
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resolve Guard -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Resolve Guard - Préchargement de Données</h2>
+
+            <p>Le Resolve guard charge des données avant d'activer la route, évitant d'afficher un composant vide.</p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user.resolver.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} ResolveFn, ActivatedRouteSnapshot {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+import {{ '{' }} UserService {{ '}' }} from './user.service';
+import {{ '{' }} User {{ '}' }} from './user.model';
+
+export const userResolver: ResolveFn&lt;User&gt; = 
+  (route: ActivatedRouteSnapshot): Observable&lt;User&gt; => {{ '{' }}
+    const userService = inject(UserService);
+    const userId = route.params['id'];
+    return userService.getUserById(userId);
+  {{ '}' }};
+
+// Configuration de la route
+{{ '{' }}
+  path: 'user/:id',
+  component: UserDetailComponent,
+  resolve: {{ '{' }} user: userResolver {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user-detail.component.ts - Récupération des données</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, OnInit, inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} ActivatedRoute {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} User {{ '}' }} from './user.model';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-detail',
+  template: `
+    &lt;div&gt;
+      &lt;h2&gt;{{ '{{' }} user.name {{ '}}' }}&lt;/h2&gt;
+      &lt;p&gt;{{ '{{' }} user.email {{ '}}' }}&lt;/p&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserDetailComponent implements OnInit {{ '{' }}
+  private route = inject(ActivatedRoute);
+  user!: User;
+
+  ngOnInit() {{ '{' }}
+    // Les données sont déjà chargées
+    this.user = this.route.snapshot.data['user'];
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Guards Avancés -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Guards Avancés</h2>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Guard avec Paramètres</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Guard factory qui retourne un guard
+export const roleGuard = (requiredRole: string) => {{ '{' }}
+  return () => {{ '{' }}
+    const authService = inject(AuthService);
+    const router = inject(Router);
+    
+    if (authService.hasRole(requiredRole)) {{ '{' }}
+      return true;
+    {{ '}' }}
+    
+    return router.createUrlTree(['/unauthorized']);
+  {{ '}' }};
+{{ '}' }};
+
+// Utilisation
+{{ '{' }}
+  path: 'admin',
+  component: AdminComponent,
+  canActivate: [roleGuard('admin')]
+{{ '}' }},
+{{ '{' }}
+  path: 'moderator',
+  component: ModeratorComponent,
+  canActivate: [roleGuard('moderator')]
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Guard Asynchrone avec Observable</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+import {{ '{' }} map {{ '}' }} from 'rxjs/operators';
+import {{ '{' }} AuthService {{ '}' }} from './auth.service';
+
+export const asyncAuthGuard = (): Observable&lt;boolean | UrlTree&gt; => {{ '{' }}
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  return authService.checkAuth().pipe(
+    map(isAuthenticated => {{ '{' }}
+      if (isAuthenticated) {{ '{' }}
+        return true;
+      {{ '}' }}
+      return router.createUrlTree(['/login']);
+    {{ '}' }})
+  );
+{{ '}' }};
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Class-based Guards -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Class-based Guards (Ancienne Méthode)</h2>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Cette approche est toujours supportée mais les functional guards sont préférés pour les nouveaux
+                projets.
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">auth.guard.ts (classe)</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} AuthService {{ '}' }} from './auth.service';
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class AuthGuard implements CanActivate {{ '{' }}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {{ '{' }}{{ '}' }}
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): boolean {{ '{' }}
+    if (this.authService.isAuthenticated()) {{ '{' }}
+      return true;
+    {{ '}' }}
+
+    // Redirection avec URL de retour
+    this.router.navigate(['/login'], {{ '{' }}
+      queryParams: {{ '{' }} returnUrl: state.url {{ '}' }}
+    {{ '}' }});
+    return false;
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                @for (practice of bestPractices; track practice.title) {
+                <div class="col-md-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-lightbulb text-warning me-2"></i>
+                                {{ practice.title }}
+                            </h5>
+                            <p class="card-text">{{ practice.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/router#preventing-unauthorized-access" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - Guards
+                </a>
+                <a href="https://angular.dev/api/router/CanActivateFn" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-code-square me-2"></i>API Reference - CanActivateFn
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/routing/router" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Router
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/routing/lazy-loading" class="btn btn-primary">
+                        Suivant: Lazy Loading<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

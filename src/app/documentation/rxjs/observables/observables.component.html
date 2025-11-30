@@ -1,0 +1,528 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Observables</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">RxJS Observables</h1>
+            <p class="lead text-muted">
+                Les Observables sont le cœur de la programmation réactive dans Angular. Ils représentent des flux de
+                données
+                asynchrones sur lesquels on peut appliquer des opérateurs pour transformer, filtrer et combiner les
+                données.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce qu'un Observable ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Un Observable est un objet qui émet des valeurs dans le temps. C'est une collection lazy qui
+                        peut émettre
+                        zéro ou plusieurs valeurs de manière synchrone ou asynchrone. Les Observables sont fournis par
+                        la bibliothèque
+                        <strong>RxJS</strong> (Reactive Extensions for JavaScript).
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Analogie :</strong> Imaginez un Observable comme un tuyau d'eau. L'eau (les données)
+                        coule à travers
+                        le tuyau, et vous pouvez installer des filtres (opérateurs) pour transformer l'eau avant qu'elle
+                        n'arrive à destination.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Caractéristiques -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Caractéristiques des Observables</h2>
+
+            <div class="row g-4">
+                @for (char of characteristics; track char.name) {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-star me-2"></i>{{ char.name }}
+                            </h5>
+                            <p class="card-text">{{ char.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Création -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Créer des Observables</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 20%">Méthode</th>
+                            <th style="width: 35%">Exemple</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (method of creationMethods; track method.method) {
+                        <tr>
+                            <td><code>{{ method.method }}</code></td>
+                            <td><code>{{ method.example }}</code></td>
+                            <td>{{ method.description }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">of() - Valeurs statiques</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} of {{ '}' }} from 'rxjs';
+
+// Émet 3 valeurs puis complete
+const numbers$ = of(1, 2, 3);
+
+numbers$.subscribe({{ '{' }}
+  next: (value) => console.log(value),
+  complete: () => console.log('Done!')
+{{ '}' }});
+
+// Output: 1, 2, 3, Done!</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">from() - Depuis un array/promise</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} from {{ '}' }} from 'rxjs';
+
+// Depuis un array
+const array$ = from([10, 20, 30]);
+
+// Depuis une Promise
+const promise$ = from(
+  fetch('/api/users').then(r => r.json())
+);
+
+promise$.subscribe(data => console.log(data));</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">interval() - Émissions périodiques</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} interval {{ '}' }} from 'rxjs';
+import {{ '{' }} take {{ '}' }} from 'rxjs/operators';
+
+// Émet toutes les secondes
+const timer$ = interval(1000).pipe(
+  take(5)  // Prend seulement 5 valeurs
+);
+
+timer$.subscribe(
+  n => console.log(`Tick: ${{ '{' }}n{{ '}' }}`)
+);
+// Output: Tick: 0, Tick: 1, ... Tick: 4</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">fromEvent() - Événements DOM</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} fromEvent {{ '}' }} from 'rxjs';
+import {{ '{' }} map {{ '}' }} from 'rxjs/operators';
+
+const button = document.querySelector('#myBtn');
+const clicks$ = fromEvent(button, 'click');
+
+clicks$.pipe(
+  map(event => event.target)
+).subscribe(
+  target => console.log('Clicked:', target)
+);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Souscription -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Souscrire à un Observable</h2>
+
+            <p>
+                Pour recevoir les valeurs d'un Observable, il faut y souscrire avec la méthode <code>subscribe()</code>.
+                Sans souscription, l'Observable ne s'exécute pas (lazy evaluation).
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Anatomie d'une souscription</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+
+const observable$ = new Observable(subscriber => {{ '{' }}
+  subscriber.next(1);
+  subscriber.next(2);
+  subscriber.next(3);
+  subscriber.complete();
+{{ '}' }});
+
+// Souscription avec observer object
+observable$.subscribe({{ '{' }}
+  next: (value) => console.log('Valeur reçue:', value),
+  error: (err) => console.error('Erreur:', err),
+  complete: () => console.log('Observable terminé')
+{{ '}' }});
+
+// Souscription simplifiée (next uniquement)
+observable$.subscribe(value => console.log(value));</code></pre>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Important :</strong> Toujours penser à se désouscrire pour éviter les fuites mémoire !
+                Voir la section <a routerLink="/documentation/rxjs/subscriptions">Subscriptions</a>.
+            </div>
+        </section>
+
+        <!-- Observable vs Promise -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Observable vs Promise</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Observable</th>
+                            <th>Promise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (comparison of vsPromises; track comparison.aspect) {
+                        <tr>
+                            <td><strong>{{ comparison.aspect }}</strong></td>
+                            <td>{{ comparison.observable }}</td>
+                            <td>{{ comparison.promise }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h6 mb-3">Promise - Une seule valeur</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Promise: résout une seule fois
+const promise = fetch('/api/user/1')
+  .then(r => r.json())
+  .then(user => console.log(user))
+  .catch(err => console.error(err));
+
+// Impossible d'annuler
+// Exécution immédiate (eager)</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h6 mb-3">Observable - Multiples valeurs</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Observable: peut émettre plusieurs fois
+const users$ = http.get('/api/users').pipe(
+  map(response => response.users),
+  catchError(err => of([]))
+);
+
+const sub = users$.subscribe(console.log);
+
+// Peut être annulé
+sub.unsubscribe();
+
+// Lazy: ne s'exécute que lors du subscribe</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exemple Angular -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Observables dans Angular</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user.service.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} HttpClient {{ '}' }} from '&#64;angular/common/http';
+import {{ '{' }} Observable, BehaviorSubject {{ '}' }} from 'rxjs';
+import {{ '{' }} map, catchError, tap {{ '}' }} from 'rxjs/operators';
+
+interface User {{ '{' }}
+  id: number;
+  name: string;
+  email: string;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class UserService {{ '{' }}
+  private apiUrl = 'https://api.example.com/users';
+  private usersSubject = new BehaviorSubject&lt;User[]&gt;([]);
+  
+  // Observable public
+  users$ = this.usersSubject.asObservable();
+
+  constructor(private http: HttpClient) {{ '{' }}{{ '}' }}
+
+  // Retourne un Observable
+  getUsers(): Observable&lt;User[]&gt; {{ '{' }}
+    return this.http.get&lt;User[]&gt;(this.apiUrl).pipe(
+      tap(users => this.usersSubject.next(users)),
+      catchError(error => {{ '{' }}
+        console.error('Error loading users', error);
+        return of([]);
+      {{ '}' }})
+    );
+  {{ '}' }}
+
+  getUserById(id: number): Observable&lt;User&gt; {{ '{' }}
+    return this.http.get&lt;User&gt;(`${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`);
+  {{ '}' }}
+
+  searchUsers(term: string): Observable&lt;User[]&gt; {{ '{' }}
+    return this.users$.pipe(
+      map(users => users.filter(u => 
+        u.name.toLowerCase().includes(term.toLowerCase())
+      ))
+    );
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user-list.component.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, OnInit, OnDestroy {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} UserService {{ '}' }} from './user.service';
+import {{ '{' }} Subject {{ '}' }} from 'rxjs';
+import {{ '{' }} takeUntil {{ '}' }} from 'rxjs/operators';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &lt;div class="users"&gt;
+      &#64;if (loading) {{ '{' }}
+        &lt;p&gt;Chargement...&lt;/p&gt;
+      {{ '}' }} &#64;else {{ '{' }}
+        &#64;for (user of users; track user.id) {{ '{' }}
+          &lt;div class="user-card"&gt;
+            &lt;h3&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/h3&gt;
+            &lt;p&gt;{{ '{' }}{{ '{' }} user.email {{ '}' }}{{ '}' }}&lt;/p&gt;
+          &lt;/div&gt;
+        {{ '}' }}
+      {{ '}' }}
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserListComponent implements OnInit, OnDestroy {{ '{' }}
+  users: User[] = [];
+  loading = true;
+  private destroy$ = new Subject&lt;void&gt;();
+
+  constructor(private userService: UserService) {{ '{' }}{{ '}' }}
+
+  ngOnInit() {{ '{' }}
+    // Souscription avec unsubscribe automatique
+    this.userService.getUsers().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({{ '{' }}
+      next: (data) => {{ '{' }}
+        this.users = data;
+        this.loading = false;
+      {{ '}' }},
+      error: (err) => {{ '{' }}
+        console.error('Error:', err);
+        this.loading = false;
+      {{ '}' }}
+    {{ '}' }});
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    this.destroy$.next();
+    this.destroy$.complete();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Async Pipe -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">AsyncPipe - La Meilleure Pratique</h2>
+
+            <p>
+                Le <code>AsyncPipe</code> est un pipe Angular qui souscrit automatiquement à un Observable et se
+                désabonne
+                automatiquement lors de la destruction du composant. C'est la méthode recommandée !
+            </p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-secondary h-100">
+                        <div class="card-header bg-secondary text-white">
+                            Sans AsyncPipe (manuel)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">// Component
+users: User[] = [];
+subscription: Subscription;
+
+ngOnInit() {{ '{' }}
+  this.subscription = this.userService
+    .getUsers()
+    .subscribe(data => this.users = data);
+{{ '}' }}
+
+ngOnDestroy() {{ '{' }}
+  this.subscription.unsubscribe();
+{{ '}' }}
+
+// Template
+&lt;div *ngFor="let user of users"&gt;
+  {{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}
+&lt;/div&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            Avec AsyncPipe (recommandé)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">// Component
+users$ = this.userService.getUsers();
+
+// Pas besoin de ngOnDestroy !
+// AsyncPipe gère tout automatiquement
+
+// Template
+&#64;for (user of users$ | async; track user.id) {{ '{' }}
+  &lt;div&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success mt-4">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong>Avantages de AsyncPipe :</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Souscription et désouscription automatiques</li>
+                    <li>Moins de code à écrire</li>
+                    <li>Pas de fuites mémoire</li>
+                    <li>Déclenche automatiquement la détection de changements</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Suffixer les Observables avec <code>$</code> (convention)</li>
+                                <li>Utiliser <code>async pipe</code> dans les templates</li>
+                                <li>Toujours se désouscrire si subscribe manuel</li>
+                                <li>Utiliser des opérateurs pour transformer les données</li>
+                                <li>Gérer les erreurs avec <code>catchError</code></li>
+                                <li>Privilégier les Observables aux Promises dans Angular</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas oublier de se désouscrire (memory leaks)</li>
+                                <li>Éviter les <code>subscribe</code> dans des <code>subscribe</code></li>
+                                <li>Ne pas créer d'Observables complexes directement</li>
+                                <li>Éviter d'appeler <code>subscribe()</code> dans le template</li>
+                                <li>Ne pas utiliser des Promises quand Observables appropriés</li>
+                                <li>Éviter les souscriptions multiples inutiles</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://rxjs.dev/guide/observable" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation RxJS - Observables
+                </a>
+                <a href="https://angular.dev/guide/observables-in-angular" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular Guide - Observables in Angular
+                </a>
+                <a href="https://www.learnrxjs.io/" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-globe me-2"></i>Learn RxJS
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/services/inject-function" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Fonction inject()
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/rxjs/subjects" class="btn btn-primary">
+                        Suivant: Subjects<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

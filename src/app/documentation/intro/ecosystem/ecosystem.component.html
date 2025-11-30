@@ -1,0 +1,226 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Écosystème</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🌍 Écosystème Angular</h1>
+      <p class="doc-subtitle">Outils et bibliothèques officiels et communautaires</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>🏢 Outils Officiels (Google)</h2>
+      <p class="intro-text">
+        Angular bénéficie d'un écosystème officiel complet maintenu par Google,
+        offrant des solutions intégrées pour tous les besoins du développement.
+      </p>
+      <div class="tools-grid official">
+        @for (tool of officialTools; track tool.name) {
+          <div class="tool-card official">
+            <div class="tool-header">
+              <h3>{{ tool.name }}</h3>
+              <span class="official-badge">✓ Officiel</span>
+            </div>
+            <div class="tool-category">{{ tool.category }}</div>
+            <p class="tool-description">{{ tool.description }}</p>
+            <a [href]="tool.url" target="_blank" class="tool-link">
+              Documentation →
+            </a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔧 Angular CLI : L'Outil Indispensable</h2>
+      <div class="cli-highlight">
+        <div class="cli-description">
+          <p>
+            Le <strong>Angular CLI</strong> est l'outil en ligne de commande officiel qui simplifie
+            considérablement le développement Angular.
+          </p>
+          <h4>Commandes Principales :</h4>
+          <div class="cli-commands">
+            <div class="command-item">
+              <code>ng new my-app</code>
+              <span>Créer un nouveau projet</span>
+            </div>
+            <div class="command-item">
+              <code>ng serve</code>
+              <span>Lancer le serveur de développement</span>
+            </div>
+            <div class="command-item">
+              <code>ng generate component</code>
+              <span>Générer un composant</span>
+            </div>
+            <div class="command-item">
+              <code>ng build</code>
+              <span>Build de production</span>
+            </div>
+            <div class="command-item">
+              <code>ng test</code>
+              <span>Exécuter les tests unitaires</span>
+            </div>
+            <div class="command-item">
+              <code>ng update</code>
+              <span>Mettre à jour les dépendances</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>👥 Outils Communautaires</h2>
+      <p class="intro-text">
+        La communauté Angular a développé d'excellents outils complémentaires
+        pour étendre les fonctionnalités du framework.
+      </p>
+      <div class="tools-grid community">
+        @for (tool of communityTools; track tool.name) {
+          <div class="tool-card community">
+            <div class="tool-header">
+              <h3>{{ tool.name }}</h3>
+              <span class="community-badge">👥 Communauté</span>
+            </div>
+            <div class="tool-category">{{ tool.category }}</div>
+            <p class="tool-description">{{ tool.description }}</p>
+            <a [href]="tool.url" target="_blank" class="tool-link">
+              Découvrir →
+            </a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Bibliothèques UI Populaires</h2>
+      <div class="ui-libraries">
+        <div class="ui-lib-card material">
+          <h3>Angular Material</h3>
+          <span class="badge official">Officiel</span>
+          <p>Le choix par défaut pour Material Design</p>
+          <ul>
+            <li>Composants complets et accessibles</li>
+            <li>Theming avancé</li>
+            <li>CDK (Component Dev Kit) puissant</li>
+            <li>Animations fluides</li>
+          </ul>
+        </div>
+        <div class="ui-lib-card primeng">
+          <h3>PrimeNG</h3>
+          <span class="badge community">Communauté</span>
+          <p>Riche collection de 90+ composants</p>
+          <ul>
+            <li>DataTable avancé</li>
+            <li>Charts et graphiques</li>
+            <li>Composants business</li>
+            <li>Support premium disponible</li>
+          </ul>
+        </div>
+        <div class="ui-lib-card ngzorro">
+          <h3>NG-ZORRO</h3>
+          <span class="badge community">Communauté</span>
+          <p>Composants Ant Design pour Angular</p>
+          <ul>
+            <li>Design enterprise</li>
+            <li>70+ composants</li>
+            <li>i18n intégré</li>
+            <li>Utilisé par Alibaba</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🧪 Écosystème Testing</h2>
+      <div class="testing-ecosystem">
+        <div class="testing-card">
+          <h3>🔬 Tests Unitaires</h3>
+          <div class="testing-tools">
+            <div class="testing-tool">
+              <h4>Karma + Jasmine</h4>
+              <p>Par défaut dans Angular CLI</p>
+              <span class="status default">Par défaut</span>
+            </div>
+            <div class="testing-tool">
+              <h4>Jest</h4>
+              <p>Alternative plus rapide et moderne</p>
+              <span class="status popular">Populaire</span>
+            </div>
+          </div>
+        </div>
+        <div class="testing-card">
+          <h3>🌐 Tests E2E</h3>
+          <div class="testing-tools">
+            <div class="testing-tool">
+              <h4>Protractor</h4>
+              <p>Ancien outil officiel (deprecated)</p>
+              <span class="status deprecated">Deprecated</span>
+            </div>
+            <div class="testing-tool">
+              <h4>Cypress</h4>
+              <p>Outil moderne recommandé</p>
+              <span class="status recommended">Recommandé</span>
+            </div>
+            <div class="testing-tool">
+              <h4>Playwright</h4>
+              <p>Alternative Microsoft puissante</p>
+              <span class="status alternative">Alternative</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 State Management</h2>
+      <div class="state-management">
+        <div class="state-option">
+          <h3>Services + RxJS</h3>
+          <span class="complexity">Complexité: ⭐</span>
+          <p>Approche simple pour petites/moyennes applications</p>
+          <ul>
+            <li>BehaviorSubject pour l'état partagé</li>
+            <li>Pas de dépendance supplémentaire</li>
+            <li>Parfait pour commencer</li>
+          </ul>
+        </div>
+        <div class="state-option">
+          <h3>NgRx</h3>
+          <span class="complexity">Complexité: ⭐⭐⭐</span>
+          <p>Redux pattern pour applications complexes</p>
+          <ul>
+            <li>State immutable et prédictible</li>
+            <li>DevTools puissants</li>
+            <li>Effects pour side-effects</li>
+          </ul>
+        </div>
+        <div class="state-option">
+          <h3>Akita / Elf</h3>
+          <span class="complexity">Complexité: ⭐⭐</span>
+          <p>Alternatives plus simples que NgRx</p>
+          <ul>
+            <li>API plus intuitive</li>
+            <li>Moins de boilerplate</li>
+            <li>Bonne pour moyennes applications</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/intro/comparison" class="nav-btn prev">
+        ← Comparaison
+      </a>
+      <a routerLink="/documentation/intro/when-to-use" class="nav-btn next">
+        Quand Utiliser Angular →
+      </a>
+    </nav>
+  </article>
+</div>

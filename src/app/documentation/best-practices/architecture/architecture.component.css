@@ -1,0 +1,59 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.folder-structure {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.folder-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.folder-path {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.principle-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-align: center;
+  border-top: 3px solid var(--primary-color);
+}
+
+.module-types-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.module-type-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.module-type-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}

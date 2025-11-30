@@ -1,0 +1,76 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.strategies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.strategy-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-align: center;
+  border-top: 3px solid var(--primary-color);
+}
+
+.strategy-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.optimizations-section {
+  margin: 2rem 0;
+}
+
+.category-card {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.category-card h3 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.techniques-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.technique-item {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid var(--success-color);
+}
+
+.tools-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.tool-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+}
+
+.tool-name {
+  font-weight: 600;
+  color: var(--primary-color);
+}

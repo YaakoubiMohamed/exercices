@@ -1,0 +1,125 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Qu'est-ce qu'Angular ?</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🌟 Qu'est-ce qu'Angular ?</h1>
+      <p class="doc-subtitle">Framework de développement d'applications web modernes</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📖 Définition</h2>
+      <div class="definition-box">
+        <p>
+          <strong>Angular</strong> est un framework de développement web open-source maintenu par Google et la communauté.
+          Il permet de créer des applications web <strong>single-page</strong> (SPA) robustes et performantes en utilisant TypeScript.
+        </p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Objectifs d'Angular</h2>
+      <ul class="feature-list">
+        <li><strong>Productivité :</strong> Outils et patterns pour développer rapidement</li>
+        <li><strong>Maintenabilité :</strong> Structure claire et organisation du code</li>
+        <li><strong>Testabilité :</strong> Architecture facilitant les tests unitaires et d'intégration</li>
+        <li><strong>Performance :</strong> Optimisations intégrées pour des applications rapides</li>
+        <li><strong>Scalabilité :</strong> Adapté aux petites et grandes applications d'entreprise</li>
+      </ul>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚙️ Caractéristiques Principales</h2>
+      <div class="features-grid">
+        @for (feature of coreFeatures; track feature.title) {
+          <div class="feature-card">
+            <div class="feature-icon">{{ feature.icon }}</div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🏗️ Architecture d'une Application Angular</h2>
+      <div class="architecture-box">
+        <pre><code>Application Angular
+│
+├── Components (UI + Logic)
+├── Services (Business Logic)
+├── Modules/Standalone (Organization)
+├── Templates (HTML + Directives)
+├── Routing (Navigation)
+└── Forms (User Input)</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Points Clés</h2>
+      <div class="key-points">
+        <div class="point">
+          <span class="point-icon">✅</span>
+          <div>
+            <strong>Framework Complet</strong>
+            <p>Tout ce dont vous avez besoin est inclus : routing, forms, HTTP, testing</p>
+          </div>
+        </div>
+        <div class="point">
+          <span class="point-icon">✅</span>
+          <div>
+            <strong>Opinionated</strong>
+            <p>Angular propose une structure et des patterns recommandés</p>
+          </div>
+        </div>
+        <div class="point">
+          <span class="point-icon">✅</span>
+          <div>
+            <strong>Enterprise-Ready</strong>
+            <p>Conçu pour des applications d'entreprise complexes et à grande échelle</p>
+          </div>
+        </div>
+        <div class="point">
+          <span class="point-icon">✅</span>
+          <div>
+            <strong>Long-Term Support</strong>
+            <p>Google garantit le support et les mises à jour régulières</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev" target="_blank" class="resource-btn">
+          <span>📘</span>
+          <span>Documentation Officielle</span>
+        </a>
+        <a href="https://angular.dev/tutorials" target="_blank" class="resource-btn">
+          <span>🎓</span>
+          <span>Tutoriels Angular</span>
+        </a>
+        <a href="https://github.com/angular/angular" target="_blank" class="resource-btn">
+          <span>💻</span>
+          <span>Code Source GitHub</span>
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation" class="nav-btn prev">
+        ← Retour au plan
+      </a>
+      <a routerLink="/documentation/intro/history" class="nav-btn next">
+        Histoire et Évolution →
+      </a>
+    </nav>
+  </article>
+</div>

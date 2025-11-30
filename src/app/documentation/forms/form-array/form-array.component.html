@@ -1,0 +1,272 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">FormArray</span>
+  </nav>
+
+  <header class="doc-header">
+    <h1>📋 FormArray - Tableaux Dynamiques</h1>
+    <p class="lead">Gérer des listes de contrôles dynamiques qui peuvent être ajoutés ou supprimés</p>
+  </header>
+
+  <section class="doc-section">
+    <h2>Qu'est-ce qu'un FormArray ?</h2>
+    <p>
+      <strong>FormArray</strong> est une structure de données Angular qui gère un tableau de contrôles de formulaire. Contrairement à FormGroup qui a des clés fixes, FormArray permet d'ajouter et de supprimer des contrôles dynamiquement par index.
+    </p>
+
+    <div class="info-box">
+      <h3>🎯 Cas d'usage</h3>
+      <ul>
+        @for (useCase of useCases; track useCase) {
+          <li>{{ useCase }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Création d'un FormArray</h2>
+    <div class="code-block">
+      <pre><code>import {{ '{' }} FormArray, FormBuilder {{ '}' }} from '&#64;angular/forms';
+
+export class MyComponent {{ '{' }}
+  private fb = inject(FormBuilder);
+
+  // Méthode 1 : Avec FormBuilder
+  profileForm = this.fb.group({{ '{' }}
+    name: [''],
+    skills: this.fb.array([
+      this.fb.control('Angular'),
+      this.fb.control('TypeScript')
+    ])
+  {{ '}' }});
+
+  // Méthode 2 : Constructeur direct
+  skills = new FormArray([
+    new FormControl('Angular'),
+    new FormControl('TypeScript')
+  ]);
+
+  // Getter pour accéder facilement
+  get skills(): FormArray {{ '{' }}
+    return this.profileForm.get('skills') as FormArray;
+  {{ '}' }}
+{{ '}' }}</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Méthodes FormArray</h2>
+    <div class="methods-grid">
+      @for (method of arrayMethods; track method.name) {
+        <div class="method-card">
+          <h3>{{ method.name }}</h3>
+          <p>{{ method.description }}</p>
+          <div class="code-inline">
+            <code>{{ method.example }}</code>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>FormArray avec FormGroups</h2>
+    <p>Pour des éléments complexes, chaque entrée du FormArray peut être un FormGroup :</p>
+    
+    <div class="code-block">
+      <pre><code>profileForm = this.fb.group({{ '{' }}
+  name: [''],
+  skills: this.fb.array([])  // Vide au départ
+{{ '}' }});
+
+// Créer un FormGroup pour chaque compétence
+createSkillFormGroup() {{ '{' }}
+  return this.fb.group({{ '{' }}
+    name: ['', Validators.required],
+    level: ['', Validators.required],
+    yearsOfExperience: [0, [Validators.min(0), Validators.max(50)]]
+  {{ '}' }});
+{{ '}' }}
+
+// Ajouter une compétence
+addSkill() {{ '{' }}
+  this.skills.push(this.createSkillFormGroup());
+{{ '}' }}
+
+// Supprimer une compétence
+removeSkill(index: number) {{ '{' }}
+  this.skills.removeAt(index);
+{{ '}' }}</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Démo Interactive : Gestion de Compétences</h2>
+    <div class="demo-box">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Nom</label>
+          <input formControlName="name" placeholder="Votre nom">
+        </div>
+
+        <div class="array-section">
+          <div class="section-header">
+            <h3>Compétences</h3>
+            <button type="button" class="btn-add" (click)="addSkill()">
+              + Ajouter une compétence
+            </button>
+          </div>
+
+          <div formArrayName="skills" class="array-items">
+            @for (skill of skills.controls; track $index; let i = $index) {
+              <div [formGroupName]="i" class="array-item">
+                <div class="item-header">
+                  <h4>Compétence #{{ i + 1 }}</h4>
+                  <button type="button" class="btn-remove" (click)="removeSkill(i)">
+                    ✕
+                  </button>
+                </div>
+
+                <div class="item-fields">
+                  <div class="form-field">
+                    <label>Nom de la compétence</label>
+                    <input formControlName="name" placeholder="Ex: Angular">
+                  </div>
+
+                  <div class="form-field">
+                    <label>Niveau</label>
+                    <select formControlName="level">
+                      <option value="">Sélectionner</option>
+                      <option value="Débutant">Débutant</option>
+                      <option value="Intermédiaire">Intermédiaire</option>
+                      <option value="Avancé">Avancé</option>
+                      <option value="Expert">Expert</option>
+                    </select>
+                  </div>
+
+                  <div class="form-field">
+                    <label>Années d'expérience</label>
+                    <input type="number" formControlName="yearsOfExperience" min="0" max="50">
+                  </div>
+                </div>
+              </div>
+            }
+            
+            @if (skills.length === 0) {
+              <p class="empty-message">Aucune compétence ajoutée. Cliquez sur "Ajouter" pour commencer.</p>
+            }
+          </div>
+        </div>
+
+        <div class="array-section">
+          <div class="section-header">
+            <h3>Hobbies (Liste simple)</h3>
+            <button type="button" class="btn-add" (click)="addHobby()">
+              + Ajouter un hobby
+            </button>
+          </div>
+
+          <div formArrayName="hobbies" class="simple-array">
+            @for (hobby of hobbies.controls; track $index; let i = $index) {
+              <div class="simple-item">
+                <input [formControlName]="i" placeholder="Ex: Lecture">
+                <button type="button" class="btn-remove-small" (click)="removeHobby(i)">
+                  ✕
+                </button>
+              </div>
+            }
+            
+            @if (hobbies.length === 0) {
+              <p class="empty-message">Aucun hobby ajouté.</p>
+            }
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="profileForm.invalid">
+            Sauvegarder le profil
+          </button>
+        </div>
+      </form>
+
+      <div class="form-value">
+        <h4>Valeur du formulaire :</h4>
+        <pre>{{ profileForm.value | json }}</pre>
+        <p><strong>Nombre de compétences :</strong> {{ skills.length }}</p>
+        <p><strong>Nombre de hobbies :</strong> {{ hobbies.length }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Itération dans le Template</h2>
+    <div class="code-block">
+      <pre><code>&lt;!-- Utiliser &#64;for avec formArrayName --&gt;
+&lt;div formArrayName="skills"&gt;
+  &#64;for (skill of skills.controls; track $index; let i = $index) {{ '{' }}
+    &lt;div [formGroupName]="i"&gt;
+      &lt;input formControlName="name"&gt;
+      &lt;button (click)="removeSkill(i)"&gt;Supprimer&lt;/button&gt;
+    &lt;/div&gt;
+  {{ '}' }}
+&lt;/div&gt;
+
+&lt;!-- Ou avec l'ancienne syntaxe *ngFor --&gt;
+&lt;div formArrayName="skills"&gt;
+  &lt;div *ngFor="let skill of skills.controls; let i = index" 
+       [formGroupName]="i"&gt;
+    &lt;input formControlName="name"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bonnes Pratiques</h2>
+    <div class="practices-container">
+      <div class="practice-card good">
+        <h3>✅ À Faire</h3>
+        <ul>
+          <li>Créer une méthode factory pour générer les FormGroups</li>
+          <li>Utiliser des getters pour un accès facile au FormArray</li>
+          <li>Ajouter des validateurs à chaque contrôle du tableau</li>
+          <li>Fournir un bouton clair pour ajouter/supprimer des éléments</li>
+          <li>Limiter le nombre maximum d'éléments si nécessaire</li>
+        </ul>
+      </div>
+
+      <div class="practice-card bad">
+        <h3>❌ À Éviter</h3>
+        <ul>
+          <li>Manipuler directement le tableau de contrôles</li>
+          <li>Oublier de valider les nouveaux éléments ajoutés</li>
+          <li>Créer des FormArrays trop complexes (> 3 niveaux)</li>
+          <li>Ne pas gérer le cas où le tableau est vide</li>
+          <li>Permettre la suppression sans confirmation (si données importantes)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Ressources</h2>
+    <div class="resources-list">
+      <a href="https://angular.dev/api/forms/FormArray" target="_blank" class="resource-link">
+        📖 API Reference - FormArray
+      </a>
+      <a href="https://angular.dev/guide/forms/reactive-forms" target="_blank" class="resource-link">
+        📖 Guide - Reactive Forms
+      </a>
+    </div>
+  </section>
+
+  <nav class="doc-navigation">
+    <a routerLink="/documentation/forms/validation" class="nav-button prev">← Validation</a>
+    <a routerLink="/documentation" class="nav-button next">Documentation →</a>
+  </nav>
+</div>

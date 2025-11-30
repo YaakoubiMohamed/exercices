@@ -1,0 +1,143 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.type-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.type-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.type-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.type-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.usecase {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.usecase strong {
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+.code-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.code-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.code-section pre {
+  background: #2c3e50;
+  padding: 1.5rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0 0 1.5rem 0;
+}
+
+.code-section pre:last-child {
+  margin-bottom: 0;
+}
+
+.code-section code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.selectors-box {
+  overflow-x: auto;
+}
+
+.selectors-box table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.selectors-box thead {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.selectors-box th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.selectors-box td {
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+  color: #2c3e50;
+}
+
+.selectors-box tr:last-child td {
+  border-bottom: none;
+}
+
+.selectors-box tr:hover {
+  background: #f8f9fa;
+}
+
+.selectors-box code {
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .types-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .selectors-box {
+    font-size: 0.85rem;
+  }
+
+  .selectors-box th,
+  .selectors-box td {
+    padding: 0.75rem;
+  }
+}

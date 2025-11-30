@@ -1,0 +1,149 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.decorators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.decorator-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.decorator-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.decorator-card h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+}
+
+.decorator-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.scope-badge, .timing-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.scope-badge {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.timing-badge {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.code-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.code-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.code-section pre {
+  background: #2c3e50;
+  padding: 1.5rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0 0 1.5rem 0;
+}
+
+.code-section pre:last-child {
+  margin-bottom: 0;
+}
+
+.code-section code {
+  color: #ecf0f1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.options-box {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.options-box table, .comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.options-box thead, .comparison-table thead {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.options-box th, .comparison-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.options-box td, .comparison-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+  color: #2c3e50;
+}
+
+.options-box tr:last-child td, .comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.options-box tr:hover, .comparison-table tr:hover {
+  background: #f8f9fa;
+}
+
+.options-box code, .comparison-table code {
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.comparison-table {
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .decorators-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .options-box, .comparison-table {
+    font-size: 0.85rem;
+  }
+
+  .options-box th, .options-box td,
+  .comparison-table th, .comparison-table td {
+    padding: 0.75rem;
+  }
+}

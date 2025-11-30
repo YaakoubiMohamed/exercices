@@ -1,0 +1,38 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.providers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.provider-card {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-top: 3px solid var(--primary-color);
+}
+
+.hierarchy-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.hierarchy-level {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  margin-left: calc(var(--level, 0) * 2rem);
+}
+
+.hierarchy-level h4 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}

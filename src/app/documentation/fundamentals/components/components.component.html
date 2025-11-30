@@ -1,0 +1,237 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Composants</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🧩 Composants Angular</h1>
+      <p class="doc-subtitle">La brique fondamentale d'une application Angular</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📝 Qu'est-ce qu'un Composant ?</h2>
+      <div class="definition-box">
+        <p>
+          Un <strong>composant</strong> est une classe TypeScript décorée avec <code>@Component</code>
+          qui contrôle une portion de l'interface utilisateur. C'est la brique de base d'Angular.
+        </p>
+        <p>
+          Chaque composant encapsule :
+        </p>
+        <ul>
+          <li><strong>Template HTML</strong> : Structure et présentation</li>
+          <li><strong>Classe TypeScript</strong> : Logique et données</li>
+          <li><strong>Styles CSS</strong> : Apparence (encapsulée par défaut)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🏗️ Anatomie d'un Composant</h2>
+      <div class="anatomy-box">
+        <pre><code>import &#123; Component &#125; from '&#64;angular/core';
+import &#123; CommonModule &#125; from '&#64;angular/common';
+
+&#64;Component(&#123;
+  selector: 'app-user-profile',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './user-profile.component.html',
+  styleUrl: './user-profile.component.css'
+&#125;)
+export class UserProfileComponent &#123;
+  // Propriétés
+  userName: string = 'John Doe';
+  age: number = 30;
+
+  // Méthodes
+  updateName(newName: string): void &#123;
+    this.userName = newName;
+  &#125;
+&#125;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚙️ Métadonnées du Décorateur @Component</h2>
+      <div class="features-grid">
+        @for (feature of features; track feature.title) {
+          <div class="feature-card">
+            <h3>{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+            <pre class="feature-code"><code>{{ feature.code }}</code></pre>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Cycle de Vie d'un Composant</h2>
+      <div class="lifecycle-intro">
+        <p>
+          Angular appelle des <strong>hooks</strong> à différents moments du cycle de vie d'un composant,
+          permettant d'exécuter du code à des moments précis.
+        </p>
+      </div>
+      <div class="lifecycle-diagram">
+        <div class="lifecycle-phase">
+          <span class="phase-number">1</span>
+          <div class="phase-content">
+            <h4>Création</h4>
+            <p>Constructor → ngOnChanges → ngOnInit</p>
+          </div>
+        </div>
+        <div class="lifecycle-arrow">↓</div>
+        <div class="lifecycle-phase">
+          <span class="phase-number">2</span>
+          <div class="phase-content">
+            <h4>Vérifications</h4>
+            <p>ngDoCheck → ngAfterContentInit → ngAfterContentChecked → ngAfterViewInit → ngAfterViewChecked</p>
+          </div>
+        </div>
+        <div class="lifecycle-arrow">↓</div>
+        <div class="lifecycle-phase">
+          <span class="phase-number">3</span>
+          <div class="phase-content">
+            <h4>Destruction</h4>
+            <p>ngOnDestroy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Hooks du Cycle de Vie</h2>
+      <div class="hooks-list">
+        @for (hook of lifecycleHooks; track hook.name; let i = $index) {
+          <div class="hook-card" [class.primary]="i === 1 || i === 7">
+            <div class="hook-header">
+              <h3>{{ hook.name }}</h3>
+              @if (i === 1 || i === 7) {
+                <span class="important-badge">⭐ Important</span>
+              }
+            </div>
+            <div class="hook-info">
+              <div class="hook-timing">
+                <strong>⏱️ Quand :</strong> {{ hook.timing }}
+              </div>
+              <div class="hook-usecase">
+                <strong>💡 Utilisation :</strong> {{ hook.useCase }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💻 Exemple Complet</h2>
+      <div class="example-box">
+        <h3>UserProfileComponent</h3>
+        <pre><code>import &#123; Component, OnInit, OnDestroy &#125; from '&#64;angular/core';
+import &#123; interval, Subscription &#125; from 'rxjs';
+
+&#64;Component(&#123;
+  selector: 'app-user-profile',
+  standalone: true,
+  template: `
+    &lt;div class="profile"&gt;
+      &lt;h2&gt;&#123;&#123; userName &#125;&#125;&lt;/h2&gt;
+      &lt;p&gt;Âge: &#123;&#123; age &#125;&#125;&lt;/p&gt;
+      &lt;p&gt;Temps écoulé: &#123;&#123; secondsElapsed &#125;&#125;s&lt;/p&gt;
+      &lt;button (click)="incrementAge()"&gt;Vieillir&lt;/button&gt;
+    &lt;/div&gt;
+  `,
+  styles: [`
+    .profile &#123;
+      padding: 20px;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+    &#125;
+  `]
+&#125;)
+export class UserProfileComponent implements OnInit, OnDestroy &#123;
+  userName = 'Jean Dupont';
+  age = 30;
+  secondsElapsed = 0;
+  private timerSubscription?: Subscription;
+
+  // Hook d'initialisation
+  ngOnInit(): void &#123;
+    console.log('Composant initialisé');
+    // Démarrer un timer
+    this.timerSubscription = interval(1000).subscribe(() =&gt; &#123;
+      this.secondsElapsed++;
+    &#125;);
+  &#125;
+
+  // Hook de destruction
+  ngOnDestroy(): void &#123;
+    console.log('Composant détruit');
+    // Nettoyer le timer pour éviter les fuites mémoire
+    this.timerSubscription?.unsubscribe();
+  &#125;
+
+  incrementAge(): void &#123;
+    this.age++;
+  &#125;
+&#125;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Utiliser <code>ngOnInit</code> pour l'initialisation (pas le constructor)</li>
+            <li>Toujours nettoyer dans <code>ngOnDestroy</code> (unsubscribe, clearInterval)</li>
+            <li>Garder les composants petits et focalisés (Single Responsibility)</li>
+            <li>Préférer <code>standalone: true</code> pour les nouveaux composants</li>
+            <li>Utiliser <code>OnPush</code> change detection pour la performance</li>
+          </ul>
+        </div>
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Logique complexe dans le constructor</li>
+            <li>Oublier de unsubscribe des Observables</li>
+            <li>Composants monolithiques avec trop de responsabilités</li>
+            <li>Manipulation directe du DOM (utiliser Renderer2)</li>
+            <li>Logique métier dans les composants (utiliser des services)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/components" target="_blank" class="resource-link">
+          📖 Guide Officiel des Composants
+        </a>
+        <a href="https://angular.dev/guide/lifecycle-hooks" target="_blank" class="resource-link">
+          🔄 Lifecycle Hooks Documentation
+        </a>
+        <a href="https://angular.dev/api/core/Component" target="_blank" class="resource-link">
+          🔧 API Reference @Component
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation" class="nav-btn prev">
+        ← Plan de Cours
+      </a>
+      <a routerLink="/documentation/fundamentals/templates" class="nav-btn next">
+        Templates →
+      </a>
+    </nav>
+  </article>
+</div>

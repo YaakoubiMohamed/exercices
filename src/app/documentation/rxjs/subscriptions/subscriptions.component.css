@@ -1,0 +1,44 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.patterns-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.pattern-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.pattern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pattern-pros {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.pattern-cons {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.warning-box {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+
+.warning-box h4 {
+  color: #f59e0b;
+  margin-bottom: 1rem;
+}

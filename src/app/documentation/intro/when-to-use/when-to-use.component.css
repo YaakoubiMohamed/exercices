@@ -1,0 +1,328 @@
+@import '../what-is-angular/what-is-angular.component.css';
+
+.decision-intro {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin-bottom: 2rem;
+}
+
+.decision-intro p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #2c3e50;
+}
+
+.usecases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.usecase-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.usecase-card.good {
+  border-left: 4px solid #27ae60;
+}
+
+.usecase-card.bad {
+  border-left: 4px solid #e74c3c;
+}
+
+.usecase-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.usecase-icon {
+  font-size: 2.5rem;
+}
+
+.usecase-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+}
+
+.usecase-description {
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.usecase-section {
+  margin-bottom: 1.5rem;
+}
+
+.usecase-section:last-child {
+  margin-bottom: 0;
+}
+
+.usecase-section h4 {
+  color: #2c3e50;
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+}
+
+.reasons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reasons-list li {
+  padding: 0.5rem 0;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.usecase-card.good .reasons-list li::before {
+  content: '✓ ';
+  color: #27ae60;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.usecase-card.bad .reasons-list li::before {
+  content: '✗ ';
+  color: #e74c3c;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.examples-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.example-tag {
+  background: #f0f0f0;
+  color: #2c3e50;
+  padding: 0.4rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.example-tag.bad {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.decision-tree {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.decision-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.decision-question {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border: 2px solid #667eea;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  max-width: 400px;
+}
+
+.decision-branches {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.branch-label {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.branch-label.yes {
+  background: #27ae60;
+  color: white;
+}
+
+.branch-label.no {
+  background: #e74c3c;
+  color: white;
+}
+
+.decision-result {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  min-width: 150px;
+}
+
+.decision-result.angular {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+}
+
+.decision-result.maybe {
+  background: linear-gradient(135deg, #f39c12, #f1c40f);
+  color: white;
+}
+
+.decision-result.vue {
+  background: linear-gradient(135deg, #42b883, #35495e);
+  color: white;
+}
+
+.decision-result.no-angular {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.decision-matrix {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.decision-matrix table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.decision-matrix thead {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.decision-matrix th,
+.decision-matrix td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.decision-matrix tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.decision-matrix td.yes {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.decision-matrix td.no {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.recommendations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.recommendation-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #e0e0e0;
+}
+
+.recommendation-card.strong {
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+  border-left-color: #27ae60;
+}
+
+.recommendation-card.moderate {
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(241, 196, 15, 0.1));
+  border-left-color: #f39c12;
+}
+
+.recommendation-card.avoid {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
+  border-left-color: #e74c3c;
+}
+
+.recommendation-card h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.recommendation-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendation-card li {
+  padding: 0.5rem 0;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.recommendation-card li::before {
+  content: '→ ';
+  color: #667eea;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .usecases-grid,
+  .recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  .decision-branches {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .branch {
+    min-width: 100%;
+  }
+
+  .decision-matrix {
+    font-size: 0.85rem;
+  }
+
+  .decision-matrix th,
+  .decision-matrix td {
+    padding: 0.75rem 0.5rem;
+  }
+}

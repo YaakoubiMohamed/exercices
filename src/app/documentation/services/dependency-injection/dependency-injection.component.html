@@ -1,0 +1,476 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Dependency Injection</span>
+    </nav>
+
+    <div class="doc-content">
+
+        <header class="mb-5">
+            <h1 class="display-4 mb-3">Dependency Injection</h1>
+            <p class="lead text-muted">
+                Le Dependency Injection (DI) est un design pattern fondamental dans Angular qui permet de fournir des
+                dépendances
+                aux classes plutôt que de les créer à l'intérieur. Angular gère automatiquement la création et
+                l'injection des dépendances.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce que le Dependency Injection ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Le DI est un pattern où les dépendances d'une classe sont fournies de l'extérieur plutôt que
+                        créées en interne.
+                        Angular utilise un système d'injection sophistiqué basé sur des <strong>Injecteurs</strong> et
+                        des <strong>Providers</strong>.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Avantage principal :</strong> Le DI rend le code plus testable, maintenable et découplé.
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>Sans DI
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">export class UserComponent {{ '{' }}
+  private userService: UserService;
+
+  constructor() {{ '{' }}
+    // Création directe = couplage fort
+    this.userService = new UserService();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                            <p class="text-danger mb-0 mt-2">
+                                <small><strong>Problèmes :</strong> Difficile à tester, couplage fort, pas de
+                                    flexibilité</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>Avec DI
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">export class UserComponent {{ '{' }}
+  // Injection automatique par Angular
+  constructor(
+    private userService: UserService
+  ) {{ '{' }}{{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                            <p class="text-success mb-0 mt-2">
+                                <small><strong>Avantages :</strong> Testable, découplé, flexible, géré par
+                                    Angular</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Providers -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Providers</h2>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Type</th>
+                            <th style="width: 35%">Syntaxe</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (provider of providers; track provider.type) {
+                        <tr>
+                            <td><strong>{{ provider.type }}</strong></td>
+                            <td><code>{{ provider.syntax }}</code></td>
+                            <td>{{ provider.description }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">Class Provider</span>
+                        </div>
+                        <pre><code class="language-typescript">&#64;Injectable({{ '{' }}
+  providedIn: 'root'
+{{ '}' }})
+export class LoggerService {{ '{' }} {{ '}' }}
+
+// Ou avec configuration explicite
+providers: [
+  {{ '{' }} provide: LoggerService, useClass: LoggerService {{ '}' }}
+]
+
+// Alternative avec implémentation différente
+providers: [
+  {{ '{' }} provide: LoggerService, useClass: ConsoleLogger {{ '}' }}
+]</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">Value Provider</span>
+                        </div>
+                        <pre><code class="language-typescript">export const API_CONFIG = new InjectionToken&lt;string&gt;('API_CONFIG');
+
+providers: [
+  {{ '{' }}
+    provide: API_CONFIG,
+    useValue: 'https://api.example.com'
+  {{ '}' }}
+]
+
+// Utilisation dans un composant
+constructor(
+  &#64;Inject(API_CONFIG) private apiUrl: string
+) {{ '{' }}{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">Factory Provider</span>
+                        </div>
+                        <pre><code class="language-typescript">export function loggerFactory(isProduction: boolean) {{ '{' }}
+  return isProduction ? new ProductionLogger() : new DevLogger();
+{{ '}' }}
+
+providers: [
+  {{ '{' }}
+    provide: LoggerService,
+    useFactory: loggerFactory,
+    deps: [IS_PRODUCTION]
+  {{ '}' }}
+]</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="language-badge">TypeScript</span>
+                            <span class="file-name">Existing Provider</span>
+                        </div>
+                        <pre><code class="language-typescript">// Créer un alias pour un service existant
+providers: [
+  {{ '{' }} provide: LoggerService, useClass: ConsoleLogger {{ '}' }},
+  {{ '{' }} provide: 'AliasLogger', useExisting: LoggerService {{ '}' }}
+]
+
+// Utile pour la migration ou rétrocompatibilité</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hiérarchie des Injecteurs -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Hiérarchie des Injecteurs</h2>
+
+            <p>
+                Angular crée une hiérarchie d'injecteurs qui suit la structure de l'application. Quand un composant
+                demande une
+                dépendance, Angular cherche dans son injecteur, puis remonte la hiérarchie jusqu'à trouver un provider.
+            </p>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Niveau</th>
+                            <th>Description</th>
+                            <th>Scope</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (level of injectorHierarchy; track level.level) {
+                        <tr>
+                            <td><strong>{{ level.level }}</strong></td>
+                            <td>{{ level.description }}</td>
+                            <td><span class="badge bg-secondary">{{ level.scope }}</span></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple de hiérarchie</span>
+                </div>
+                <pre><code class="language-typescript">// 1. Root Injector - Application-wide singleton
+&#64;Injectable({{ '{' }}
+  providedIn: 'root'
+{{ '}' }})
+export class GlobalService {{ '{' }} {{ '}' }}
+
+// 2. Module Injector
+&#64;NgModule({{ '{' }}
+  providers: [FeatureService]
+{{ '}' }})
+export class FeatureModule {{ '{' }} {{ '}' }}
+
+// 3. Component Injector - Instance par composant
+&#64;Component({{ '{' }}
+  selector: 'app-example',
+  providers: [ComponentService]
+{{ '}' }})
+export class ExampleComponent {{ '{' }} {{ '}' }}
+
+// 4. Element Injector - Directives
+&#64;Directive({{ '{' }}
+  selector: '[appHighlight]',
+  providers: [HighlightService]
+{{ '}' }})
+export class HighlightDirective {{ '{' }} {{ '}' }}</code></pre>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Attention :</strong> Si vous fournissez un service à plusieurs niveaux, chaque niveau aura sa
+                propre instance !
+            </div>
+        </section>
+
+        <!-- Resolution Modifiers -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Modificateurs de Résolution</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">&#64;Optional()</h5>
+                            <p>Indique que la dépendance est optionnelle. Si elle n'est pas trouvée, <code>null</code>
+                                est injecté.</p>
+                            <div class="code-example">
+                                <pre><code class="language-typescript">constructor(
+  &#64;Optional() private logger?: LoggerService
+) {{ '{' }}
+  if (this.logger) {{ '{' }}
+    this.logger.log('Service disponible');
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">&#64;Self()</h5>
+                            <p>Cherche uniquement dans l'injecteur du composant courant.</p>
+                            <div class="code-example">
+                                <pre><code class="language-typescript">constructor(
+  &#64;Self() private service: ComponentService
+) {{ '{' }}{{ '}' }}
+
+// Lève une erreur si le service n'est pas
+// fourni au niveau du composant</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">&#64;SkipSelf()</h5>
+                            <p>Ignore l'injecteur du composant courant et cherche dans le parent.</p>
+                            <div class="code-example">
+                                <pre><code class="language-typescript">constructor(
+  &#64;SkipSelf() private service: ParentService
+) {{ '{' }}{{ '}' }}
+
+// Utile pour accéder à l'instance du parent</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">&#64;Host()</h5>
+                            <p>Cherche jusqu'au composant hôte (limite la recherche).</p>
+                            <div class="code-example">
+                                <pre><code class="language-typescript">constructor(
+  &#64;Host() private hostService: HostService
+) {{ '{' }}{{ '}' }}
+
+// Arrête la recherche au composant hôte</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bénéfices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bénéfices du Dependency Injection</h2>
+
+            <div class="row g-4">
+                @for (benefit of benefits; track benefit) {
+                <div class="col-md-6">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-check2-circle me-2"></i>{{ benefit }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Exemple : Testabilité avec DI</h3>
+                <div class="code-example">
+                    <div class="code-header">
+                        <span class="language-badge">TypeScript</span>
+                        <span class="file-name">user.component.spec.ts</span>
+                    </div>
+                    <pre><code class="language-typescript">describe('UserComponent', () => {{ '{' }}
+  let component: UserComponent;
+  let mockUserService: jasmine.SpyObj&lt;UserService&gt;;
+
+  beforeEach(() => {{ '{' }}
+    // Créer un mock du service
+    mockUserService = jasmine.createSpyObj('UserService', ['getUsers']);
+    mockUserService.getUsers.and.returnValue(of([
+      {{ '{' }} id: 1, name: 'Test User' {{ '}' }}
+    ]));
+
+    // Injecter le mock dans le composant
+    TestBed.configureTestingModule({{ '{' }}
+      providers: [
+        {{ '{' }} provide: UserService, useValue: mockUserService {{ '}' }}
+      ]
+    {{ '}' }});
+
+    component = TestBed.createComponent(UserComponent).componentInstance;
+  {{ '}' }});
+
+  it('should load users on init', () => {{ '{' }}
+    component.ngOnInit();
+    expect(mockUserService.getUsers).toHaveBeenCalled();
+    expect(component.users.length).toBe(1);
+  {{ '}' }});
+{{ '}' }});</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser <code>providedIn: 'root'</code> pour les singletons</li>
+                                <li>Préférer l'injection par constructeur</li>
+                                <li>Utiliser <code>&#64;Optional()</code> pour les dépendances optionnelles</li>
+                                <li>Créer des interfaces pour abstraire les services</li>
+                                <li>Utiliser InjectionToken pour les valeurs primitives</li>
+                                <li>Tester avec des mocks injectés</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas créer d'instances manuellement avec <code>new</code></li>
+                                <li>Éviter les dépendances circulaires</li>
+                                <li>Ne pas fournir au mauvais niveau (instance non voulue)</li>
+                                <li>Éviter d'injecter des composants dans des services</li>
+                                <li>Ne pas abuser des factory providers (complexité)</li>
+                                <li>Éviter trop de dépendances dans un seul constructeur</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/di" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - Dependency Injection
+                </a>
+                <a href="https://angular.dev/guide/hierarchical-dependency-injection" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular Guide - Hierarchical DI
+                </a>
+                <a href="https://angular.dev/guide/dependency-injection-providers" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-bookmark me-2"></i>DI Providers
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/services/services" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Services
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/services/inject-function" class="btn btn-primary">
+                        Suivant: Fonction inject()<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
++            </div>
+        </nav>
+    </div>
+</div>

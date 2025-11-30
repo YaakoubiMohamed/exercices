@@ -1,0 +1,271 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Templates</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>📄 Templates Angular</h1>
+      <p class="doc-subtitle">Syntaxe et fonctionnalités des templates</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>🎨 Qu'est-ce qu'un Template ?</h2>
+      <div class="definition-box">
+        <p>
+          Un <strong>template</strong> est le code HTML qui définit la vue d'un composant.
+          Angular enrichit le HTML standard avec une syntaxe spéciale pour :
+        </p>
+        <ul>
+          <li>Afficher des données dynamiques</li>
+          <li>Réagir aux événements utilisateur</li>
+          <li>Contrôler le rendu conditionnel</li>
+          <li>Répéter des éléments</li>
+          <li>Lier des propriétés et événements</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📝 Syntaxe des Templates</h2>
+      <div class="syntax-grid">
+        @for (syntax of syntaxElements; track syntax.name) {
+          <div class="syntax-card">
+            <div class="syntax-header">
+              <h3>{{ syntax.name }}</h3>
+              <code class="syntax-code">{{ syntax.syntax }}</code>
+            </div>
+            <p class="syntax-description">{{ syntax.description }}</p>
+            <div class="syntax-example">
+              <strong>Exemple :</strong>
+              <pre><code>{{ syntax.example }}</code></pre>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔤 Interpolation</h2>
+      <div class="feature-box">
+        <p>
+          L'interpolation utilise des doubles accolades pour insérer des expressions TypeScript dans le HTML.
+        </p>
+        <div class="code-example">
+          <div class="code-block">
+            <h4>TypeScript</h4>
+            <pre><code>export class MyComponent &#123;
+  title = 'Mon Application';
+  count = 42;
+  
+  getFullName(): string &#123;
+    return 'Jean Dupont';
+  &#125;
+&#125;</code></pre>
+          </div>
+          <div class="code-block">
+            <h4>Template</h4>
+            <pre><code>&lt;h1&gt;Titre : &#123;&#123; title &#125;&#125;&lt;/h1&gt;
+&lt;p&gt;Compteur : &#123;&#123; count &#125;&#125;&lt;/p&gt;
+&lt;p&gt;Nom : &#123;&#123; getFullName() &#125;&#125;&lt;/p&gt;
+&lt;p&gt;Calcul : &#123;&#123; 10 + 5 &#125;&#125;&lt;/p&gt;</code></pre>
+          </div>
+        </div>
+        <div class="note-box">
+          <strong>⚠️ Limitations :</strong>
+          <ul>
+            <li>Pas d'assignations (=, +=, etc.)</li>
+            <li>Pas de new, typeof, instanceof</li>
+            <li>Pas de chaînage avec ; ou ,</li>
+            <li>Pas d'opérateurs bitwise (|, &)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Property Binding [property]</h2>
+      <div class="feature-box">
+        <p>
+          Lie une propriété d'un élément DOM ou d'un composant à une valeur TypeScript.
+          Les données circulent de la classe TypeScript vers le template (one-way).
+        </p>
+        <div class="binding-examples">
+          <div class="binding-item">
+            <h4>Propriétés DOM</h4>
+            <pre><code>&lt;img [src]="imageUrl"&gt;
+&lt;button [disabled]="isProcessing"&gt;
+&lt;div [hidden]="!showContent"&gt;
+&lt;input [value]="userName"&gt;</code></pre>
+          </div>
+          <div class="binding-item">
+            <h4>Propriétés de Composant</h4>
+            <pre><code>&lt;app-user-card [user]="currentUser"&gt;
+&lt;app-product [productId]="selectedId"&gt;</code></pre>
+          </div>
+          <div class="binding-item">
+            <h4>Classes CSS</h4>
+            <pre><code>&lt;div [class.active]="isActive"&gt;
+&lt;div [class]="cssClasses"&gt;
+&lt;div [ngClass]="&#123;'bold': isBold, 'italic': isItalic&#125;"&gt;</code></pre>
+          </div>
+          <div class="binding-item">
+            <h4>Styles</h4>
+            <pre><code>&lt;div [style.color]="textColor"&gt;
+&lt;div [style.width.px]="widthValue"&gt;
+&lt;div [ngStyle]="&#123;'font-size': fontSize + 'px'&#125;"&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🖱️ Event Binding (event)</h2>
+      <div class="feature-box">
+        <p>
+          Écoute les événements du DOM et appelle des méthodes du composant.
+          Les données circulent du template vers la classe TypeScript (one-way).
+        </p>
+        <div class="events-grid">
+          <div class="event-category">
+            <h4>Événements Souris</h4>
+            <pre><code>&lt;button (click)="handleClick()"&gt;Cliquer&lt;/button&gt;
+&lt;div (dblclick)="handleDoubleClick()"&gt;
+&lt;div (mouseenter)="onHover()" (mouseleave)="onLeave()"&gt;</code></pre>
+          </div>
+          <div class="event-category">
+            <h4>Événements Clavier</h4>
+            <pre><code>&lt;input (keyup)="onKeyUp($event)"&gt;
+&lt;input (keydown.enter)="onEnter()"&gt;
+&lt;input (keydown.escape)="onEscape()"&gt;</code></pre>
+          </div>
+          <div class="event-category">
+            <h4>Événements Formulaire</h4>
+            <pre><code>&lt;form (submit)="onSubmit($event)"&gt;
+&lt;input (input)="onInput($event)"&gt;
+&lt;input (change)="onChange($event)"&gt;
+&lt;input (focus)="onFocus()" (blur)="onBlur()"&gt;</code></pre>
+          </div>
+          <div class="event-category">
+            <h4>Objet $event</h4>
+            <pre><code>onKeyUp(event: KeyboardEvent): void &#123;
+  console.log(event.key);
+  console.log(event.target.value);
+&#125;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Two-way Binding [(ngModel)]</h2>
+      <div class="feature-box">
+        <p>
+          Combine property binding et event binding pour une synchronisation bidirectionnelle.
+          Nécessite l'import de <code>FormsModule</code>.
+        </p>
+        <div class="two-way-example">
+          <div class="code-block">
+            <h4>Setup</h4>
+            <pre><code>import &#123; FormsModule &#125; from '&#64;angular/forms';
+
+&#64;Component(&#123;
+  imports: [FormsModule]
+&#125;)</code></pre>
+          </div>
+          <div class="code-block">
+            <h4>Utilisation</h4>
+            <pre><code>&lt;input [(ngModel)]="userName"&gt;
+&lt;p&gt;Bonjour &#123;&#123; userName &#125;&#125;&lt;/p&gt;
+
+&lt;!-- Équivalent à : --&gt;
+&lt;input 
+  [ngModel]="userName"
+  (ngModelChange)="userName = $event"&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📍 Template Reference Variables #var</h2>
+      <div class="feature-box">
+        <p>
+          Crée une référence à un élément DOM ou composant pour y accéder dans le template.
+        </p>
+        <div class="reference-examples">
+          <h4>Exemples d'utilisation</h4>
+          <pre><code>&lt;!-- Accéder à la valeur d'un input --&gt;
+&lt;input #phoneInput placeholder="Téléphone"&gt;
+&lt;button (click)="call(phoneInput.value)"&gt;Appeler&lt;/button&gt;
+
+&lt;!-- Focus programmatique --&gt;
+&lt;input #nameInput&gt;
+&lt;button (click)="nameInput.focus()"&gt;Focus&lt;/button&gt;
+
+&lt;!-- Passer l'élément entier --&gt;
+&lt;video #videoPlayer src="video.mp4"&gt;&lt;/video&gt;
+&lt;button (click)="videoPlayer.play()"&gt;Play&lt;/button&gt;
+
+&lt;!-- Référencer un composant --&gt;
+&lt;app-modal #modal&gt;&lt;/app-modal&gt;
+&lt;button (click)="modal.open()"&gt;Ouvrir Modal&lt;/button&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Garder la logique dans le composant (pas dans le template)</li>
+            <li>Utiliser des pipes pour les transformations simples</li>
+            <li>Éviter les appels de méthodes dans l'interpolation (performance)</li>
+            <li>Utiliser <code>trackBy</code> avec les boucles</li>
+            <li>Préférer property binding à l'interpolation pour les propriétés</li>
+          </ul>
+        </div>
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Logique complexe dans les expressions de template</li>
+            <li>Appels de fonctions coûteuses dans l'interpolation</li>
+            <li>Manipulation directe du DOM avec les références</li>
+            <li>Trop de niveaux d'imbrication</li>
+            <li>Expressions avec effets de bord</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/templates" target="_blank" class="resource-link">
+          📖 Guide Templates
+        </a>
+        <a href="https://angular.dev/guide/templates/binding" target="_blank" class="resource-link">
+          🔗 Data Binding
+        </a>
+        <a href="https://angular.dev/guide/templates/reference-variables" target="_blank" class="resource-link">
+          📍 Template Variables
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/components" class="nav-btn prev">
+        ← Composants
+      </a>
+      <a routerLink="/documentation/fundamentals/data-binding" class="nav-btn next">
+        Data Binding →
+      </a>
+    </nav>
+  </article>
+</div>

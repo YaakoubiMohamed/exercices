@@ -1,0 +1,212 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Architecture</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🏗️ Architecture Angular</h1>
+      <p class="doc-subtitle">Comprendre la philosophie et l'organisation</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>🎯 Philosophie : Framework Opinionated</h2>
+      <div class="philosophy-comparison">
+        <div class="comparison-card opinionated">
+          <h3>Framework Opinionated (Angular)</h3>
+          <ul>
+            <li>✅ Structure imposée</li>
+            <li>✅ Conventions établies</li>
+            <li>✅ Tout est inclus (CLI, forms, routing, HTTP)</li>
+            <li>✅ Moins de décisions à prendre</li>
+            <li>✅ Équipes uniformisées</li>
+          </ul>
+          <p class="note">Idéal pour grandes équipes et applications enterprise</p>
+        </div>
+        <div class="comparison-card unopinionated">
+          <h3>Library Unopinionated (React)</h3>
+          <ul>
+            <li>⚡ Flexibilité maximale</li>
+            <li>⚡ Choix de l'architecture</li>
+            <li>⚡ Écosystème externe (React Router, Redux, etc.)</li>
+            <li>⚡ Liberté totale</li>
+            <li>⚡ Personnalisation complète</li>
+          </ul>
+          <p class="note">Idéal pour petites équipes et projets spécifiques</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🏛️ Architecture en Couches</h2>
+      <div class="layers-container">
+        @for (layer of layers; track layer.title; let i = $index) {
+          <div class="layer-card" [class.layer-highlight]="i === 0">
+            <div class="layer-number">{{ i + 1 }}</div>
+            <div class="layer-content">
+              <h3>{{ layer.title }}</h3>
+              <p class="layer-description">{{ layer.description }}</p>
+              <ul class="layer-elements">
+                @for (element of layer.elements; track element) {
+                  <li>{{ element }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📐 Pattern MVC/MVVM</h2>
+      <div class="pattern-box">
+        <div class="pattern-diagram">
+          <div class="pattern-item model">
+            <h4>Model (Services)</h4>
+            <p>Données et logique métier</p>
+          </div>
+          <div class="pattern-arrow">↔️</div>
+          <div class="pattern-item viewmodel">
+            <h4>ViewModel (Component)</h4>
+            <p>État et logique de présentation</p>
+          </div>
+          <div class="pattern-arrow">↔️</div>
+          <div class="pattern-item view">
+            <h4>View (Template)</h4>
+            <p>Interface utilisateur</p>
+          </div>
+        </div>
+        <div class="pattern-explanation">
+          <p>
+            <strong>Angular suit le pattern MVVM</strong> où le composant agit comme ViewModel,
+            facilitant la communication entre le modèle (services) et la vue (template).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Flux de Données</h2>
+      <div class="data-flow">
+        <div class="flow-step">
+          <span class="flow-number">1</span>
+          <div>
+            <h4>User Interaction</h4>
+            <p>L'utilisateur interagit avec la vue (clic, saisie...)</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <span class="flow-number">2</span>
+          <div>
+            <h4>Event Binding</h4>
+            <p>Le template déclenche une méthode du composant</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <span class="flow-number">3</span>
+          <div>
+            <h4>Service Call</h4>
+            <p>Le composant appelle un service pour la logique métier</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <span class="flow-number">4</span>
+          <div>
+            <h4>State Update</h4>
+            <p>Le service met à jour l'état (Observable, BehaviorSubject)</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <span class="flow-number">5</span>
+          <div>
+            <h4>Change Detection</h4>
+            <p>Angular détecte les changements et met à jour la vue</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔌 Dependency Injection (DI)</h2>
+      <div class="di-explanation">
+        <div class="di-concept">
+          <h3>Qu'est-ce que le DI ?</h3>
+          <p>
+            Le <strong>Dependency Injection</strong> est un design pattern où les dépendances d'une classe
+            sont fournies de l'extérieur plutôt que créées à l'intérieur.
+          </p>
+        </div>
+        <div class="di-benefits">
+          <h3>Avantages du DI Angular</h3>
+          <div class="benefits-grid">
+            <div class="benefit-card">
+              <span class="benefit-icon">🧪</span>
+              <h4>Testabilité</h4>
+              <p>Facile de mocker les dépendances</p>
+            </div>
+            <div class="benefit-card">
+              <span class="benefit-icon">♻️</span>
+              <h4>Réutilisabilité</h4>
+              <p>Services partagés entre composants</p>
+            </div>
+            <div class="benefit-card">
+              <span class="benefit-icon">🔧</span>
+              <div>
+                <h4>Maintenabilité</h4>
+                <p>Couplage faible entre classes</p>
+              </div>
+            </div>
+            <div class="benefit-card">
+              <span class="benefit-icon">⚡</span>
+              <h4>Performance</h4>
+              <p>Singletons par défaut</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📦 Modules vs Standalone</h2>
+      <div class="module-comparison">
+        <div class="module-option">
+          <h3>❌ NgModules (Legacy)</h3>
+          <pre><code>&#64;NgModule(&#123;
+  declarations: [MyComponent],
+  imports: [CommonModule],
+  providers: [MyService]
+&#125;)
+export class MyModule &#123;&#125;</code></pre>
+          <p class="note">Approche traditionnelle, plus verbeux</p>
+        </div>
+        <div class="module-option preferred">
+          <h3>✅ Standalone (Moderne)</h3>
+          <pre><code>&#64;Component(&#123;
+  standalone: true,
+  imports: [CommonModule],
+  providers: [MyService]
+&#125;)
+export class MyComponent &#123;&#125;</code></pre>
+          <p class="note">Approche moderne, plus simple</p>
+        </div>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/intro/history" class="nav-btn prev">
+        ← Histoire
+      </a>
+      <a routerLink="/documentation/intro/comparison" class="nav-btn next">
+        Comparaison →
+      </a>
+    </nav>
+  </article>
+</div>

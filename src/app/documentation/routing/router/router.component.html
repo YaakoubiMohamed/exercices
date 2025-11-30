@@ -1,0 +1,406 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Router</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Angular Router</h1>
+            <p class="lead text-muted">
+                Le Router Angular permet de naviguer entre différentes vues de l'application en fonction de l'URL.
+                Il gère l'historique du navigateur, les paramètres de route, et le lazy loading des modules.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Configuration du Router</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.routes.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Routes {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} HomeComponent {{ '}' }} from './home/home.component';
+import {{ '{' }} AboutComponent {{ '}' }} from './about/about.component';
+import {{ '{' }} UserListComponent {{ '}' }} from './users/user-list.component';
+import {{ '{' }} UserDetailComponent {{ '}' }} from './users/user-detail.component';
+import {{ '{' }} NotFoundComponent {{ '}' }} from './not-found/not-found.component';
+
+export const routes: Routes = [
+  {{ '{' }} path: '', component: HomeComponent {{ '}' }},
+  {{ '{' }} path: 'about', component: AboutComponent {{ '}' }},
+  {{ '{' }} path: 'users', component: UserListComponent {{ '}' }},
+  {{ '{' }} path: 'users/:id', component: UserDetailComponent {{ '}' }},
+  {{ '{' }} path: '**', component: NotFoundComponent {{ '}' }}  // Wildcard route
+];
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.config.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} ApplicationConfig {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} provideRouter {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} routes {{ '}' }} from './app.routes';
+
+export const appConfig: ApplicationConfig = {{ '{' }}
+  providers: [
+    provideRouter(routes)
+  ]
+{{ '}' }};
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Configuration de Route -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Configuration d'une Route</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 20%">Propriété</th>
+                            <th style="width: 35%">Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (config of routeConfig; track config.property) {
+                        <tr>
+                            <td><code>{{ config.property }}</code></td>
+                            <td>{{ config.description }}</td>
+                            <td><code class="small">{{ config.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Routes avancées</span>
+                </div>
+                <pre><code class="language-typescript">export const routes: Routes = [
+  // Route simple
+  {{ '{' }} path: 'home', component: HomeComponent {{ '}' }},
+  
+  // Route avec paramètre
+  {{ '{' }} path: 'user/:id', component: UserComponent {{ '}' }},
+  
+  // Routes enfants
+  {{ '{' }}
+    path: 'dashboard',
+    component: DashboardComponent,
+    children: [
+      {{ '{' }} path: 'stats', component: StatsComponent {{ '}' }},
+      {{ '{' }} path: 'profile', component: ProfileComponent {{ '}' }}
+    ]
+  {{ '}' }},
+  
+  // Redirection
+  {{ '{' }} path: 'old-path', redirectTo: '/new-path', pathMatch: 'full' {{ '}' }},
+  
+  // Lazy loading
+  {{ '{' }}
+    path: 'admin',
+    loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
+  {{ '}' }},
+  
+  // Wildcard (404)
+  {{ '{' }} path: '**', component: NotFoundComponent {{ '}' }}
+];
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Méthodes de Navigation</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Méthode</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (method of navigationMethods; track method.method) {
+                        <tr>
+                            <td><code>{{ method.method }}</code></td>
+                            <td>{{ method.description }}</td>
+                            <td><code class="small">{{ method.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">routerLink dans le Template</h3>
+                    <div class="code-example">
+                        <pre><code class="language-html">&lt;!-- Lien simple --&gt;
+&lt;a routerLink="/home"&gt;Accueil&lt;/a&gt;
+
+&lt;!-- Avec paramètres --&gt;
+&lt;a [routerLink]="['/user', userId]"&gt;Profil&lt;/a&gt;
+
+&lt;!-- Query params --&gt;
+&lt;a routerLink="/search" [queryParams]="{{ '{' }}q: 'angular'{{ '}' }}"&gt;
+  Rechercher
+&lt;/a&gt;
+
+&lt;!-- Classe active automatique --&gt;
+&lt;a routerLink="/home" routerLinkActive="active"&gt;
+  Home
+&lt;/a&gt;
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Navigation Programmatique</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+
+export class MyComponent {{ '{' }}
+  private router = inject(Router);
+
+  goToUser(id: number) {{ '{' }}
+    // Avec array
+    this.router.navigate(['/user', id]);
+  {{ '}' }}
+
+  goToSearch(term: string) {{ '{' }}
+    // Avec query params
+    this.router.navigate(['/search'], {{ '{' }}
+      queryParams: {{ '{' }} q: term {{ '}' }}
+    {{ '}' }});
+  {{ '}' }}
+
+  goToAbout() {{ '{' }}
+    // URL absolue
+    this.router.navigateByUrl('/about');
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Paramètres de Route -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Paramètres de Route</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Type</th>
+                            <th>Syntaxe</th>
+                            <th>Accès</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (param of routeParams; track param.type) {
+                        <tr>
+                            <td><strong>{{ param.type }}</strong></td>
+                            <td><code>{{ param.syntax }}</code></td>
+                            <td><code class="small">{{ param.access }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Route Parameters (:id)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} ActivatedRoute {{ '}' }} from '&#64;angular/router';
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class UserDetailComponent implements OnInit {{ '{' }}
+  private route = inject(ActivatedRoute);
+  userId: number;
+
+  ngOnInit() {{ '{' }}
+    // Observable (réactif)
+    this.route.params.subscribe(params => {{ '{' }}
+      this.userId = +params['id'];
+      this.loadUser(this.userId);
+    {{ '}' }});
+
+    // Snapshot (une fois)
+    this.userId = +this.route.snapshot.params['id'];
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Query Parameters (?page=1)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">&#64;Component({{ '{' }}...{{ '}' }})
+export class SearchComponent implements OnInit {{ '{' }}
+  private route = inject(ActivatedRoute);
+  searchTerm: string;
+  page: number;
+
+  ngOnInit() {{ '{' }}
+    // Observable
+    this.route.queryParams.subscribe(params => {{ '{' }}
+      this.searchTerm = params['q'] || '';
+      this.page = +params['page'] || 1;
+      this.search();
+    {{ '}' }});
+
+    // Snapshot
+    this.searchTerm = this.route.snapshot.queryParams['q'];
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RouterOutlet -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Router Outlet</h2>
+
+            <p>
+                <code>&lt;router-outlet&gt;</code> est la directive qui indique où afficher le composant correspondant à
+                la route active.
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">HTML</span>
+                    <span class="file-name">app.component.html</span>
+                </div>
+                <pre><code class="language-html">&lt;nav&gt;
+  &lt;a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{{ '{' }}exact: true{{ '}' }}"&gt;Home&lt;/a&gt;
+  &lt;a routerLink="/about" routerLinkActive="active"&gt;About&lt;/a&gt;
+  &lt;a routerLink="/users" routerLinkActive="active"&gt;Users&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;!-- Le composant de la route active s'affiche ici --&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">HTML</span>
+                    <span class="file-name">Routes imbriquées (named outlets)</span>
+                </div>
+                <pre><code class="language-html">&lt;div class="layout"&gt;
+  &lt;div class="sidebar"&gt;
+    &lt;router-outlet name="sidebar"&gt;&lt;/router-outlet&gt;
+  &lt;/div&gt;
+  &lt;div class="main"&gt;
+    &lt;router-outlet&gt;&lt;/router-outlet&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Route avec outlet nommé --&gt;
+{{ '{' }}
+  path: 'home',
+  component: HomeComponent,
+  outlet: 'sidebar'
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser routerLink plutôt que href</li>
+                                <li>Lazy load les feature modules</li>
+                                <li>Utiliser route guards pour protection</li>
+                                <li>Organiser les routes par fonctionnalité</li>
+                                <li>Utiliser pathMatch: 'full' pour redirections</li>
+                                <li>Placer la route wildcard en dernier</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas utiliser href (recharge la page)</li>
+                                <li>Éviter trop de niveaux d'imbrication</li>
+                                <li>Ne pas oublier de se désouscrire des params</li>
+                                <li>Éviter la navigation dans ngOnInit si possible</li>
+                                <li>Ne pas dupliquer les routes</li>
+                                <li>Éviter les routes sans composant</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/routing" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - Routing
+                </a>
+                <a href="https://angular.dev/guide/router" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Router Reference
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/http/interceptors" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Interceptors
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/routing/guards" class="btn btn-primary">
+                        Suivant: Guards<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

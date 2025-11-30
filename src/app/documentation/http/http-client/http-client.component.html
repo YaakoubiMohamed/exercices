@@ -1,0 +1,528 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">HttpClient</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">HttpClient</h1>
+            <p class="lead text-muted">
+                HttpClient est le module Angular pour effectuer des requêtes HTTP vers des APIs. Il offre une API
+                simplifiée,
+                basée sur les Observables, avec support de l'interception, de la gestion d'erreurs et du typage
+                TypeScript.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Introduction à HttpClient</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        HttpClient est un service Angular qui remplace l'ancien Http. Il retourne des Observables RxJS,
+                        ce qui permet d'utiliser tous les opérateurs RxJS pour transformer et gérer les réponses.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Avantages :</strong> Typage fort, interception, gestion d'erreurs centralisée,
+                        testabilité, API simplifiée.
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Configuration dans app.config.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} ApplicationConfig {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} provideHttpClient, withInterceptors {{ '}' }} from '&#64;angular/common/http';
+
+export const appConfig: ApplicationConfig = {{ '{' }}
+  providers: [
+    provideHttpClient(
+      // Configuration moderne d'HttpClient
+    )
+  ]
+{{ '}' }};</code></pre>
+            </div>
+        </section>
+
+        <!-- Méthodes HTTP -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Méthodes HTTP</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 15%">Méthode</th>
+                            <th style="width: 35%">Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (method of httpMethods; track method.method) {
+                        <tr>
+                            <td><strong>{{ method.method }}</strong></td>
+                            <td>{{ method.description }}</td>
+                            <td><code>{{ method.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- GET Requests -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">GET - Récupérer des Données</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user.service.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable, inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} HttpClient {{ '}' }} from '&#64;angular/common/http';
+import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+import {{ '{' }} map, catchError {{ '}' }} from 'rxjs/operators';
+
+interface User {{ '{' }}
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class UserService {{ '{' }}
+  private http = inject(HttpClient);
+  private apiUrl = 'https://api.example.com/users';
+
+  // GET liste d'utilisateurs
+  getUsers(): Observable&lt;User[]&gt; {{ '{' }}
+    return this.http.get&lt;User[]&gt;(this.apiUrl);
+  {{ '}' }}
+
+  // GET un utilisateur par ID
+  getUserById(id: number): Observable&lt;User&gt; {{ '{' }}
+    return this.http.get&lt;User&gt;(`${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`);
+  {{ '}' }}
+
+  // GET avec transformation
+  getActiveUsers(): Observable&lt;User[]&gt; {{ '{' }}
+    return this.http.get&lt;User[]&gt;(this.apiUrl).pipe(
+      map(users => users.filter(u => u.role === 'active'))
+    );
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Utilisation dans un composant</span>
+                </div>
+                <pre><code class="language-typescript">&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &#64;if (loading) {{ '{' }}
+      &lt;div class="spinner"&gt;Chargement...&lt;/div&gt;
+    {{ '}' }} &#64;else if (error) {{ '{' }}
+      &lt;div class="alert alert-danger"&gt;{{ '{' }}{{ '{' }} error {{ '}' }}{{ '}' }}&lt;/div&gt;
+    {{ '}' }} &#64;else {{ '{' }}
+      &#64;for (user of users$ | async; track user.id) {{ '{' }}
+        &lt;div class="user-card"&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+      {{ '}' }}
+    {{ '}' }}
+  `
+{{ '}' }})
+export class UserListComponent {{ '{' }}
+  private userService = inject(UserService);
+  
+  users$ = this.userService.getUsers();
+  loading = true;
+  error: string | null = null;
+
+  ngOnInit() {{ '{' }}
+    this.users$.subscribe({{ '{' }}
+      next: () => this.loading = false,
+      error: (err) => {{ '{' }}
+        this.error = 'Erreur de chargement';
+        this.loading = false;
+      {{ '}' }}
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- POST/PUT/DELETE -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">POST, PUT, PATCH, DELETE</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">POST - Créer</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">createUser(user: Partial&lt;User&gt;): Observable&lt;User&gt; {{ '{' }}
+  return this.http.post&lt;User&gt;(
+    this.apiUrl,
+    user
+  ).pipe(
+    catchError(this.handleError)
+  );
+{{ '}' }}
+
+// Utilisation
+this.userService.createUser({{ '{' }}
+  name: 'John Doe',
+  email: 'john@example.com'
+{{ '}' }}).subscribe({{ '{' }}
+  next: (user) => console.log('Créé:', user),
+  error: (err) => console.error('Erreur:', err)
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">PUT - Mise à jour complète</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">updateUser(id: number, user: User): Observable&lt;User&gt; {{ '{' }}
+  return this.http.put&lt;User&gt;(
+    `${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`,
+    user
+  );
+{{ '}' }}
+
+// Utilisation
+this.userService.updateUser(1, {{ '{' }}
+  id: 1,
+  name: 'John Updated',
+  email: 'john.updated@example.com',
+  role: 'admin'
+{{ '}' }}).subscribe();</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">PATCH - Mise à jour partielle</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">patchUser(id: number, changes: Partial&lt;User&gt;): Observable&lt;User&gt; {{ '{' }}
+  return this.http.patch&lt;User&gt;(
+    `${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`,
+    changes
+  );
+{{ '}' }}
+
+// Utilisation - modifie seulement l'email
+this.userService.patchUser(1, {{ '{' }}
+  email: 'new.email@example.com'
+{{ '}' }}).subscribe();</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">DELETE - Supprimer</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">deleteUser(id: number): Observable&lt;void&gt; {{ '{' }}
+  return this.http.delete&lt;void&gt;(
+    `${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`
+  );
+{{ '}' }}
+
+// Utilisation
+this.userService.deleteUser(1).subscribe({{ '{' }}
+  next: () => console.log('Supprimé'),
+  error: (err) => console.error('Erreur:', err)
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Options de Requête -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Options de Requête</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (option of requestOptions; track option.option) {
+                        <tr>
+                            <td><code>{{ option.option }}</code></td>
+                            <td>{{ option.description }}</td>
+                            <td><code class="small">{{ option.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Headers Personnalisés</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} HttpHeaders {{ '}' }} from '&#64;angular/common/http';
+
+getUsers(): Observable&lt;User[]&gt; {{ '{' }}
+  const headers = new HttpHeaders({{ '{' }}
+    'Authorization': 'Bearer ' + this.token,
+    'Content-Type': 'application/json',
+    'X-Custom-Header': 'value'
+  {{ '}' }});
+
+  return this.http.get&lt;User[]&gt;(this.apiUrl, {{ '{' }}
+    headers
+  {{ '}' }});
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Query Parameters</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} HttpParams {{ '}' }} from '&#64;angular/common/http';
+
+searchUsers(query: string, page: number): Observable&lt;User[]&gt; {{ '{' }}
+  const params = new HttpParams()
+    .set('q', query)
+    .set('page', page.toString())
+    .set('limit', '10');
+
+  // GET /users?q=john&page=1&limit=10
+  return this.http.get&lt;User[]&gt;(this.apiUrl, {{ '{' }}
+    params
+  {{ '}' }});
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Observe Response</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Accéder aux headers et status
+getUsers(): Observable&lt;HttpResponse&lt;User[]&gt;&gt; {{ '{' }}
+  return this.http.get&lt;User[]&gt;(this.apiUrl, {{ '{' }}
+    observe: 'response'
+  {{ '}' }}).pipe(
+    tap(response => {{ '{' }}
+      console.log('Status:', response.status);
+      console.log('Headers:', response.headers);
+      console.log('Body:', response.body);
+    {{ '}' }})
+  );
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Response Type</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Texte brut
+getText(): Observable&lt;string&gt; {{ '{' }}
+  return this.http.get('/api/text', {{ '{' }}
+    responseType: 'text'
+  {{ '}' }});
+{{ '}' }}
+
+// Blob (fichiers)
+downloadFile(): Observable&lt;Blob&gt; {{ '{' }}
+  return this.http.get('/api/file', {{ '{' }}
+    responseType: 'blob'
+  {{ '}' }});
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gestion d'Erreurs -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Gestion d'Erreurs</h2>
+
+            <div class="row g-3 mb-4">
+                @for (practice of errorHandling; track practice) {
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-shield-check text-primary me-3 mt-1 fs-5"></i>
+                        <div>{{ practice }}</div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Gestion centralisée des erreurs</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} HttpErrorResponse {{ '}' }} from '&#64;angular/common/http';
+import {{ '{' }} catchError, retry {{ '}' }} from 'rxjs/operators';
+import {{ '{' }} throwError {{ '}' }} from 'rxjs';
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class UserService {{ '{' }}
+  
+  getUsers(): Observable&lt;User[]&gt; {{ '{' }}
+    return this.http.get&lt;User[]&gt;(this.apiUrl).pipe(
+      retry(3),  // Réessayer 3 fois
+      catchError(this.handleError)
+    );
+  {{ '}' }}
+
+  private handleError(error: HttpErrorResponse) {{ '{' }}
+    let errorMessage = 'Une erreur est survenue';
+
+    if (error.error instanceof ErrorEvent) {{ '{' }}
+      // Erreur côté client
+      errorMessage = `Erreur: ${{ '{' }}error.error.message{{ '}' }}`;
+    {{ '}' }} else {{ '{' }}
+      // Erreur côté serveur
+      switch (error.status) {{ '{' }}
+        case 400:
+          errorMessage = 'Requête invalide';
+          break;
+        case 401:
+          errorMessage = 'Non autorisé';
+          break;
+        case 404:
+          errorMessage = 'Ressource non trouvée';
+          break;
+        case 500:
+          errorMessage = 'Erreur serveur';
+          break;
+        default:
+          errorMessage = `Code d'erreur: ${{ '{' }}error.status{{ '}' }}`;
+      {{ '}' }}
+    {{ '}' }}
+
+    console.error('Erreur HTTP:', errorMessage);
+    return throwError(() => new Error(errorMessage));
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Utilisation avec feedback utilisateur</span>
+                </div>
+                <pre><code class="language-typescript">&#64;Component({{ '{' }}...{{ '}' }})
+export class UserListComponent {{ '{' }}
+  users: User[] = [];
+  loading = false;
+  error: string | null = null;
+
+  loadUsers() {{ '{' }}
+    this.loading = true;
+    this.error = null;
+
+    this.userService.getUsers().subscribe({{ '{' }}
+      next: (users) => {{ '{' }}
+        this.users = users;
+        this.loading = false;
+      {{ '}' }},
+      error: (err) => {{ '{' }}
+        this.error = err.message;
+        this.loading = false;
+        // Afficher un toast/notification
+        this.notificationService.error(err.message);
+      {{ '}' }}
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser le typage TypeScript pour les réponses</li>
+                                <li>Centraliser les appels API dans des services</li>
+                                <li>Gérer les erreurs avec <code>catchError</code></li>
+                                <li>Utiliser des interfaces pour les modèles de données</li>
+                                <li>Implémenter retry logic pour les erreurs réseau</li>
+                                <li>Utiliser <code>shareReplay</code> pour éviter les requêtes multiples</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas oublier de gérer les erreurs</li>
+                                <li>Éviter les appels HTTP dans les composants</li>
+                                <li>Ne pas utiliser <code>subscribe</code> dans <code>subscribe</code></li>
+                                <li>Éviter de stocker des données sensibles côté client</li>
+                                <li>Ne pas ignorer les status codes HTTP</li>
+                                <li>Éviter trop de retry (surcharge serveur)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/http" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - HttpClient
+                </a>
+                <a href="https://angular.dev/guide/http/making-requests" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Making HTTP Requests
+                </a>
+                <a href="https://angular.dev/guide/http/testing" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-bookmark me-2"></i>Testing HTTP Requests
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/rxjs/subscriptions" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Subscriptions
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/http/interceptors" class="btn btn-primary">
+                        Suivant: Interceptors<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

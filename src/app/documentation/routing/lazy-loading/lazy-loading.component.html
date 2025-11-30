@@ -1,0 +1,388 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Lazy Loading</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Lazy Loading</h1>
+            <p class="lead text-muted">
+                Le lazy loading permet de charger les modules ou composants uniquement lorsqu'ils sont nécessaires,
+                réduisant ainsi la taille du bundle initial et améliorant les performances de chargement de
+                l'application.
+            </p>
+        </header>
+
+        <!-- Avantages -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Avantages du Lazy Loading</h2>
+
+            <div class="row g-4">
+                @for (advantage of advantages; track advantage.title) {
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                {{ advantage.title }}
+                            </h5>
+                            <p class="card-text">{{ advantage.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Lazy Loading de Composants -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Lazy Loading de Composants Standalone</h2>
+
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Depuis Angular 14, vous pouvez lazy load des composants standalone directement sans module.
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.routes.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Routes {{ '}' }} from '&#64;angular/router';
+
+export const routes: Routes = [
+  {{ '{' }}
+    path: '',
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+  {{ '}' }},
+  {{ '{' }}
+    path: 'about',
+    loadComponent: () => import('./about/about.component').then(m => m.AboutComponent)
+  {{ '}' }},
+  {{ '{' }}
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Résultat :</strong> Chaque composant est dans son propre chunk JavaScript qui ne se charge que
+                lorsque l'utilisateur navigue vers la route correspondante.
+            </div>
+        </section>
+
+        <!-- Lazy Loading de Routes Enfants -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Lazy Loading de Routes Enfants</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.routes.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Routes {{ '}' }} from '&#64;angular/router';
+
+export const routes: Routes = [
+  {{ '{' }}
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
+  {{ '}' }},
+  {{ '{' }}
+    path: 'user',
+    loadChildren: () => import('./user/user.routes').then(m => m.USER_ROUTES)
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">admin/admin.routes.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Routes {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} AdminComponent {{ '}' }} from './admin.component';
+import {{ '{' }} DashboardComponent {{ '}' }} from './dashboard/dashboard.component';
+import {{ '{' }} UsersComponent {{ '}' }} from './users/users.component';
+import {{ '{' }} SettingsComponent {{ '}' }} from './settings/settings.component';
+
+export const ADMIN_ROUTES: Routes = [
+  {{ '{' }}
+    path: '',
+    component: AdminComponent,
+    children: [
+      {{ '{' }} path: '', redirectTo: 'dashboard', pathMatch: 'full' {{ '}' }},
+      {{ '{' }} path: 'dashboard', component: DashboardComponent {{ '}' }},
+      {{ '{' }} path: 'users', component: UsersComponent {{ '}' }},
+      {{ '{' }} path: 'settings', component: SettingsComponent {{ '}' }}
+    ]
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Preloading Strategies -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Stratégies de Préchargement</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Stratégie</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Quand l'utiliser</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (strategy of preloadingStrategies; track strategy.name) {
+                        <tr>
+                            <td><code>{{ strategy.name }}</code></td>
+                            <td>{{ strategy.description }}</td>
+                            <td>{{ strategy.useCase }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">NoPreloading (Par défaut)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} provideRouter {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} routes {{ '}' }} from './app.routes';
+
+export const appConfig = {{ '{' }}
+  providers: [
+    provideRouter(routes)
+    // NoPreloading par défaut
+  ]
+{{ '}' }};
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">PreloadAllModules</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} provideRouter, withPreloading, PreloadAllModules {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} routes {{ '}' }} from './app.routes';
+
+export const appConfig = {{ '{' }}
+  providers: [
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules)
+    )
+  ]
+{{ '}' }};
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Custom Preloading Strategy -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Stratégie de Préchargement Personnalisée</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">custom-preloading.strategy.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} PreloadingStrategy, Route {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} Observable, of, timer {{ '}' }} from 'rxjs';
+import {{ '{' }} mergeMap {{ '}' }} from 'rxjs/operators';
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class CustomPreloadingStrategy implements PreloadingStrategy {{ '{' }}
+  preload(route: Route, load: () => Observable&lt;any&gt;): Observable&lt;any&gt; {{ '{' }}
+    // Précharger uniquement les routes avec data.preload = true
+    if (route.data?.['preload']) {{ '{' }}
+      const delay = route.data?.['delay'] || 0;
+      
+      console.log(`Preloading ${{ '{' }}route.path{{ '}' }} after ${{ '{' }}delay{{ '}' }}ms`);
+      
+      return timer(delay).pipe(
+        mergeMap(() => load())
+      );
+    {{ '}' }}
+    
+    return of(null);
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.routes.ts - Configuration</span>
+                </div>
+                <pre><code class="language-typescript">export const routes: Routes = [
+  {{ '{' }}
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    data: {{ '{' }} preload: true {{ '}' }}  // Sera préchargé
+  {{ '}' }},
+  {{ '{' }}
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES),
+    data: {{ '{' }} preload: true, delay: 2000 {{ '}' }}  // Préchargé après 2s
+  {{ '}' }},
+  {{ '{' }}
+    path: 'settings',
+    loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
+    // Pas préchargé (pas de data.preload)
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">app.config.ts - Enregistrement</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} provideRouter, withPreloading {{ '}' }} from '&#64;angular/router';
+import {{ '{' }} CustomPreloadingStrategy {{ '}' }} from './custom-preloading.strategy';
+
+export const appConfig = {{ '{' }}
+  providers: [
+    provideRouter(
+      routes,
+      withPreloading(CustomPreloadingStrategy)
+    )
+  ]
+{{ '}' }};
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Bundle Optimization -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Optimisation des Bundles</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Technique</th>
+                            <th>Description</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (optimization of bundleOptimizations; track optimization.technique) {
+                        <tr>
+                            <td><strong>{{ optimization.technique }}</strong></td>
+                            <td>{{ optimization.description }}</td>
+                            <td><span class="badge bg-success">{{ optimization.impact }}</span></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">Bash</span>
+                    <span class="file-name">Analyse des bundles</span>
+                </div>
+                <pre><code class="language-bash"># Générer le rapport d'analyse des bundles
+ng build --stats-json
+
+# Installer webpack-bundle-analyzer
+npm install -g webpack-bundle-analyzer
+
+# Analyser les bundles
+webpack-bundle-analyzer dist/your-app/stats.json
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Lazy load les feature modules/routes</li>
+                                <li>Utiliser PreloadAllModules pour petites apps</li>
+                                <li>Créer une stratégie personnalisée si besoin</li>
+                                <li>Grouper les features par domaine métier</li>
+                                <li>Analyser régulièrement les bundles</li>
+                                <li>Précharger les routes fréquemment utilisées</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Charger trop de code dans le bundle initial</li>
+                                <li>Lazy load les modules très fréquents (home)</li>
+                                <li>Oublier d'analyser la taille des bundles</li>
+                                <li>Créer trop de petits lazy modules</li>
+                                <li>Importer des modules lourds partout</li>
+                                <li>Négliger le préchargement pour UX</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/ngmodules/lazy-loading" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - Lazy Loading
+                </a>
+                <a href="https://angular.dev/guide/router#preloading" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Preloading Strategies
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/routing/guards" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Guards
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/typescript/interfaces" class="btn btn-primary">
+                        Suivant: Interfaces<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

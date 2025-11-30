@@ -1,0 +1,285 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Directives</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🎯 Directives Angular</h1>
+      <p class="doc-subtitle">Modifier le comportement et l'apparence des éléments DOM</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📋 Qu'est-ce qu'une Directive ?</h2>
+      <div class="definition-box">
+        <p>Les <strong>directives</strong> sont des classes qui ajoutent un comportement supplémentaire aux éléments de vos templates Angular. Elles permettent de manipuler le DOM, d'ajouter des styles, ou de modifier la structure des templates.</p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔀 Types de Directives</h2>
+      <div class="types-grid">
+        <div class="type-card structural">
+          <div class="type-icon">🏗️</div>
+          <h3>Directives Structurelles</h3>
+          <p>Modifient la structure du DOM en ajoutant, supprimant ou manipulant des éléments</p>
+          <div class="examples-list">
+            <code>&#64;if</code>
+            <code>&#64;for</code>
+            <code>&#64;switch</code>
+          </div>
+        </div>
+
+        <div class="type-card attribute">
+          <div class="type-icon">🎨</div>
+          <h3>Directives d'Attribut</h3>
+          <p>Modifient l'apparence ou le comportement d'un élément existant</p>
+          <div class="examples-list">
+            <code>ngClass</code>
+            <code>ngStyle</code>
+            <code>ngModel</code>
+          </div>
+        </div>
+
+        <div class="type-card component">
+          <div class="type-icon">🧩</div>
+          <h3>Composants</h3>
+          <p>Directives avec un template - le type le plus courant</p>
+          <div class="examples-list">
+            <code>@Component</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🏗️ Directives Structurelles</h2>
+      <div class="directives-list">
+        @for (directive of structuralDirectives; track directive.name) {
+          <div class="directive-card structural">
+            <div class="directive-header">
+              <h3>{{ directive.name }}</h3>
+              <span class="badge">{{ directive.type }}</span>
+            </div>
+            <p class="description">{{ directive.description }}</p>
+            <div class="syntax-box">
+              <strong>Syntaxe:</strong>
+              <code>{{ directive.syntax }}</code>
+            </div>
+            <div class="example-box">
+              <strong>Exemple:</strong>
+              <pre><code>{{ directive.example }}</code></pre>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎨 Directives d'Attribut</h2>
+      <div class="directives-list">
+        @for (directive of attributeDirectives; track directive.name) {
+          <div class="directive-card attribute">
+            <div class="directive-header">
+              <h3>{{ directive.name }}</h3>
+              <span class="badge">{{ directive.type }}</span>
+            </div>
+            <p class="description">{{ directive.description }}</p>
+            <div class="syntax-box">
+              <strong>Syntaxe:</strong>
+              <code>{{ directive.syntax }}</code>
+            </div>
+            <div class="example-box">
+              <strong>Exemple:</strong>
+              <pre><code>{{ directive.example }}</code></pre>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Démonstration Interactive</h2>
+      <div class="demo-container">
+        <div class="demo-card">
+          <h4>Directive &#64;if</h4>
+          <button (click)="isVisible = !isVisible" class="demo-button">Toggle</button>
+          @if (isVisible) {
+            <div class="demo-result">✓ Contenu visible</div>
+          } @else {
+            <div class="demo-result">✗ Contenu caché</div>
+          }
+        </div>
+
+        <div class="demo-card">
+          <h4>Directive &#64;for</h4>
+          <div class="demo-result">
+            @for (item of items; track item) {
+              <div class="list-item">{{ item }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <h4>Directive ngClass</h4>
+          <div 
+            [ngClass]="{
+              'box-blue': selectedColor === 'blue',
+              'box-red': selectedColor === 'red',
+              'box-green': selectedColor === 'green'
+            }"
+            class="color-box">
+            Couleur: {{ selectedColor }}
+          </div>
+          <div class="color-buttons">
+            <button (click)="selectedColor = 'blue'">Bleu</button>
+            <button (click)="selectedColor = 'red'">Rouge</button>
+            <button (click)="selectedColor = 'green'">Vert</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔧 Créer une Directive Personnalisée</h2>
+      <div class="custom-directive-box">
+        <h3>Directive d'Attribut Personnalisée</h3>
+        <pre><code>import {{ '{' }} Directive, ElementRef, HostListener {{ '}' }} from '@angular/core';
+
+@Directive({{ '{' }}
+  selector: '[appHighlight]',
+  standalone: true
+{{ '}' }})
+export class HighlightDirective {{ '{' }}
+  constructor(private el: ElementRef) {{ '{' }}{{ '}' }}
+
+  @HostListener('mouseenter') onMouseEnter() {{ '{' }}
+    this.el.nativeElement.style.backgroundColor = 'yellow';
+  {{ '}' }}
+
+  @HostListener('mouseleave') onMouseLeave() {{ '{' }}
+    this.el.nativeElement.style.backgroundColor = '';
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+&lt;p appHighlight&gt;Survolez-moi!&lt;/p&gt;</code></pre>
+      </div>
+
+      <div class="custom-directive-box">
+        <h3>Directive avec @Input</h3>
+        <pre><code>import {{ '{' }} Directive, Input, ElementRef {{ '}' }} from '@angular/core';
+
+@Directive({{ '{' }}
+  selector: '[appHighlight]',
+  standalone: true
+{{ '}' }})
+export class HighlightDirective {{ '{' }}
+  @Input() appHighlight = '';
+
+  constructor(private el: ElementRef) {{ '{' }}{{ '}' }}
+
+  ngOnInit() {{ '{' }}
+    this.el.nativeElement.style.backgroundColor = this.appHighlight || 'yellow';
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+&lt;p [appHighlight]="'lightblue'"&gt;Texte surligné en bleu&lt;/p&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🆚 Structural vs Attribute Directives</h2>
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Structurelle</th>
+              <th>Attribut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Impact DOM</strong></td>
+              <td>Ajoute/supprime des éléments</td>
+              <td>Modifie les éléments existants</td>
+            </tr>
+            <tr>
+              <td><strong>Syntaxe</strong></td>
+              <td>&#64;if, &#64;for, &#64;switch</td>
+              <td>[directive]="value"</td>
+            </tr>
+            <tr>
+              <td><strong>Use Case</strong></td>
+              <td>Contrôle de flux, boucles</td>
+              <td>Styles, comportements</td>
+            </tr>
+            <tr>
+              <td><strong>Performance</strong></td>
+              <td>Peut impacter (création/destruction)</td>
+              <td>Légère (modification seulement)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Utiliser &#64;if au lieu de *ngIf (nouvelle syntaxe)</li>
+            <li>Toujours spécifier track dans &#64;for pour les performances</li>
+            <li>Préférer les directives d'attribut pour les styles</li>
+            <li>Donner des noms descriptifs aux directives personnalisées</li>
+            <li>Utiliser @HostListener pour les événements</li>
+            <li>Documenter les @Input de vos directives</li>
+          </ul>
+        </div>
+
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Manipuler directement le DOM sans ElementRef</li>
+            <li>Créer des directives trop complexes</li>
+            <li>Oublier le track dans &#64;for (problèmes de performance)</li>
+            <li>Utiliser plusieurs directives structurelles sur le même élément</li>
+            <li>Ignorer la détection de changements</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/directives" target="_blank" class="resource-link">
+          📖 Guide des Directives
+        </a>
+        <a href="https://angular.dev/guide/directives/structural-directives" target="_blank" class="resource-link">
+          🏗️ Directives Structurelles
+        </a>
+        <a href="https://angular.dev/guide/directives/attribute-directives" target="_blank" class="resource-link">
+          🎨 Directives d'Attribut
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/data-binding" class="nav-btn prev">
+        ← Data Binding
+      </a>
+      <a routerLink="/documentation/fundamentals/pipes" class="nav-btn next">
+        Pipes →
+      </a>
+    </nav>
+  </article>
+</div>

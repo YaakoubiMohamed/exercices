@@ -3,7 +3,7 @@
 <div class="products-container">
   <header class="products-header">
     <h2>🛍️ Catalogue de Produits</h2>
-    <p class="subtitle">{{ productCount() }} produit(s) disponible(s)</p>
+    <p class="subtitle">{{ productCount }} produit(s) disponible(s)</p>
   </header>
   
   <div class="filters">
@@ -30,7 +30,7 @@
   </div>
   
   <div class="product-grid">
-    @for (product of filteredProducts(); track product.id) {
+    @for (product of filteredProducts; track product.id) {
       <app-product-card 
         [product]="product"
         (addToCart)="onAddToCart($event)" />

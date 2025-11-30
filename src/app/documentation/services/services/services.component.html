@@ -1,0 +1,354 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Services</span>
+    </nav>
+
+    <div class="doc-content">
+
+        <header class="mb-5">
+            <h1 class="display-4 mb-3">Services Angular</h1>
+            <p class="lead text-muted">
+                Les services sont des classes singleton qui encapsulent la logique métier et permettent le partage de
+                données
+                entre composants. Ils constituent l'épine dorsale de toute application Angular bien architecturée.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce qu'un Service ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Un service est une classe TypeScript décorée avec <code>&#64;Injectable()</code> qui peut être
+                        injectée
+                        dans des composants ou d'autres services. Les services suivent le principe de séparation des
+                        préoccupations
+                        en déplaçant la logique métier hors des composants.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Principe clé :</strong> Les composants s'occupent de la présentation,
+                        les services gèrent les données et la logique métier.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Créer un Service -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Créer un Service</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user.service.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} HttpClient {{ '}' }} from '&#64;angular/common/http';
+import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+
+interface User {{ '{' }}
+  id: number;
+  name: string;
+  email: string;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }}
+  providedIn: 'root'  // Service singleton disponible dans toute l'app
+{{ '}' }})
+export class UserService {{ '{' }}
+  private apiUrl = 'https://api.example.com/users';
+
+  constructor(private http: HttpClient) {{ '{' }}{{ '}' }}
+
+  getUsers(): Observable&lt;User[]&gt; {{ '{' }}
+    return this.http.get&lt;User[]&gt;(this.apiUrl);
+  {{ '}' }}
+
+  getUserById(id: number): Observable&lt;User&gt; {{ '{' }}
+    return this.http.get&lt;User&gt;(`${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`);
+  {{ '}' }}
+
+  createUser(user: User): Observable&lt;User&gt; {{ '{' }}
+    return this.http.post&lt;User&gt;(this.apiUrl, user);
+  {{ '}' }}
+
+  updateUser(id: number, user: User): Observable&lt;User&gt; {{ '{' }}
+    return this.http.put&lt;User&gt;(`${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`, user);
+  {{ '}' }}
+
+  deleteUser(id: number): Observable&lt;void&gt; {{ '{' }}
+    return this.http.delete&lt;void&gt;(`${{ '{' }}this.apiUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user-list.component.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, OnInit {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} UserService {{ '}' }} from './user.service';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &lt;div class="users"&gt;
+      &#64;for (user of users; track user.id) {{ '{' }}
+        &lt;div class="user-card"&gt;
+          &lt;h3&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/h3&gt;
+          &lt;p&gt;{{ '{' }}{{ '{' }} user.email {{ '}' }}{{ '}' }}&lt;/p&gt;
+        &lt;/div&gt;
+      {{ '}' }}
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserListComponent implements OnInit {{ '{' }}
+  users: User[] = [];
+
+  // Injection du service dans le constructeur
+  constructor(private userService: UserService) {{ '{' }}{{ '}' }}
+
+  ngOnInit() {{ '{' }}
+    this.userService.getUsers().subscribe({{ '{' }}
+      next: (data) => this.users = data,
+      error: (err) => console.error('Error loading users', err)
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-lightbulb me-2"></i>
+                <strong>Commande CLI :</strong> Utilisez <code>ng generate service &lt;nom&gt;</code> ou
+                <code>ng g s &lt;nom&gt;</code>
+                pour générer un service.
+            </div>
+        </section>
+
+        <!-- Types de Services -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Services (Scope)</h2>
+
+            <div class="row g-4 mb-4">
+                @for (type of serviceTypes; track type.name) {
+                <div class="col-md-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-diagram-3 me-2"></i>{{ type.name }}
+                            </h5>
+                            <p class="card-text">{{ type.description }}</p>
+                            <div class="bg-light p-2 rounded">
+                                <code class="text-dark">providedIn: '{{ type.providedIn }}'</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemples de providedIn</span>
+                </div>
+                <pre><code class="language-typescript">// 1. Singleton (Application-wide)
+&#64;Injectable({{ '{' }}
+  providedIn: 'root'
+{{ '}' }})
+export class GlobalService {{ '{' }} {{ '}' }}
+
+// 2. Module-scoped
+&#64;Injectable({{ '{' }}
+  providedIn: FeatureModule
+{{ '}' }})
+export class FeatureService {{ '{' }} {{ '}' }}
+
+// 3. Component-scoped
+&#64;Component({{ '{' }}
+  selector: 'app-example',
+  providers: [ComponentService]  // Nouvelle instance par composant
+{{ '}' }})
+export class ExampleComponent {{ '{' }} {{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Cas d'Usage -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Cas d'Usage des Services</h2>
+
+            <div class="row g-3">
+                @for (useCase of useCases; track useCase) {
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                        <div>
+                            <strong>{{ useCase }}</strong>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <h3 class="h5 mb-3">Exemple : Service de Gestion d'État</h3>
+                <div class="code-example">
+                    <div class="code-header">
+                        <span class="language-badge">TypeScript</span>
+                        <span class="file-name">cart.service.ts</span>
+                    </div>
+                    <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} BehaviorSubject, Observable {{ '}' }} from 'rxjs';
+
+interface CartItem {{ '{' }}
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }}
+  providedIn: 'root'
+{{ '}' }})
+export class CartService {{ '{' }}
+  private cartItems = new BehaviorSubject&lt;CartItem[]&gt;([]);
+  
+  // Observable public pour les composants
+  cartItems$ = this.cartItems.asObservable();
+
+  addItem(item: CartItem) {{ '{' }}
+    const currentItems = this.cartItems.value;
+    const existingItem = currentItems.find(i => i.id === item.id);
+
+    if (existingItem) {{ '{' }}
+      existingItem.quantity += item.quantity;
+      this.cartItems.next([...currentItems]);
+    {{ '}' }} else {{ '{' }}
+      this.cartItems.next([...currentItems, item]);
+    {{ '}' }}
+  {{ '}' }}
+
+  removeItem(id: number) {{ '{' }}
+    const updated = this.cartItems.value.filter(item => item.id !== id);
+    this.cartItems.next(updated);
+  {{ '}' }}
+
+  getTotal(): number {{ '{' }}
+    return this.cartItems.value.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    );
+  {{ '}' }}
+
+  clearCart() {{ '{' }}
+    this.cartItems.next([]);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Avantages -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Avantages des Services</h2>
+
+            <div class="row g-4">
+                @for (advantage of advantages; track advantage) {
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">
+                                <i class="bi bi-star-fill me-2"></i>{{ advantage }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser <code>providedIn: 'root'</code> par défaut</li>
+                                <li>Nommer les services avec le suffixe <code>.service.ts</code></li>
+                                <li>Exposer des Observables pour les données asynchrones</li>
+                                <li>Garder les services focalisés (Single Responsibility)</li>
+                                <li>Utiliser des interfaces pour typer les données</li>
+                                <li>Implémenter la gestion d'erreurs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas mettre de logique UI dans les services</li>
+                                <li>Éviter les services trop génériques (God Object)</li>
+                                <li>Ne pas stocker l'état dans des propriétés simples</li>
+                                <li>Éviter les dépendances circulaires entre services</li>
+                                <li>Ne pas oublier de désouscrire des Observables</li>
+                                <li>Ne pas injecter des composants dans des services</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/di" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - Dependency Injection
+                </a>
+                <a href="https://angular.dev/guide/creating-injectable-service" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular Guide - Creating Injectable Services
+                </a>
+                <a href="https://angular.dev/best-practices/services" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-bookmark me-2"></i>Best Practices - Services
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/fundamentals/viewchild-contentchild"
+                        class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: ViewChild & ContentChild
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/services/dependency-injection" class="btn btn-primary">
+                        Suivant: Dependency Injection<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
++            </div>
+        </nav>
+    </div>
+</div>

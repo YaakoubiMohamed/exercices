@@ -3,10 +3,10 @@
 <div class="cart-container">
   <header class="cart-header">
     <h2>🛒 Panier d'Achat</h2>
-    <p class="item-count">{{ cartService.itemCount() }} article(s)</p>
+    <p class="item-count">{{ cartService.itemCount }} article(s)</p>
   </header>
   
-  @if (cartService.items().length === 0) {
+  @if (cartService.items.length === 0) {
     <div class="empty-cart">
       <p class="empty-icon">🛍️</p>
       <p class="empty-text">Votre panier est vide</p>
@@ -21,7 +21,7 @@
         <h3>Articles</h3>
         
         <div class="cart-items">
-          @for (item of cartService.items(); track item.product.id) {
+          @for (item of cartService.items; track item.product.id) {
             <div class="cart-item">
               @if (item.product.imageUrl) {
                 <img [src]="item.product.imageUrl" 
@@ -86,11 +86,11 @@
             </button>
           </form>
           
-          @if (promoMessage()) {
+          @if (promoMessage) {
             <p class="promo-message" 
-               [class.success]="promoMessage().includes('✅')"
-               [class.error]="promoMessage().includes('❌')">
-              {{ promoMessage() }}
+               [class.success]="promoMessage.includes('✅')"
+               [class.error]="promoMessage.includes('❌')">
+              {{ promoMessage }}
             </p>
           }
           
@@ -102,7 +102,7 @@
             💡 Voir les codes disponibles
           </button>
           
-          @if (showPromoHint()) {
+          @if (showPromoHint) {
             <div class="promo-hints">
               <p><strong>WELCOME10</strong> - 10% dès 50€</p>
               <p><strong>SAVE20</strong> - 20% dès 100€</p>
@@ -117,27 +117,27 @@
           
           <div class="summary-line">
             <span>Sous-total HT</span>
-            <span>{{ cartService.summary().subtotal | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+            <span>{{ cartService.summary.subtotal | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
           </div>
           
-          @if (cartService.summary().discount > 0) {
+          @if (cartService.summary.discount > 0) {
             <div class="summary-line discount">
               <span>💰 Remise</span>
               <span class="discount-amount">
-                -{{ cartService.summary().discount | currency:'EUR':'symbol':'1.2-2':'fr' }}
+                -{{ cartService.summary.discount | currency:'EUR':'symbol':'1.2-2':'fr' }}
               </span>
             </div>
           }
           
           <div class="summary-line">
             <span>TVA (20%)</span>
-            <span>{{ cartService.summary().tax | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+            <span>{{ cartService.summary.tax | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
           </div>
           
           <div class="summary-line total">
             <strong>TOTAL TTC</strong>
             <strong class="total-price">
-              {{ cartService.summary().total | currency:'EUR':'symbol':'1.2-2':'fr' }}
+              {{ cartService.summary.total | currency:'EUR':'symbol':'1.2-2':'fr' }}
             </strong>
           </div>
           

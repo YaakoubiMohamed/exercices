@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Exercices Angular 20');
+  protected readonly title = 'Exercices Angular 20';
   
   constructor(public router: Router) {}
   

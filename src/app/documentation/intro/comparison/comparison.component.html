@@ -1,0 +1,232 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Comparaison</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>⚖️ Angular vs React vs Vue</h1>
+      <p class="doc-subtitle">Comparaison objective des 3 grands frameworks front-end</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📊 Vue d'Ensemble</h2>
+      <div class="overview-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Critère</th>
+              <th>Angular</th>
+              <th>React</th>
+              <th>Vue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Type</strong></td>
+              <td>Framework complet</td>
+              <td>Library UI</td>
+              <td>Framework progressif</td>
+            </tr>
+            <tr>
+              <td><strong>Créé par</strong></td>
+              <td>Google (2016)</td>
+              <td>Meta/Facebook (2013)</td>
+              <td>Evan You (2014)</td>
+            </tr>
+            <tr>
+              <td><strong>Langage</strong></td>
+              <td>TypeScript (natif)</td>
+              <td>JavaScript (TS optionnel)</td>
+              <td>JavaScript (TS optionnel)</td>
+            </tr>
+            <tr>
+              <td><strong>Architecture</strong></td>
+              <td>MVC/MVVM Opinionated</td>
+              <td>Component-based Flexible</td>
+              <td>MVVM Progressif</td>
+            </tr>
+            <tr>
+              <td><strong>Bundle Size</strong></td>
+              <td>~150-300 KB</td>
+              <td>~40-100 KB</td>
+              <td>~20-80 KB</td>
+            </tr>
+            <tr>
+              <td><strong>Courbe d'apprentissage</strong></td>
+              <td>Élevée</td>
+              <td>Moyenne</td>
+              <td>Douce</td>
+            </tr>
+            <tr>
+              <td><strong>Adoption Enterprise</strong></td>
+              <td>⭐⭐⭐⭐⭐</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>⭐⭐⭐</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔍 Comparaison Détaillée</h2>
+      <div class="frameworks-grid">
+        @for (framework of frameworks; track framework.name) {
+          <div class="framework-card" [class]="framework.name.toLowerCase()">
+            <div class="framework-header">
+              <h3>{{ framework.name }}</h3>
+              <span class="framework-type">{{ framework.type }}</span>
+            </div>
+
+            <div class="framework-section">
+              <h4>✅ Points Forts</h4>
+              <ul class="pros-list">
+                @for (pro of framework.pros; track pro) {
+                  <li>{{ pro }}</li>
+                }
+              </ul>
+            </div>
+
+            <div class="framework-section">
+              <h4>⚠️ Points Faibles</h4>
+              <ul class="cons-list">
+                @for (con of framework.cons; track con) {
+                  <li>{{ con }}</li>
+                }
+              </ul>
+            </div>
+
+            <div class="framework-section best-for">
+              <h4>🎯 Idéal Pour</h4>
+              <ul>
+                @for (use of framework.bestFor; track use) {
+                  <li>{{ use }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💼 Critères de Choix</h2>
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <span class="criteria-icon">👥</span>
+          <h3>Taille de l'Équipe</h3>
+          <ul>
+            <li><strong>Petite équipe (1-5) :</strong> React ou Vue</li>
+            <li><strong>Moyenne équipe (5-20) :</strong> Vue ou Angular</li>
+            <li><strong>Grande équipe (20+) :</strong> Angular</li>
+          </ul>
+        </div>
+
+        <div class="criteria-card">
+          <span class="criteria-icon">🏢</span>
+          <h3>Type de Projet</h3>
+          <ul>
+            <li><strong>MVP/Prototype :</strong> Vue</li>
+            <li><strong>Application moyenne :</strong> React ou Vue</li>
+            <li><strong>Enterprise complexe :</strong> Angular</li>
+          </ul>
+        </div>
+
+        <div class="criteria-card">
+          <span class="criteria-icon">📚</span>
+          <h3>Niveau d'Expertise</h3>
+          <ul>
+            <li><strong>Débutants :</strong> Vue</li>
+            <li><strong>Intermédiaires :</strong> React</li>
+            <li><strong>Experts TypeScript :</strong> Angular</li>
+          </ul>
+        </div>
+
+        <div class="criteria-card">
+          <span class="criteria-icon">⏱️</span>
+          <h3>Time-to-Market</h3>
+          <ul>
+            <li><strong>Très rapide :</strong> Vue</li>
+            <li><strong>Rapide :</strong> React</li>
+            <li><strong>Setup initial plus long :</strong> Angular</li>
+          </ul>
+        </div>
+
+        <div class="criteria-card">
+          <span class="criteria-icon">🔒</span>
+          <h3>Besoins de Stabilité</h3>
+          <ul>
+            <li><strong>Stabilité maximale :</strong> Angular (LTS)</li>
+            <li><strong>Stabilité bonne :</strong> React</li>
+            <li><strong>Stabilité moyenne :</strong> Vue</li>
+          </ul>
+        </div>
+
+        <div class="criteria-card">
+          <span class="criteria-icon">🎨</span>
+          <h3>Flexibilité</h3>
+          <ul>
+            <li><strong>Maximale :</strong> React</li>
+            <li><strong>Bonne :</strong> Vue</li>
+            <li><strong>Limitée (opinionated) :</strong> Angular</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🏆 Verdict : Pas de Gagnant Absolu</h2>
+      <div class="verdict-box">
+        <p>
+          <strong>Il n'existe pas de "meilleur" framework.</strong> Chacun excelle dans des contextes différents :
+        </p>
+        <div class="verdict-grid">
+          <div class="verdict-item angular">
+            <h4>Choisissez Angular si...</h4>
+            <ul>
+              <li>Vous développez une application enterprise complexe</li>
+              <li>Vous avez une grande équipe nécessitant uniformité</li>
+              <li>TypeScript est obligatoire</li>
+              <li>Vous voulez tout inclus sans chercher</li>
+              <li>Stabilité long terme critique</li>
+            </ul>
+          </div>
+          <div class="verdict-item react">
+            <h4>Choisissez React si...</h4>
+            <ul>
+              <li>Vous voulez flexibilité maximale</li>
+              <li>Petite/moyenne équipe expérimentée</li>
+              <li>Écosystème innovant important</li>
+              <li>Bundle size critique</li>
+              <li>Besoins spécifiques nécessitant customisation</li>
+            </ul>
+          </div>
+          <div class="verdict-item vue">
+            <h4>Choisissez Vue si...</h4>
+            <ul>
+              <li>Courbe d'apprentissage prioritaire</li>
+              <li>Projet petit à moyen</li>
+              <li>Rapidité de développement critique</li>
+              <li>Équipe débutante ou mixte</li>
+              <li>MVP ou prototype</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/intro/architecture" class="nav-btn prev">
+        ← Architecture
+      </a>
+      <a routerLink="/documentation/intro/ecosystem" class="nav-btn next">
+        Écosystème →
+      </a>
+    </nav>
+  </article>
+</div>

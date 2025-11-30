@@ -1,13 +1,14 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /**
  * EXERCICE 2 : Service de gestion des tâches
  * 
- * TODO:
- * 1. Créer un signal pour stocker les tâches
- * 2. Implémenter les computed signals pour les filtres
- * 3. Implémenter les computed signals pour les statistiques
- * 4. Implémenter les méthodes CRUD
+ * Service utilisant RxJS pour la gestion d'état
+ * - BehaviorSubject pour les tâches
+ * - Observables pour les données dérivées
+ * - Méthodes CRUD pour manipuler les tâches
  */
 
 export interface Task {
@@ -30,37 +31,39 @@ export interface TaskStats {
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
-  // TODO: Créer le signal pour les tâches
-  private tasks = signal<Task[]>([]);
+  private tasksSubject = new BehaviorSubject<Task[]>([]);
   private nextId = 1;
 
-  // TODO: Exposer en lecture seule
-  readonly allTasks = this.tasks.asReadonly();
+  // Observable pour toutes les tâches
+  readonly allTasks$: Observable<Task[]> = this.tasksSubject.asObservable();
 
-  // Computed signal pour les tâches complétées
-  readonly completedTasks = computed(() => {
-    return this.tasks().filter(t => t.completed);
-  });
+  // Observable pour les tâches complétées
+  readonly completedTasks$: Observable<Task[]> = this.allTasks$.pipe(
+    map(tasks => tasks.filter(t => t.completed))
+  );
 
-  // Computed signal pour les tâches en cours
-  readonly pendingTasks = computed(() => {
-    return this.tasks().filter(t => !t.completed);
-  });
+  // Observable pour les tâches en cours
+  readonly pendingTasks$: Observable<Task[]> = this.allTasks$.pipe(
+    map(tasks => tasks.filter(t => !t.completed))
+  );
 
-  // Computed signal pour les statistiques
-  readonly stats = computed<TaskStats>(() => {
-    const tasks = this.tasks();
-    const completed = tasks.filter(t => t.completed).length;
-    const total = tasks.length;
-    return {
-      total,
-      completed,
-      pending: total - completed,
-      completionRate: total > 0 ? (completed / total) * 100 : 0
-    };
-  });
+  // Observable pour les statistiques
+  readonly stats$: Observable<TaskStats> = this.allTasks$.pipe(
+    map(tasks => {
+      const completed = tasks.filter(t => t.completed).length;
+      
+      const total = tasks.length;
+      return {
+        total,
+        completed,
+        pending: total - completed,
+        completionRate: total > 0 ? (completed / total) * 100 : 0
+      };
+    })
+  );
 
-  // Implémenter addTask
+
+  // Ajouter une tâche
   addTask(title: string, description: string, priority: TaskPriority): void {
     const newTask: Task = {
       id: this.nextId++,
@@ -70,29 +73,32 @@ export class TaskService {
       completed: false,
       createdAt: new Date()
     };
-    this.tasks.update(tasks => [...tasks, newTask]);
+    const currentTasks = this.tasksSubject.value;
+    this.tasksSubject.next([...currentTasks, newTask]); // Met à jour le BehaviorSubject avec la nouvelle liste de tâches
   }
 
-  // Implémenter toggleTask
+  // Basculer l'état d'une tâche
   toggleTask(id: number): void {
-    this.tasks.update(tasks =>
-      tasks.map(task =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+    const currentTasks = this.tasksSubject.value;
+    const updatedTasks = currentTasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
     );
+    this.tasksSubject.next(updatedTasks);
   }
 
-  // Implémenter deleteTask
+  // Supprimer une tâche
   deleteTask(id: number): void {
-    this.tasks.update(tasks => tasks.filter(task => task.id !== id));
+    const currentTasks = this.tasksSubject.value;
+  //  currentTasks.filter(task => task.id !== id)
+    this.tasksSubject.next(currentTasks.filter(task => task.id !== id));
   }
 
-  // Implémenter updateTask
+  // Mettre à jour une tâche
   updateTask(id: number, updates: Partial<Task>): void {
-    this.tasks.update(tasks =>
-      tasks.map(task =>
-        task.id === id ? { ...task, ...updates } : task
-      )
+    const currentTasks = this.tasksSubject.value;
+    const updatedTasks = currentTasks.map(task =>
+      task.id === id ? { ...task, ...updates } : task
     );
+    this.tasksSubject.next(updatedTasks);
   }
 }

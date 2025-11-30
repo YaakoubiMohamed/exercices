@@ -1,0 +1,241 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">FormBuilder</span>
+  </nav>
+
+  <header class="doc-header">
+    <h1>🏗️ FormBuilder & FormGroup</h1>
+    <p class="lead">Service pour créer des formulaires réactifs de manière concise et lisible</p>
+  </header>
+
+  <section class="doc-section">
+    <h2>Qu'est-ce que FormBuilder ?</h2>
+    <p>
+      <strong>FormBuilder</strong> est un service Angular qui fournit des méthodes pratiques pour créer des instances de FormControl, FormGroup et FormArray. Il réduit considérablement le code boilerplate nécessaire pour créer des formulaires complexes.
+    </p>
+
+    <div class="comparison-grid">
+      <div class="comparison-card">
+        <h3>❌ Sans FormBuilder</h3>
+        <div class="code-block">
+          <pre><code>userForm = new FormGroup({{ '{' }}
+  firstName: new FormControl('', Validators.required),
+  lastName: new FormControl('', Validators.required),
+  email: new FormControl('', [
+    Validators.required,
+    Validators.email
+  ])
+{{ '}' }});</code></pre>
+        </div>
+      </div>
+
+      <div class="comparison-card">
+        <h3>✅ Avec FormBuilder</h3>
+        <div class="code-block">
+          <pre><code>private fb = inject(FormBuilder);
+
+userForm = this.fb.group({{ '{' }}
+  firstName: ['', Validators.required],
+  lastName: ['', Validators.required],
+  email: ['', [Validators.required, Validators.email]]
+{{ '}' }});</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Injection du Service</h2>
+    <div class="code-block">
+      <pre><code>import {{ '{' }} FormBuilder {{ '}' }} from '&#64;angular/forms';
+import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+
+export class MyComponent {{ '{' }}
+  // Méthode moderne (inject function)
+  private fb = inject(FormBuilder);
+
+  // OU méthode classique (constructor injection)
+  constructor(private fb: FormBuilder) {{ '{' }}{{ '}' }}
+{{ '}' }}</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Méthodes Principales</h2>
+    <div class="card-grid">
+      @for (method of methods; track method.name) {
+        <div class="feature-card">
+          <h3>{{ method.name }}</h3>
+          <p>{{ method.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>FormGroups Imbriqués</h2>
+    <p>FormBuilder facilite la création de structures de formulaires complexes avec des groupes imbriqués :</p>
+    
+    <div class="code-block">
+      <pre><code>userForm = this.fb.group({{ '{' }}
+  personalInfo: this.fb.group({{ '{' }}
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    birthDate: ['']
+  {{ '}' }}),
+  contactInfo: this.fb.group({{ '{' }}
+    email: ['', [Validators.required, Validators.email]],
+    phone: ['', Validators.pattern(/^[0-9]{{ '{' }}10{{ '}' }}$/)]
+  {{ '}' }}),
+  address: this.fb.group({{ '{' }}
+    street: [''],
+    city: [''],
+    zipCode: ['', Validators.pattern(/^[0-9]{{ '{' }}5{{ '}' }}$/)]
+  {{ '}' }})
+{{ '}' }});</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <h3>🎮 Formulaire Imbriqué</h3>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <fieldset formGroupName="personalInfo">
+          <legend>Informations Personnelles</legend>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input formControlName="firstName">
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input formControlName="lastName">
+          </div>
+          <div class="form-group">
+            <label>Date de naissance</label>
+            <input type="date" formControlName="birthDate">
+          </div>
+        </fieldset>
+
+        <fieldset formGroupName="contactInfo">
+          <legend>Contact</legend>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" formControlName="email">
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input formControlName="phone" placeholder="0612345678">
+          </div>
+        </fieldset>
+
+        <fieldset formGroupName="address">
+          <legend>Adresse</legend>
+          <div class="form-group">
+            <label>Rue</label>
+            <input formControlName="street">
+          </div>
+          <div class="form-group">
+            <label>Ville</label>
+            <input formControlName="city">
+          </div>
+          <div class="form-group">
+            <label>Code postal</label>
+            <input formControlName="zipCode" placeholder="75001">
+          </div>
+        </fieldset>
+
+        <button type="submit" [disabled]="userForm.invalid">Soumettre</button>
+      </form>
+
+      <div class="form-value">
+        <h4>Valeur du formulaire :</h4>
+        <pre>{{ userForm.value | json }}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Accéder aux Contrôles Imbriqués</h2>
+    <div class="code-block">
+      <pre><code>// Méthode 1 : get() avec chemin
+const firstName = this.userForm.get('personalInfo.firstName');
+
+// Méthode 2 : Chaîner get()
+const email = this.userForm.get('contactInfo')?.get('email');
+
+// Méthode 3 : Getters pour réutilisation
+get personalInfo() {{ '{' }}
+  return this.userForm.get('personalInfo') as FormGroup;
+{{ '}' }}
+
+get contactInfo() {{ '{' }}
+  return this.userForm.get('contactInfo') as FormGroup;
+{{ '}' }}</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>FormBuilder NonNullable (Angular 14+)</h2>
+    <p>FormBuilder peut garantir des valeurs non-null pour éviter les undefined :</p>
+    
+    <div class="code-block">
+      <pre><code>// FormBuilder standard (peut retourner null)
+profileForm = this.fb.group({{ '{' }}
+  name: ['']  // Type: string | null
+{{ '}' }});
+
+// FormBuilder nonNullable
+profileForm = this.fb.nonNullable.group({{ '{' }}
+  name: ['']  // Type: string (jamais null)
+{{ '}' }});
+
+// Avantage : TypeScript sait que la valeur ne sera jamais null
+const name: string = this.profileForm.value.name;  // ✅ OK avec nonNullable</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bonnes Pratiques</h2>
+    <div class="practices-container">
+      <div class="practice-card good">
+        <h3>✅ À Faire</h3>
+        <ul>
+          <li>Utiliser inject() pour l'injection (Angular moderne)</li>
+          <li>Créer des getters pour les FormGroups fréquemment accédés</li>
+          <li>Utiliser nonNullable pour éviter les null checks</li>
+          <li>Organiser les formulaires complexes en groupes logiques</li>
+          <li>Typer les FormGroups avec des interfaces</li>
+        </ul>
+      </div>
+
+      <div class="practice-card bad">
+        <h3>❌ À Éviter</h3>
+        <ul>
+          <li>Créer des FormGroups trop profondément imbriqués (> 3 niveaux)</li>
+          <li>Accéder aux contrôles avec des chaînes magiques partout</li>
+          <li>Oublier de typer les FormGroups</li>
+          <li>Mélanger FormBuilder et constructeurs manuels</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Ressources</h2>
+    <div class="resources-list">
+      <a href="https://angular.dev/api/forms/FormBuilder" target="_blank" class="resource-link">
+        📖 API Reference - FormBuilder
+      </a>
+      <a href="https://angular.dev/guide/forms/reactive-forms" target="_blank" class="resource-link">
+        📖 Guide - Reactive Forms
+      </a>
+    </div>
+  </section>
+
+  <nav class="doc-navigation">
+    <a routerLink="/documentation/forms/reactive-forms" class="nav-button prev">← Reactive Forms</a>
+    <a routerLink="/documentation/forms/validation" class="nav-button next">Validation →</a>
+  </nav>
+</div>

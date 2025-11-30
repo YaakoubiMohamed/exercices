@@ -1,17 +1,18 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TaskService, TaskPriority } from './task.service';
+import { TaskService, TaskPriority, Task, TaskStats } from './task.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * EXERCICE 2 : Composant de gestion des tâches
  * 
- * TODO:
- * 1. Injecter le TaskService
- * 2. Créer les signals pour le formulaire
- * 3. Créer un signal pour le filtre actif
- * 4. Créer un computed signal pour les tâches affichées
- * 5. Implémenter les méthodes du composant
+ * Composant utilisant des Observables et le pattern subscribe/unsubscribe
+ * - Injection du TaskService
+ * - Propriétés pour le formulaire
+ * - Gestion du filtre actif
+ * - Souscription aux observables du service
  */
 
 type FilterType = 'all' | 'pending' | 'completed';
@@ -23,34 +24,60 @@ type FilterType = 'all' | 'pending' | 'completed';
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })
-export class TodoComponent {
-  // TODO: Injecter le service
+export class TodoComponent implements OnInit, OnDestroy {
   protected taskService = inject(TaskService);
+  private destroy$ = new Subject<void>();
 
-  // TODO: Créer les signals pour le formulaire
-  newTaskTitle = signal('');
-  newTaskDescription = signal('');
-  newTaskPriority = signal<TaskPriority>('medium');
+  // Propriétés pour le formulaire
+  newTaskTitle = '';
+  newTaskDescription = '';
+  newTaskPriority: TaskPriority = 'medium';
 
-  // TODO: Créer un signal pour le filtre
-  activeFilter = signal<FilterType>('all');
+  // Filtre actif
+  activeFilter: FilterType = 'all';
 
-  // Computed signal pour les tâches affichées selon le filtre
-  displayedTasks = computed(() => {
-    const filter = this.activeFilter();
-    switch (filter) {
+  // Données affichées
+  displayedTasks: Task[] = [];
+  stats: TaskStats = { total: 0, completed: 0, pending: 0, completionRate: 0 };
+
+  ngOnInit(): void {
+    // Souscription aux statistiques
+    this.taskService.stats$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(stats => this.stats = stats);
+
+    // Souscription aux tâches selon le filtre
+    this.updateDisplayedTasks();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // Mise à jour des tâches affichées selon le filtre
+  private updateDisplayedTasks(): void {
+    const observable = this.getTasksObservable();
+    observable
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(tasks => this.displayedTasks = tasks);
+  }
+
+  // Obtenir l'observable selon le filtre
+  private getTasksObservable() {
+    switch (this.activeFilter) {
       case 'completed':
-        return this.taskService.completedTasks();
+        return this.taskService.completedTasks$;
       case 'pending':
-        return this.taskService.pendingTasks();
+        return this.taskService.pendingTasks$;
       default:
-        return this.taskService.allTasks();
+        return this.taskService.allTasks$;
     }
-  });
+  }
 
-  // Méthode pour ajouter une tâche
+  // Ajouter une tâche
   addTask(): void {
-    const title = this.newTaskTitle().trim();
+    const title = this.newTaskTitle.trim();
     if (!title) {
       alert('Veuillez saisir un titre pour la tâche');
       return;
@@ -58,33 +85,34 @@ export class TodoComponent {
     
     this.taskService.addTask(
       title,
-      this.newTaskDescription(),
-      this.newTaskPriority()
+      this.newTaskDescription,
+      this.newTaskPriority
     );
     this.resetForm();
   }
 
-  // Méthode pour basculer l'état d'une tâche
+  // Basculer l'état d'une tâche
   toggleTask(id: number): void {
     this.taskService.toggleTask(id);
   }
 
-  // Méthode pour supprimer une tâche
+  // Supprimer une tâche
   deleteTask(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cette tâche ?')) {
       this.taskService.deleteTask(id);
     }
   }
 
-  // Méthode pour changer le filtre
+  // Changer le filtre
   setFilter(filter: FilterType): void {
-    this.activeFilter.set(filter);
+    this.activeFilter = filter;
+    this.updateDisplayedTasks();
   }
 
-  // Méthode pour réinitialiser le formulaire
+  // Réinitialiser le formulaire
   resetForm(): void {
-    this.newTaskTitle.set('');
-    this.newTaskDescription.set('');
-    this.newTaskPriority.set('medium');
+    this.newTaskTitle = '';
+    this.newTaskDescription = '';
+    this.newTaskPriority = 'medium';
   }
 }

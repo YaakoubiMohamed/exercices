@@ -1,0 +1,252 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Input/Output</span>
+    </nav>
+
+    <article class="doc-content">
+        <header class="doc-header">
+            <h1>🔄 Input & Output</h1>
+            <p class="doc-subtitle">Communication entre composants parent et enfant</p>
+        </header>
+
+        <section class="doc-section">
+            <h2>📋 Communication Parent-Enfant</h2>
+            <div class="definition-box">
+                <p>Les décorateurs <strong>@Input()</strong> et <strong>@Output()</strong> permettent la communication
+                    entre composants. @Input() permet au parent de passer des données à l'enfant, tandis que @Output()
+                    permet à l'enfant d'émettre des événements vers le parent.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>🔀 Patterns de Communication</h2>
+            <div class="patterns-grid">
+                @for (pattern of patterns; track pattern.name) {
+                <div class="pattern-card">
+                    <div class="pattern-header">
+                        <h3>{{ pattern.name }}</h3>
+                        <span class="direction-badge">{{ pattern.direction }}</span>
+                    </div>
+                    <div class="decorator-tag">{{ pattern.decorator }}</div>
+                    <p class="description">{{ pattern.description }}</p>
+                    <div class="example-box">
+                        <code>{{ pattern.example }}</code>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>📥 @Input() - Recevoir des Données</h2>
+            <div class="code-section">
+                <h3>Composant Enfant</h3>
+                <pre><code>import {{ '{' }} Component, Input {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-child',
+  template: `
+    &lt;div&gt;
+      &lt;h3&gt;{{ '{' }}{{ '{' }} title {{ '}' }}{{ '}' }}&lt;/h3&gt;
+      &lt;p&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/p&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class ChildComponent {{ '{' }}
+  @Input() title: string = '';
+  @Input() user!: User;
+  
+  // Avec alias
+  @Input('userName') name: string = '';
+  
+  // Avec transformation
+  @Input() 
+  set count(value: number) {{ '{' }}
+    this._count = value * 2;
+  {{ '}' }}
+  get count() {{ '{' }} return this._count; {{ '}' }}
+  private _count = 0;
+{{ '}' }}</code></pre>
+
+                <h3>Composant Parent</h3>
+                <pre><code>&lt;app-child 
+  [title]="pageTitle"
+  [user]="currentUser"
+  [userName]="username"
+  [count]="5"
+&gt;&lt;/app-child&gt;</code></pre>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>📤 @Output() - Émettre des Événements</h2>
+            <div class="code-section">
+                <h3>Composant Enfant</h3>
+                <pre><code>import {{ '{' }} Component, Output, EventEmitter {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-child',
+  template: `
+    &lt;button (click)="sendMessage()"&gt;Envoyer&lt;/button&gt;
+  `
+{{ '}' }})
+export class ChildComponent {{ '{' }}
+  @Output() messageEvent = new EventEmitter&lt;string&gt;();
+  @Output() userChanged = new EventEmitter&lt;User&gt;();
+  
+  sendMessage() {{ '{' }}
+    this.messageEvent.emit('Hello from child!');
+  {{ '}' }}
+  
+  updateUser(user: User) {{ '{' }}
+    this.userChanged.emit(user);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+
+                <h3>Composant Parent</h3>
+                <pre><code>&lt;app-child 
+  (messageEvent)="receiveMessage($event)"
+  (userChanged)="handleUserChange($event)"
+&gt;&lt;/app-child&gt;
+
+// Dans le composant
+receiveMessage(message: string) {{ '{' }}
+  console.log(message);
+{{ '}' }}
+
+handleUserChange(user: User) {{ '{' }}
+  this.currentUser = user;
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>↔️ Two-way Binding Personnalisé</h2>
+            <div class="twoway-box">
+                <p>Pour créer un binding bidirectionnel personnalisé [(value)], suivez cette convention:</p>
+                <pre><code>import {{ '{' }} Component, Input, Output, EventEmitter {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-counter',
+  template: `
+    &lt;button (click)="decrement()"&gt;-&lt;/button&gt;
+    &lt;span&gt;{{ '{' }}{{ '{' }} value {{ '}' }}{{ '}' }}&lt;/span&gt;
+    &lt;button (click)="increment()"&gt;+&lt;/button&gt;
+  `
+{{ '}' }})
+export class CounterComponent {{ '{' }}
+  @Input() value: number = 0;
+  @Output() valueChange = new EventEmitter&lt;number&gt;();
+  
+  increment() {{ '{' }}
+    this.value++;
+    this.valueChange.emit(this.value);
+  {{ '}' }}
+  
+  decrement() {{ '{' }}
+    this.value--;
+    this.valueChange.emit(this.value);
+  {{ '}' }}
+{{ '}' }}
+
+// Usage dans le parent
+&lt;app-counter [(value)]="count"&gt;&lt;/app-counter&gt;
+
+// Équivalent à:
+&lt;app-counter 
+  [value]="count" 
+  (valueChange)="count = $event"
+&gt;&lt;/app-counter&gt;</code></pre>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>🔒 Input avec Required & Transform</h2>
+            <div class="modern-features">
+                <h3>Input Required (Angular 16+)</h3>
+                <pre><code>import {{ '{' }} Component, Input {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent {{ '{' }}
+  // Input requis - erreur de compilation si absent
+  @Input({{ '{' }} required: true {{ '}' }}) userId!: string;
+  
+  // Input optionnel avec valeur par défaut
+  @Input() title: string = 'Default Title';
+{{ '}' }}</code></pre>
+
+                <h3>Input Transform (Angular 16+)</h3>
+                <pre><code>import {{ '{' }} Component, Input, booleanAttribute, numberAttribute {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}...{{ '}' }})
+export class MyComponent {{ '{' }}
+  // Transforme string en boolean
+  @Input({{ '{' }} transform: booleanAttribute {{ '}' }}) disabled: boolean = false;
+  
+  // Transforme string en number
+  @Input({{ '{' }} transform: numberAttribute {{ '}' }}) count: number = 0;
+  
+  // Transform personnalisé
+  @Input({{ '{' }} transform: (value: string) => value.toUpperCase() {{ '}' }}) 
+  name: string = '';
+{{ '}' }}
+
+// Usage
+&lt;app-my disabled count="5" name="john"&gt;&lt;/app-my&gt;</code></pre>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>✅ Bonnes Pratiques</h2>
+            <div class="best-practices">
+                <div class="practice-card good">
+                    <h3>✓ À Faire</h3>
+                    <ul>
+                        <li>Typer vos @Input() et @Output() avec des interfaces</li>
+                        <li>Utiliser required pour les inputs obligatoires</li>
+                        <li>Préfixer les Output avec "on" ou suffixer avec "Change"</li>
+                        <li>Documenter les inputs/outputs avec JSDoc</li>
+                        <li>Valider les inputs dans ngOnChanges</li>
+                        <li>Utiliser readonly pour les objets passés en Input</li>
+                    </ul>
+                </div>
+
+                <div class="practice-card bad">
+                    <h3>✗ À Éviter</h3>
+                    <ul>
+                        <li>Modifier directement les objets reçus via @Input</li>
+                        <li>Créer des chaînes d'événements trop longues</li>
+                        <li>Oublier de typer les EventEmitter</li>
+                        <li>Émettre dans le constructor ou ngOnInit</li>
+                        <li>Passer des fonctions complexes via @Input</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>📚 Ressources Officielles</h2>
+            <div class="resources">
+                <a href="https://angular.dev/guide/components/inputs" target="_blank" class="resource-link">
+                    📖 Guide @Input()
+                </a>
+                <a href="https://angular.dev/guide/components/outputs" target="_blank" class="resource-link">
+                    📤 Guide @Output()
+                </a>
+            </div>
+        </section>
+
+        <nav class="doc-navigation">
+            <a routerLink="/documentation/fundamentals/lifecycle-hooks" class="nav-btn prev">
+                ← Lifecycle Hooks
+            </a>
+            <a routerLink="/documentation/fundamentals/content-projection" class="nav-btn next">
+                Content Projection →
+            </a>
+        </nav>
+    </article>
+</div>

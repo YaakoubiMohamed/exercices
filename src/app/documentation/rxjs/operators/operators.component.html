@@ -1,0 +1,433 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Operators</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">RxJS Operators</h1>
+            <p class="lead text-muted">
+                Les opérateurs RxJS sont des fonctions qui permettent de transformer, filtrer, combiner et manipuler les
+                flux de données
+                des Observables. Ils constituent la boîte à outils essentielle pour la programmation réactive.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce qu'un Operator ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Un opérateur est une fonction pure qui prend un Observable en entrée et retourne un nouvel
+                        Observable en sortie.
+                        Les opérateurs permettent de composer des transformations complexes de manière déclarative et
+                        chainable via la méthode <code>pipe()</code>.
+                    </p>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} of {{ '}' }} from 'rxjs';
+import {{ '{' }} map, filter {{ '}' }} from 'rxjs/operators';
+
+of(1, 2, 3, 4, 5).pipe(
+  filter(x => x % 2 === 0),  // Garde uniquement les pairs
+  map(x => x * 10)            // Multiplie par 10
+).subscribe(console.log);
+
+// Output: 20, 40</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catégories -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Catégories d'Opérateurs</h2>
+
+            @for (category of operatorCategories; track category.name) {
+            <div class="mb-5">
+                <h3 class="h4 mb-3 text-primary">
+                    <i class="bi bi-tag me-2"></i>{{ category.name }}
+                </h3>
+
+                <div class="row g-3">
+                    @for (op of category.operators; track op.name) {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <code class="text-primary">{{ op.name }}</code>
+                                </h5>
+                                <p class="card-text small">{{ op.description }}</p>
+                                <div class="bg-light p-2 rounded">
+                                    <code class="small text-dark">{{ op.example }}</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </section>
+
+        <!-- Opérateurs Essentiels -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Opérateurs Essentiels en Détail</h2>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">map() - Transformation</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} of {{ '}' }} from 'rxjs';
+import {{ '{' }} map {{ '}' }} from 'rxjs/operators';
+
+const numbers$ = of(1, 2, 3, 4, 5);
+
+numbers$.pipe(
+  map(x => x * x)  // Carré de chaque nombre
+).subscribe(console.log);
+
+// Output: 1, 4, 9, 16, 25
+
+// Cas d'usage Angular
+this.http.get&lt;ApiResponse&gt;(url).pipe(
+  map(response => response.data)  // Extraire data
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">filter() - Filtrage</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} filter {{ '}' }} from 'rxjs/operators';
+
+const numbers$ = of(1, 2, 3, 4, 5);
+
+numbers$.pipe(
+  filter(x => x > 2)  // Garde seulement > 2
+).subscribe(console.log);
+
+// Output: 3, 4, 5
+
+// Cas d'usage Angular
+this.users$.pipe(
+  filter(users => users.length > 0)
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">tap() - Effet de bord</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} tap {{ '}' }} from 'rxjs/operators';
+
+this.http.get&lt;User[]&gt;(url).pipe(
+  tap(data => console.log('Données reçues:', data)),
+  map(data => data.filter(u => u.active)),
+  tap(filtered => console.log('Après filtre:', filtered))
+).subscribe(users => {{ '{' }}
+  // Ne change pas les données, juste logging
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">switchMap() - Changement de flux</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} switchMap {{ '}' }} from 'rxjs/operators';
+
+// Recherche avec annulation automatique
+this.searchInput$.pipe(
+  debounceTime(300),
+  switchMap(term => this.api.search(term))
+).subscribe(results => {{ '{' }}
+  // Annule la requête précédente si nouvelle recherche
+{{ '}' }});
+
+// Utile pour navigation entre pages
+this.route.params.pipe(
+  switchMap(params => this.api.getUser(params['id']))
+);</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">debounceTime() - Anti-rebond</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} debounceTime {{ '}' }} from 'rxjs/operators';
+
+// Attendre que l'utilisateur arrête de taper
+this.searchControl.valueChanges.pipe(
+  debounceTime(300),  // Attendre 300ms d'inactivité
+  switchMap(term => this.api.search(term))
+).subscribe(results => {{ '{' }}
+  this.searchResults = results;
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">catchError() - Gestion d'erreurs</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} catchError {{ '}' }} from 'rxjs/operators';
+import {{ '{' }} of {{ '}' }} from 'rxjs';
+
+this.http.get&lt;User[]&gt;(url).pipe(
+  catchError(error => {{ '{' }}
+    console.error('Erreur:', error);
+    return of([]);  // Retourne tableau vide
+  {{ '}' }})
+).subscribe(users => {{ '{' }}
+  this.users = users;
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">combineLatest() - Combiner</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} combineLatest {{ '}' }} from 'rxjs';
+
+const users$ = this.userService.getUsers();
+const settings$ = this.settingsService.getSettings();
+
+combineLatest([users$, settings$]).pipe(
+  map(([users, settings]) => {{ '{' }}
+    return {{ '{' }} users, settings {{ '}' }};
+  {{ '}' }})
+).subscribe(data => {{ '{' }}
+  console.log(data.users, data.settings);
+{{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3 class="h5 mb-3">shareReplay() - Partage/Cache</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} shareReplay {{ '}' }} from 'rxjs/operators';
+
+// Cache le résultat et partage entre souscripteurs
+export class DataService {{ '{' }}
+  users$ = this.http.get&lt;User[]&gt;(url).pipe(
+    shareReplay({{ '{' }} bufferSize: 1, refCount: true {{ '}' }})
+  );
+  
+  // Plusieurs subscribe = une seule requête HTTP
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chaînage -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Chaînage d'Opérateurs</h2>
+
+            <p>
+                La puissance de RxJS réside dans le chaînage d'opérateurs via <code>pipe()</code>.
+                Chaque opérateur transforme le flux et le passe au suivant.
+            </p>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple complet de chaînage</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} fromEvent {{ '}' }} from 'rxjs';
+import {{ '{' }} map, filter, debounceTime, distinctUntilChanged, switchMap {{ '}' }} from 'rxjs/operators';
+
+// Recherche auto-complète avec optimisations
+&#64;Component({{ '{' }}...{{ '}' }})
+export class SearchComponent {{ '{' }}
+  searchInput: ElementRef;
+  results$: Observable&lt;SearchResult[]&gt;;
+
+  ngAfterViewInit() {{ '{' }}
+    this.results$ = fromEvent(
+      this.searchInput.nativeElement, 
+      'input'
+    ).pipe(
+      // 1. Extraire la valeur
+      map((event: Event) => (event.target as HTMLInputElement).value),
+      
+      // 2. Attendre 300ms d'inactivité
+      debounceTime(300),
+      
+      // 3. Ignorer si même valeur
+      distinctUntilChanged(),
+      
+      // 4. Filtrer les termes trop courts
+      filter(term => term.length >= 3),
+      
+      // 5. Appeler l'API (annule les requêtes précédentes)
+      switchMap(term => this.searchService.search(term)),
+      
+      // 6. Gérer les erreurs
+      catchError(error => {{ '{' }}
+        console.error('Erreur de recherche:', error);
+        return of([]);
+      {{ '}' }}),
+      
+      // 7. Partager le résultat entre plusieurs composants
+      shareReplay({{ '{' }} bufferSize: 1, refCount: true {{ '}' }})
+    );
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Opérateurs de Haut Niveau -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Opérateurs de Haut Niveau (Higher-Order)</h2>
+
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Ces opérateurs gèrent des Observables qui émettent d'autres Observables. Ils "aplatissent" les flux
+                imbriqués.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">switchMap</h5>
+                            <p class="small">Annule l'Observable précédent quand nouveau arrive.</p>
+                            <div class="alert alert-light mb-0">
+                                <strong>Usage :</strong> Recherche, navigation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-success">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">mergeMap</h5>
+                            <p class="small">Garde tous les Observables actifs (parallèle).</p>
+                            <div class="alert alert-light mb-0">
+                                <strong>Usage :</strong> Upload de fichiers multiples
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning">concatMap</h5>
+                            <p class="small">Attend que l'Observable précédent se termine.</p>
+                            <div class="alert alert-light mb-0">
+                                <strong>Usage :</strong> Opérations séquentielles
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example mt-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Comparaison switchMap vs mergeMap vs concatMap</span>
+                </div>
+                <pre><code class="language-typescript">// switchMap - Annule la requête précédente
+// Bon pour: recherche, navigation
+this.searchTerm$.pipe(
+  switchMap(term => this.api.search(term))
+)
+
+// mergeMap - Toutes les requêtes en parallèle
+// Bon pour: uploads multiples, requêtes indépendantes
+this.fileUploads$.pipe(
+  mergeMap(file => this.api.uploadFile(file))
+)
+
+// concatMap - Une par une dans l'ordre
+// Bon pour: opérations qui doivent être séquentielles
+this.queue$.pipe(
+  concatMap(task => this.api.processTask(task))
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser <code>pipe()</code> pour chaîner les opérateurs</li>
+                                <li>Préférer <code>switchMap</code> pour les recherches/navigation</li>
+                                <li>Toujours gérer les erreurs avec <code>catchError</code></li>
+                                <li>Utiliser <code>shareReplay</code> pour éviter les requêtes multiples</li>
+                                <li>Combiner <code>debounceTime</code> + <code>distinctUntilChanged</code></li>
+                                <li>Utiliser <code>tap</code> pour le debugging</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas imbriquer les <code>subscribe()</code></li>
+                                <li>Éviter trop d'opérateurs dans un seul pipe (lisibilité)</li>
+                                <li>Ne pas oublier <code>catchError</code> dans les chaînes HTTP</li>
+                                <li>Éviter <code>mergeMap</code> si l'ordre est important</li>
+                                <li>Ne pas utiliser d'opérateurs qui modifient l'état</li>
+                                <li>Éviter les side-effects dans <code>map</code></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://rxjs.dev/guide/operators" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation RxJS - Operators
+                </a>
+                <a href="https://www.learnrxjs.io/learn-rxjs/operators" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-globe me-2"></i>Learn RxJS - Operators
+                </a>
+                <a href="https://rxmarbles.com/" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-diagram-3 me-2"></i>RxMarbles - Visualisation interactive
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/rxjs/subjects" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Subjects
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/rxjs/subscriptions" class="btn btn-primary">
+                        Suivant: Subscriptions<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

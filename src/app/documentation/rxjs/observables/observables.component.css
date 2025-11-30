@@ -1,0 +1,38 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.characteristics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.char-card {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border-top: 3px solid var(--primary-color);
+}
+
+.creation-methods-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.method-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  align-items: center;
+}
+
+.method-item code {
+  background: var(--code-bg);
+  padding: 0.5rem;
+  border-radius: 4px;
+}

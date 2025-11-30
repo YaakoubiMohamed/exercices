@@ -21,8 +21,8 @@ import { CartService } from '../cart.service';
            routerLinkActive="active"
            class="nav-btn cart-btn">
           🛒 Panier
-          @if (cartService.itemCount() > 0) {
-            <span class="badge">{{ cartService.itemCount() }}</span>
+          @if (cartService.itemCount > 0) {
+            <span class="badge">{{ cartService.itemCount }}</span>
           }
         </a>
       </div>

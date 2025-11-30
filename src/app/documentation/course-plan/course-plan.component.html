@@ -1,0 +1,99 @@
+<div class="course-plan-container">
+  <header class="course-header">
+    <h1>📚 Documentation du Cours Angular 20</h1>
+    <p class="subtitle">Guide complet des concepts utilisés dans ce projet</p>
+    <p class="description">
+      Explorez en détail tous les concepts Angular, TypeScript et RxJS utilisés dans les exercices.
+      Chaque section contient des explications claires, des exemples pratiques et des cas d'usage.
+    </p>
+  </header>
+
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <span class="current">Documentation</span>
+  </nav>
+
+  <section class="progress-info">
+    <div class="info-card">
+      <div class="info-icon">📖</div>
+      <div class="info-content">
+        <h3>{{ getTotalTopics() }} Sujets</h3>
+        <p>Concepts détaillés</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">🎯</div>
+      <div class="info-content">
+        <h3>{{ courseModules.length }} Modules</h3>
+        <p>Catégories principales</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">⚡</div>
+      <div class="info-content">
+        <h3>Angular 20</h3>
+        <p>Version moderne</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="modules-section">
+    <h2>📑 Plan du Cours</h2>
+    
+    @for (module of courseModules; track module.id) {
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-title">
+            <span class="module-icon">{{ module.icon }}</span>
+            <h3>{{ module.title }}</h3>
+          </div>
+          <span class="topics-count">{{ module.topics.length }} sujets</span>
+        </div>
+        
+        <p class="module-description">{{ module.description }}</p>
+        
+        <div class="topics-grid">
+          @for (topic of module.topics; track topic.id) {
+            <a [routerLink]="topic.route" class="topic-card">
+              <div class="topic-header">
+                <h4>{{ topic.name }}</h4>
+                <span class="difficulty-badge" [class]="getDifficultyClass(topic.difficulty)">
+                  {{ topic.difficulty }}
+                </span>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          }
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="help-section">
+    <div class="help-card">
+      <h3>💡 Comment utiliser cette documentation ?</h3>
+      <ul>
+        <li>📖 <strong>Lisez dans l'ordre</strong> pour une progression logique</li>
+        <li>🎯 <strong>Commencez par les bases</strong> si vous débutez avec Angular</li>
+        <li>🔍 <strong>Utilisez les badges de difficulté</strong> pour vous orienter</li>
+        <li>💻 <strong>Pratiquez avec les exercices</strong> après chaque section</li>
+      </ul>
+    </div>
+    
+    <div class="help-card">
+      <h3>🎓 Conseils d'apprentissage</h3>
+      <ul>
+        <li>✅ Prenez le temps de comprendre chaque concept</li>
+        <li>🔄 Revenez aux concepts précédents si nécessaire</li>
+        <li>💪 Pratiquez avec les exercices du projet</li>
+        <li>📚 Consultez la documentation officielle Angular</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <p>🚀 Prêt à commencer ? Choisissez un module ci-dessus !</p>
+    <a routerLink="/home" class="btn-back">← Retour aux exercices</a>
+  </footer>
+</div>

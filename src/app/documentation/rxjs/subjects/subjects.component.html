@@ -1,0 +1,543 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Subjects</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">RxJS Subjects</h1>
+            <p class="lead text-muted">
+                Un Subject est un type spécial d'Observable qui permet d'émettre des valeurs à plusieurs observateurs
+                simultanément.
+                C'est à la fois un Observable et un Observer, ce qui en fait un outil puissant pour la communication
+                entre composants.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce qu'un Subject ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Un <strong>Subject</strong> est un Observable spécial qui permet le <em>multicasting</em> :
+                        une seule exécution est partagée entre plusieurs souscripteurs. Contrairement aux Observables
+                        classiques
+                        (unicast), un Subject peut émettre des valeurs à tous ses observateurs en même temps.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Analogie :</strong> Un Subject est comme une station de radio qui diffuse à tous ses
+                        auditeurs en même temps,
+                        alors qu'un Observable classique est comme un lecteur CD personnel.
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="card border-secondary h-100">
+                        <div class="card-header bg-secondary text-white">
+                            Observable classique (Unicast)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">const obs$ = new Observable(subscriber => {{ '{' }}
+  console.log('Exécution!');
+  subscriber.next(Math.random());
+{{ '}' }});
+
+obs$.subscribe(v => console.log('A:', v));
+obs$.subscribe(v => console.log('B:', v));
+
+// Output:
+// Exécution!
+// A: 0.123
+// Exécution!
+// B: 0.456
+// Chaque subscribe = nouvelle exécution</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-primary h-100">
+                        <div class="card-header bg-primary text-white">
+                            Subject (Multicast)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">const subject = new Subject&lt;number&gt;();
+
+subject.subscribe(v => console.log('A:', v));
+subject.subscribe(v => console.log('B:', v));
+
+subject.next(Math.random());
+
+// Output:
+// A: 0.123
+// B: 0.123
+// Une seule valeur partagée !</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Types de Subjects -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Subjects</h2>
+
+            <div class="row g-4 mb-4">
+                @for (type of subjectTypes; track type.name) {
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-broadcast me-2"></i>{{ type.name }}
+                            </h5>
+                            <p><strong>Description :</strong> {{ type.description }}</p>
+                            <p><strong>Comportement :</strong> {{ type.behavior }}</p>
+                            <div class="alert alert-light mb-0">
+                                <small><strong>Usage :</strong> {{ type.useCase }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Subject de Base -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">1. Subject (de base)</h2>
+
+            <p>
+                Le Subject de base n'a pas de valeur initiale et n'émet que les valeurs futures aux nouveaux
+                souscripteurs.
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Subject basique</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Subject {{ '}' }} from 'rxjs';
+
+const subject = new Subject&lt;string&gt;();
+
+// Souscripteur 1
+subject.subscribe(value => console.log('Observer A:', value));
+
+subject.next('Premier message');
+subject.next('Deuxième message');
+
+// Souscripteur 2 (ne reçoit que les messages futurs)
+subject.subscribe(value => console.log('Observer B:', value));
+
+subject.next('Troisième message');
+
+// Output:
+// Observer A: Premier message
+// Observer A: Deuxième message
+// Observer A: Troisième message
+// Observer B: Troisième message  (seulement le dernier !)</code></pre>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Les nouveaux souscripteurs ne reçoivent pas les valeurs précédentes !
+            </div>
+        </section>
+
+        <!-- BehaviorSubject -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">2. BehaviorSubject</h2>
+
+            <p>
+                <code>BehaviorSubject</code> requiert une valeur initiale et émet immédiatement la dernière valeur aux
+                nouveaux souscripteurs.
+                C'est le type le plus utilisé pour la gestion d'état.
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">BehaviorSubject exemple</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} BehaviorSubject {{ '}' }} from 'rxjs';
+
+// Valeur initiale requise
+const userSubject = new BehaviorSubject&lt;string&gt;('Anonymous');
+
+// Observer 1
+userSubject.subscribe(name => console.log('A:', name));
+// Output: A: Anonymous  (valeur initiale immédiatement)
+
+userSubject.next('Alice');
+// Output: A: Alice
+
+// Observer 2 (reçoit la dernière valeur)
+userSubject.subscribe(name => console.log('B:', name));
+// Output: B: Alice  (dernière valeur reçue immédiatement)
+
+userSubject.next('Bob');
+// Output: A: Bob
+//         B: Bob
+
+// Récupérer la valeur actuelle
+console.log('Current:', userSubject.getValue());
+// Output: Current: Bob</code></pre>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Cas d'usage : State Management</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class AuthService {{ '{' }}
+  private currentUserSubject = 
+    new BehaviorSubject&lt;User | null&gt;(null);
+  
+  currentUser$ = this.currentUserSubject
+    .asObservable();
+
+  login(user: User) {{ '{' }}
+    this.currentUserSubject.next(user);
+  {{ '}' }}
+
+  logout() {{ '{' }}
+    this.currentUserSubject.next(null);
+  {{ '}' }}
+
+  getCurrentUser(): User | null {{ '{' }}
+    return this.currentUserSubject.getValue();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Utilisation dans un composant</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">&#64;Component({{ '{' }}
+  selector: 'app-header',
+  template: `
+    &#64;if (user$ | async; as user) {{ '{' }}
+      &lt;div&gt;Bonjour {{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+      &lt;button (click)="logout()"&gt;
+        Déconnexion
+      &lt;/button&gt;
+    {{ '}' }} &#64;else {{ '{' }}
+      &lt;button (click)="login()"&gt;
+        Connexion
+      &lt;/button&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class HeaderComponent {{ '{' }}
+  user$ = inject(AuthService).currentUser$;
+  
+  logout() {{ '{' }}
+    inject(AuthService).logout();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ReplaySubject -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">3. ReplaySubject</h2>
+
+            <p>
+                <code>ReplaySubject</code> enregistre les N dernières valeurs et les rejoue aux nouveaux souscripteurs.
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">ReplaySubject exemple</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} ReplaySubject {{ '}' }} from 'rxjs';
+
+// Garde les 3 dernières valeurs
+const messages$ = new ReplaySubject&lt;string&gt;(3);
+
+messages$.next('Message 1');
+messages$.next('Message 2');
+messages$.next('Message 3');
+messages$.next('Message 4');
+
+// Nouveau souscripteur reçoit les 3 derniers messages
+messages$.subscribe(msg => console.log('A:', msg));
+// Output:
+// A: Message 2
+// A: Message 3
+// A: Message 4
+
+// Avec temps limite (optionnel)
+const timedReplay$ = new ReplaySubject&lt;string&gt;(
+  100,        // Buffer size
+  500         // Time window (ms)
+);</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Cas d'usage : Historique de notifications</span>
+                </div>
+                <pre><code class="language-typescript">&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class NotificationService {{ '{' }}
+  // Garde les 10 dernières notifications
+  private notificationsSubject = new ReplaySubject&lt;Notification&gt;(10);
+  notifications$ = this.notificationsSubject.asObservable();
+
+  addNotification(message: string, type: 'info' | 'success' | 'error') {{ '{' }}
+    const notification: Notification = {{ '{' }}
+      id: Date.now(),
+      message,
+      type,
+      timestamp: new Date()
+    {{ '}' }};
+    this.notificationsSubject.next(notification);
+  {{ '}' }}
+{{ '}' }}
+
+// Composant qui affiche les notifications
+&#64;Component({{ '{' }}...{{ '}' }})
+export class NotificationsComponent {{ '{' }}
+  notifications$ = inject(NotificationService).notifications$;
+  
+  // Reçoit automatiquement les 10 dernières notifications
+  // dès la souscription !
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- AsyncSubject -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">4. AsyncSubject</h2>
+
+            <p>
+                <code>AsyncSubject</code> n'émet que la dernière valeur lorsque le Subject est <em>complété</em>.
+                Tous les observateurs reçoivent la même valeur finale.
+            </p>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">AsyncSubject exemple</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} AsyncSubject {{ '}' }} from 'rxjs';
+
+const asyncSubject = new AsyncSubject&lt;number&gt;();
+
+asyncSubject.subscribe(value => console.log('A:', value));
+
+asyncSubject.next(1);
+asyncSubject.next(2);
+asyncSubject.next(3);
+
+// Rien n'est émis encore...
+
+asyncSubject.subscribe(value => console.log('B:', value));
+
+asyncSubject.complete();  // Déclenche l'émission de la dernière valeur
+
+// Output:
+// A: 3
+// B: 3</code></pre>
+            </div>
+        </section>
+
+        <!-- Comparaison -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Tableau Comparatif</h2>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Fonctionnalité</th>
+                            <th>Subject</th>
+                            <th>BehaviorSubject</th>
+                            <th>ReplaySubject</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (comp of comparison; track comp.feature) {
+                        <tr>
+                            <td><strong>{{ comp.feature }}</strong></td>
+                            <td>{{ comp.subject }}</td>
+                            <td>{{ comp.behavior }}</td>
+                            <td>{{ comp.replay }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Cas d'Usage Pratiques</h2>
+
+            <div class="row g-3 mb-4">
+                @for (useCase of useCases; track useCase) {
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1 fs-5"></i>
+                        <div>
+                            <strong>{{ useCase }}</strong>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Event Bus avec Subject</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class EventBusService {{ '{' }}
+  private eventSubject = new Subject&lt;AppEvent&gt;();
+  events$ = this.eventSubject.asObservable();
+
+  emit(event: AppEvent) {{ '{' }}
+    this.eventSubject.next(event);
+  {{ '}' }}
+{{ '}' }}
+
+// Composant émetteur
+this.eventBus.emit({{ '{' }}
+  type: 'USER_LOGGED_IN',
+  payload: user
+{{ '}' }});
+
+// Composant récepteur
+this.eventBus.events$
+  .pipe(filter(e => e.type === 'USER_LOGGED_IN'))
+  .subscribe(event => {{ '{' }}
+    console.log('User logged in:', event.payload);
+  {{ '}' }});</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Communication Parent-Enfant</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Service partagé
+&#64;Injectable()
+export class DataSharingService {{ '{' }}
+  private dataSubject = new BehaviorSubject&lt;Data&gt;(
+    initialData
+  );
+  data$ = this.dataSubject.asObservable();
+
+  updateData(data: Data) {{ '{' }}
+    this.dataSubject.next(data);
+  {{ '}' }}
+{{ '}' }}
+
+// Parent
+export class ParentComponent {{ '{' }}
+  constructor(private sharing: DataSharingService) {{ '{' }}{{ '}' }}
+  
+  updateChild(newData: Data) {{ '{' }}
+    this.sharing.updateData(newData);
+  {{ '}' }}
+{{ '}' }}
+
+// Enfant
+export class ChildComponent {{ '{' }}
+  data$ = inject(DataSharingService).data$;
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser BehaviorSubject pour la gestion d'état</li>
+                                <li>Exposer un Observable (<code>asObservable()</code>) plutôt que le Subject</li>
+                                <li>Compléter les Subjects dans <code>ngOnDestroy</code></li>
+                                <li>Préfixer avec <code>$</code> les Observables publics</li>
+                                <li>Utiliser Subject pour event bus simple</li>
+                                <li>ReplaySubject pour historique/cache</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas exposer directement le Subject (encapsulation)</li>
+                                <li>Éviter BehaviorSubject sans valeur par défaut sensée</li>
+                                <li>Ne pas oublier de <code>complete()</code> les Subjects</li>
+                                <li>Éviter trop de Subjects (complexité)</li>
+                                <li>Ne pas utiliser Subject pour données HTTP (use shareReplay)</li>
+                                <li>Éviter les ReplaySubject avec buffer trop grand</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://rxjs.dev/guide/subject" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation RxJS - Subject
+                </a>
+                <a href="https://www.learnrxjs.io/learn-rxjs/subjects" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-globe me-2"></i>Learn RxJS - Subjects
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/rxjs/observables" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Observables
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/rxjs/operators" class="btn btn-primary">
+                        Suivant: Operators<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

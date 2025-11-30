@@ -1,0 +1,36 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.subject-types-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.subject-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.subject-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.subject-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.meta-item {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 4px;
+}
+
+.meta-item strong {
+  color: var(--primary-color);
+}

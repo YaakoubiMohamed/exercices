@@ -1,0 +1,436 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Génériques TypeScript</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Génériques TypeScript</h1>
+            <p class="lead text-muted">
+                Les génériques permettent de créer des composants réutilisables qui fonctionnent avec différents types
+                tout en maintenant la sécurité de type. Ils sont essentiels pour écrire du code flexible et type-safe.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Syntaxe de Base</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Fonction générique simple</span>
+                </div>
+                <pre><code class="language-typescript">// Sans génériques (perte de type)
+function identityAny(arg: any): any {{ '{' }}
+  return arg;
+{{ '}' }}
+
+// Avec génériques (type préservé)
+function identity&lt;T&gt;(arg: T): T {{ '{' }}
+  return arg;
+{{ '}' }}
+
+// Utilisation
+const num = identity&lt;number&gt;(42);        // num: number
+const str = identity&lt;string&gt;('hello');   // str: string
+const auto = identity(true);             // Inférence automatique: boolean
+</code></pre>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>T</strong> est une variable de type qui représente n'importe quel type. Les conventions
+                courantes sont T, U, V, K (Key), V (Value).
+            </div>
+        </section>
+
+        <!-- Avantages -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Avantages des Génériques</h2>
+
+            <div class="row g-4">
+                @for (benefit of benefits; track benefit.title) {
+                <div class="col-md-4">
+                    <div class="card h-100 border-success">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                {{ benefit.title }}
+                            </h5>
+                            <p class="card-text">{{ benefit.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Types de Génériques -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Génériques</h2>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Fonctions Génériques</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Fonction avec un type générique
+function wrapInArray&lt;T&gt;(value: T): T[] {{ '{' }}
+  return [value];
+{{ '}' }}
+
+// Fonction avec plusieurs types génériques
+function pair&lt;T, U&gt;(first: T, second: U): [T, U] {{ '{' }}
+  return [first, second];
+{{ '}' }}
+
+const result = pair&lt;string, number&gt;('age', 25);  // [string, number]
+
+// Arrow function générique
+const map = &lt;T, U&gt;(arr: T[], fn: (item: T) => U): U[] => {{ '{' }}
+  return arr.map(fn);
+{{ '}' }};
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Interfaces Génériques</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">interface Box&lt;T&gt; {{ '{' }}
+  value: T;
+{{ '}' }}
+
+const stringBox: Box&lt;string&gt; = {{ '{' }} value: 'hello' {{ '}' }};
+const numberBox: Box&lt;number&gt; = {{ '{' }} value: 42 {{ '}' }};
+
+// Interface générique avec méthodes
+interface Repository&lt;T&gt; {{ '{' }}
+  getAll(): T[];
+  getById(id: number): T | undefined;
+  create(item: T): T;
+  update(id: number, item: T): T;
+  delete(id: number): void;
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Classes Génériques</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">class GenericStorage&lt;T&gt; {{ '{' }}
+  private items: T[] = [];
+
+  add(item: T): void {{ '{' }}
+    this.items.push(item);
+  {{ '}' }}
+
+  get(index: number): T | undefined {{ '{' }}
+    return this.items[index];
+  {{ '}' }}
+
+  getAll(): T[] {{ '{' }}
+    return [...this.items];
+  {{ '}' }}
+{{ '}' }}
+
+const numberStorage = new GenericStorage&lt;number&gt;();
+numberStorage.add(1);
+numberStorage.add(2);
+
+const userStorage = new GenericStorage&lt;User&gt;();
+userStorage.add({{ '{' }} id: 1, name: 'John' {{ '}' }});
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contraintes -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Contraintes sur les Génériques</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-warning">
+                        <tr>
+                            <th style="width: 30%">Type de Contrainte</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (constraint of constraints; track constraint.type) {
+                        <tr>
+                            <td><strong>{{ constraint.type }}</strong></td>
+                            <td>{{ constraint.description }}</td>
+                            <td><code class="small">{{ constraint.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Extends Constraint</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// T doit avoir une propriété length
+function logLength&lt;T extends {{ '{' }} length: number {{ '}' }}&gt;(arg: T): void {{ '{' }}
+  console.log(arg.length);
+{{ '}' }}
+
+logLength('hello');     // ✅ string a length
+logLength([1, 2, 3]);   // ✅ array a length
+logLength(42);          // ❌ number n'a pas length
+
+// Contrainte d'interface
+interface HasId {{ '{' }}
+  id: number;
+{{ '}' }}
+
+function getById&lt;T extends HasId&gt;(items: T[], id: number): T | undefined {{ '{' }}
+  return items.find(item => item.id === id);
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Keyof Constraint</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// K doit être une clé de T
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {{ '{' }}
+  return obj[key];
+{{ '}' }}
+
+const person = {{ '{' }}
+  name: 'John',
+  age: 30,
+  email: 'john@example.com'
+{{ '}' }};
+
+const name = getProperty(person, 'name');    // ✅ string
+const age = getProperty(person, 'age');      // ✅ number
+const invalid = getProperty(person, 'xyz'); // ❌ Erreur
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Utility Types -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Utility Types Génériques</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Types utilitaires built-in</span>
+                </div>
+                <pre><code class="language-typescript">interface User {{ '{' }}
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+{{ '}' }}
+
+// Partial - Toutes les propriétés optionnelles
+type PartialUser = Partial&lt;User&gt;;
+const update: PartialUser = {{ '{' }} name: 'John' {{ '}' }};  // ✅
+
+// Required - Toutes les propriétés obligatoires
+type RequiredUser = Required&lt;PartialUser&gt;;
+
+// Readonly - Toutes les propriétés en lecture seule
+type ReadonlyUser = Readonly&lt;User&gt;;
+
+// Pick - Sélectionner certaines propriétés
+type UserPreview = Pick&lt;User, 'id' | 'name'&gt;;
+
+// Omit - Exclure certaines propriétés
+type UserPublic = Omit&lt;User, 'password'&gt;;
+
+// Record - Créer un type avec clés et valeurs
+type UserMap = Record&lt;number, User&gt;;
+const users: UserMap = {{ '{' }}
+  1: {{ '{' }} id: 1, name: 'John', email: 'john@example.com', password: 'xxx' {{ '}' }}
+{{ '}' }};
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Exemples Angular -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Génériques dans Angular</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Service Générique</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} HttpClient {{ '}' }} from '&#64;angular/common/http';
+import {{ '{' }} Observable {{ '}' }} from 'rxjs';
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class ApiService&lt;T&gt; {{ '{' }}
+  constructor(
+    private http: HttpClient,
+    private baseUrl: string
+  ) {{ '{' }}{{ '}' }}
+
+  getAll(): Observable&lt;T[]&gt; {{ '{' }}
+    return this.http.get&lt;T[]&gt;(this.baseUrl);
+  {{ '}' }}
+
+  getById(id: number): Observable&lt;T&gt; {{ '{' }}
+    return this.http.get&lt;T&gt;(`${{ '{' }}this.baseUrl{{ '}' }}/${{ '{' }}id{{ '}' }}`);
+  {{ '}' }}
+
+  create(item: T): Observable&lt;T&gt; {{ '{' }}
+    return this.http.post&lt;T&gt;(this.baseUrl, item);
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Composant avec Signal Générique</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Component, signal {{ '}' }} from '&#64;angular/core';
+
+interface ListState&lt;T&gt; {{ '{' }}
+  items: T[];
+  loading: boolean;
+  error: string | null;
+{{ '}' }}
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class GenericListComponent&lt;T&gt; {{ '{' }}
+  state = signal&lt;ListState&lt;T&gt;&gt;({{ '{' }}
+    items: [],
+    loading: false,
+    error: null
+  {{ '}' }});
+
+  loadItems(items: T[]) {{ '{' }}
+    this.state.update(s => ({{ '{' }}
+      ...s,
+      items,
+      loading: false
+    {{ '}' }}));
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">FormControl Typé</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} FormControl, FormGroup {{ '}' }} from '&#64;angular/forms';
+
+interface LoginForm {{ '{' }}
+  email: string;
+  password: string;
+  rememberMe: boolean;
+{{ '}' }}
+
+// Formulaire typé
+const loginForm = new FormGroup&lt;{{ '{' }}
+  [K in keyof LoginForm]: FormControl&lt;LoginForm[K] | null&gt;
+{{ '}' }}&gt;({{ '{' }}
+  email: new FormControl(''),
+  password: new FormControl(''),
+  rememberMe: new FormControl(false)
+{{ '}' }});
+
+// Type-safe access
+const email: string | null = loginForm.value.email;
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser des noms significatifs (T, K, V)</li>
+                                <li>Ajouter des contraintes quand nécessaire</li>
+                                <li>Laisser TypeScript inférer quand possible</li>
+                                <li>Utiliser les utility types built-in</li>
+                                <li>Documenter les paramètres génériques</li>
+                                <li>Combiner avec keyof pour type-safety</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser any au lieu de génériques</li>
+                                <li>Créer trop de paramètres génériques</li>
+                                <li>Oublier les contraintes nécessaires</li>
+                                <li>Utiliser génériques sans bénéfice</li>
+                                <li>Noms de types non conventionnels</li>
+                                <li>Généraliser trop tôt</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://www.typescriptlang.org/docs/handbook/2/generics.html" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>TypeScript Handbook - Generics
+                </a>
+                <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>TypeScript - Utility Types
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/typescript/interfaces" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Interfaces
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/typescript/decorators" class="btn btn-primary">
+                        Suivant: Décorateurs<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

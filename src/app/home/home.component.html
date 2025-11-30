@@ -3,7 +3,7 @@
     <h1> Exercices Angular 20</h1>
     <p class="subtitle">Maîtrisez les meilleures pratiques d'Angular 20</p>
     <p class="description">
-      Collection d'exercices progressifs pour apprendre les signals, le nouveau control flow,
+      Collection d'exercices progressifs pour apprendre le nouveau control flow,
       les reactive forms, HttpClient et bien plus encore !
     </p>
   </header>
@@ -11,16 +11,6 @@
   <section class="key-concepts">
     <h2>📚 Concepts couverts</h2>
     <div class="concepts-grid">
-      <div class="concept-card">
-        <div class="concept-icon">⚡</div>
-        <h3>Signals</h3>
-        <p>Gestion d'état réactive moderne</p>
-      </div>
-      <div class="concept-card">
-        <div class="concept-icon">🔄</div>
-        <h3>Computed Signals</h3>
-        <p>Calculs dérivés automatiques</p>
-      </div>
       <div class="concept-card">
         <div class="concept-icon">🏗️</div>
         <h3>Standalone Components</h3>
@@ -50,7 +40,7 @@
     <div class="exercises-grid">
       @for (exercise of exercises; track exercise.id) {
         <div class="exercise-card" 
-             [class.disabled]="exercise.route === '/exercice3' || exercise.route === '/exercice4' || exercise.route === '/exercice5'">
+             [class.disabled]="exercise.route === '/exercice4' || exercise.route === '/exercice5'">
           <div class="exercise-header">
             <span class="exercise-icon">{{ exercise.icon }}</span>
             <span class="difficulty-badge" [class]="getDifficultyClass(exercise.difficulty)">
@@ -81,50 +71,16 @@
     </div>
   </section>
 
-  <section class="demos-section">
-    <h2>🎓 Démonstrations Pédagogiques</h2>
-    <p class="section-subtitle">Comprenez les avantages des Signals avec des exemples concrets</p>
-    
-    <div class="demos-grid">
-      <div class="demo-card">
-        <div class="demo-icon">⚡</div>
-        <h3>Signals vs Traditional</h3>
-        <p class="demo-description">
-          Comparaison côte à côte : voyez la différence entre l'approche traditionnelle 
-          avec ChangeDetectorRef et la simplicité des signals
-        </p>
-        <div class="demo-highlights">
-          <span class="highlight-item">✨ Code plus simple</span>
-          <span class="highlight-item"> Meilleures performances</span>
-          <span class="highlight-item">🔄 Réactivité automatique</span>
-        </div>
-        <a routerLink="/demos/signals" class="btn-demo">
-          Voir la démo →
-        </a>
-      </div>
-
-      <div class="demo-card">
-        <div class="demo-icon">🔄</div>
-        <h3>Computed Signals</h3>
-        <p class="demo-description">
-          Découvrez la puissance des computed signals avec un exemple de panier d'achat : 
-          calculs automatiques et cascade de mises à jour
-        </p>
-        <div class="demo-highlights">
-          <span class="highlight-item"> Calculs dérivés</span>
-          <span class="highlight-item">⚙️ Mise à jour auto</span>
-          <span class="highlight-item">💡 Performance optimale</span>
-        </div>
-        <a routerLink="/demos/computed-signals" class="btn-demo">
-          Voir la démo →
-        </a>
-      </div>
-    </div>
-  </section>
-
   <section class="resources">
     <h2>📖 Ressources</h2>
     <div class="resources-grid">
+      <a routerLink="/documentation" class="resource-link featured">
+        <span>📚</span>
+        <div>
+          <strong>Documentation du Cours</strong>
+          <p>Guide complet des concepts Angular utilisés</p>
+        </div>
+      </a>
       <a href="https://angular.dev" target="_blank" class="resource-link">
         <span>📘</span>
         <div>
@@ -132,14 +88,7 @@
           <p>Documentation officielle Angular 20</p>
         </div>
       </a>
-      <a href="https://angular.dev/guide/signals" target="_blank" class="resource-link">
-        <span>⚡</span>
-        <div>
-          <strong>Guide des Signals</strong>
-          <p>Tout savoir sur les signals</p>
-        </div>
-      </a>
-      <a href="./td.md" class="resource-link">
+      <a href="https://github.com/YaakoubiMohamed/exercices/blob/master/td.md" target="_blank" class="resource-link">
         <span></span>
         <div>
           <strong>Énoncés détaillés</strong>

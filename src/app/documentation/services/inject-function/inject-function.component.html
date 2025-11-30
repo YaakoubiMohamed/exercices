@@ -1,0 +1,536 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Fonction inject()</span>
+    </nav>
+
+    <div class="doc-content">
+
+        <header class="mb-5">
+            <h1 class="display-4 mb-3">Fonction inject()</h1>
+            <p class="lead text-muted">
+                La fonction <code>inject()</code> est une API moderne d'Angular qui permet d'injecter des dépendances en
+                dehors
+                des constructeurs. Introduite dans Angular 14, elle simplifie l'injection et favorise la composition
+                fonctionnelle.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce que inject() ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        <code>inject()</code> est une fonction qui récupère une instance d'un service depuis l'injecteur
+                        Angular.
+                        Elle peut être utilisée dans le contexte d'injection (constructeur, initialisation de propriété,
+                        factory functions, etc.).
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Nouveauté Angular :</strong> Cette approche moderne est le standard recommandé pour les
+                        nouveaux projets Angular.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparaison -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Comparaison : Constructor vs inject()</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-secondary text-white">
+                            <i class="bi bi-hammer me-2"></i>Méthode Classique (Constructor)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">import {{ '{' }} Component {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} UserService {{ '}' }} from './user.service';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user',
+  template: '...'
+{{ '}' }})
+export class UserComponent {{ '{' }}
+  
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private http: HttpClient
+  ) {{ '{' }}{{ '}' }}
+
+  loadUsers() {{ '{' }}
+    this.userService.getUsers();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <i class="bi bi-stars me-2"></i>Méthode Moderne (inject)
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">import {{ '{' }} Component, inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} UserService {{ '}' }} from './user.service';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user',
+  template: '...'
+{{ '}' }})
+export class UserComponent {{ '{' }}
+  
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+
+  loadUsers() {{ '{' }}
+    this.userService.getUsers();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Avantages -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Avantages de inject()</h2>
+
+            <div class="row g-3 mb-4">
+                @for (advantage of advantages; track advantage) {
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1 fs-5"></i>
+                        <div>
+                            <strong>{{ advantage }}</strong>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple : Composition avec inject()</span>
+                </div>
+                <pre><code class="language-typescript">// Helper function réutilisable
+export function injectAuthUser() {{ '{' }}
+  const authService = inject(AuthService);
+  const userService = inject(UserService);
+  
+  return computed(() => {{ '{' }}
+    const userId = authService.currentUserId();
+    return userId ? userService.getUserById(userId) : null;
+  {{ '}' }});
+{{ '}' }}
+
+// Utilisation dans plusieurs composants
+&#64;Component({{ '{' }}...{{ '}' }})
+export class ProfileComponent {{ '{' }}
+  currentUser = injectAuthUser();  // Réutilisation simple !
+{{ '}' }}
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class DashboardComponent {{ '{' }}
+  currentUser = injectAuthUser();  // Même logique réutilisée
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Cas d'Usage -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Cas d'Usage Avancés</h2>
+
+            <div class="row g-4 mb-4">
+                @for (useCase of useCases; track useCase) {
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-lightbulb me-2"></i>{{ useCase }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">1. Injection dans les propriétés</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">export class MyComponent {{ '{' }}
+  // Propriété avec inject()
+  private logger = inject(LoggerService);
+  
+  // Avec modificateur optionnel
+  private analytics = inject(AnalyticsService, {{ '{' }}
+    optional: true
+  {{ '}' }});
+
+  logAction(action: string) {{ '{' }}
+    this.logger.log(action);
+    this.analytics?.track(action);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">2. Guards Fonctionnels</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Router {{ '}' }} from '&#64;angular/router';
+
+export const authGuard: CanActivateFn = () => {{ '{' }}
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) {{ '{' }}
+    return true;
+  {{ '}' }}
+
+  return router.createUrlTree(['/login']);
+{{ '}' }};</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">3. Resolvers Fonctionnels</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">export const userResolver: ResolveFn&lt;User&gt; = 
+  (route) => {{ '{' }}
+    const userService = inject(UserService);
+    const userId = route.params['id'];
+    
+    return userService.getUserById(userId);
+  {{ '}' }};
+
+// Utilisation dans les routes
+const routes: Routes = [
+  {{ '{' }}
+    path: 'user/:id',
+    component: UserComponent,
+    resolve: {{ '{' }} user: userResolver {{ '}' }}
+  {{ '}' }}
+];</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">4. Factory Functions</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Factory avec dépendances
+export function createLogger() {{ '{' }}
+  const config = inject(APP_CONFIG);
+  const http = inject(HttpClient);
+  
+  return new Logger(config.logLevel, http);
+{{ '}' }}
+
+// Provider
+{{ '{' }}
+  provide: Logger,
+  useFactory: createLogger
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Limitations -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Limitations et Contraintes</h2>
+
+            <div class="alert alert-warning mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Important :</strong> <code>inject()</code> ne peut être utilisé que dans le <strong>contexte
+                    d'injection</strong>.
+            </div>
+
+            <div class="row g-3 mb-4">
+                @for (limitation of limitations; track limitation) {
+                <div class="col-md-6">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                            {{ limitation }}
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>Ne Fonctionne PAS
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">export class MyComponent {{ '{' }}
+  
+  // ❌ Dans une méthode classique
+  loadData() {{ '{' }}
+    const service = inject(DataService);
+    // Error: inject() must be called from
+    // an injection context
+  {{ '}' }}
+
+  // ❌ Dans un setTimeout
+  ngOnInit() {{ '{' }}
+    setTimeout(() => {{ '{' }}
+      const service = inject(DataService);
+    {{ '}' }}, 1000);
+  {{ '}' }}
+
+  // ❌ Dans un callback async
+  async fetchData() {{ '{' }}
+    const data = await fetch('/api');
+    const service = inject(DataService);
+  {{ '}' }}
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>Fonctionne Correctement
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">export class MyComponent {{ '{' }}
+  
+  // ✅ Au niveau de la classe (field)
+  private service = inject(DataService);
+
+  // ✅ Dans le constructeur
+  constructor() {{ '{' }}
+    const service = inject(DataService);
+  {{ '}' }}
+
+  // ✅ Stocké puis utilisé
+  private dataService = inject(DataService);
+  
+  loadData() {{ '{' }}
+    // Utiliser la référence stockée
+    this.dataService.getData();
+  {{ '}' }}
+{{ '}' }}
+
+// ✅ Dans les fonctions standalone
+export const myGuard: CanActivateFn = () => {{ '{' }}
+  const auth = inject(AuthService);
+  return auth.isAuthenticated();
+{{ '}' }};</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Avec Signals -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Intégration avec Signals</h2>
+
+            <p>
+                <code>inject()</code> s'intègre parfaitement avec les Signals d'Angular pour créer des patterns réactifs
+                puissants.
+            </p>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user-list.component.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, inject, signal, computed, effect {{ '}' }} from '&#64;angular/core';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &lt;div&gt;
+      &lt;input [(ngModel)]="searchTerm" placeholder="Rechercher..."&gt;
+      
+      &lt;div class="user-count"&gt;
+        {{ '{' }}{{ '{' }} filteredCount() {{ '}' }}{{ '}' }} utilisateurs trouvés
+      &lt;/div&gt;
+
+      &#64;for (user of filteredUsers(); track user.id) {{ '{' }}
+        &lt;div class="user-card"&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+      {{ '}' }}
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserListComponent {{ '{' }}
+  private userService = inject(UserService);
+  
+  // Signals pour l'état
+  users = signal&lt;User[]&gt;([]);
+  searchTerm = signal('');
+  
+  // Computed signal pour le filtrage
+  filteredUsers = computed(() => {{ '{' }}
+    const term = this.searchTerm().toLowerCase();
+    return this.users().filter(u => 
+      u.name.toLowerCase().includes(term)
+    );
+  {{ '}' }});
+
+  filteredCount = computed(() => this.filteredUsers().length);
+
+  constructor() {{ '{' }}
+    // Charger les utilisateurs
+    this.userService.getUsers().subscribe(
+      data => this.users.set(data)
+    );
+
+    // Effect pour logger les changements
+    effect(() => {{ '{' }}
+      console.log('Filtered count:', this.filteredCount());
+    {{ '}' }});
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser <code>inject()</code> pour les nouveaux projets Angular</li>
+                                <li>Créer des helper functions réutilisables</li>
+                                <li>Stocker le résultat dans une propriété</li>
+                                <li>Combiner avec Signals pour la réactivité</li>
+                                <li>Utiliser dans les guards et resolvers fonctionnels</li>
+                                <li>Documenter les dépendances injectées</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne pas appeler dans des méthodes asynchrones</li>
+                                <li>Éviter d'appeler dans des callbacks</li>
+                                <li>Ne pas utiliser après l'initialisation du composant</li>
+                                <li>Éviter les appels multiples du même service</li>
+                                <li>Ne pas utiliser dans des setTimeout/setInterval</li>
+                                <li>Éviter dans les event handlers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Migration -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Migration depuis Constructor Injection</h2>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Les deux approches sont valides et peuvent coexister. La migration n'est pas obligatoire pour le code
+                existant.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h6 mb-3">Avant (Constructor)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">export class ProductComponent {{ '{' }}
+  
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {{ '{' }}{{ '}' }}
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h6 mb-3">Après (inject)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">export class ProductComponent {{ '{' }}
+  private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+{{ '}' }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/api/core/inject" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Documentation Angular - inject() API
+                </a>
+                <a href="https://angular.dev/guide/di/dependency-injection-context" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Injection Context
+                </a>
+                <a href="https://blog.angular.io/angular-v14-is-now-available-391a6db736af" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-newspaper me-2"></i>Angular v14 Release - inject() introduction
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/services/dependency-injection" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Dependency Injection
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/rxjs/observables" class="btn btn-primary">
+                        Suivant: Observables<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

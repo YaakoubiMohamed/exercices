@@ -1,0 +1,73 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.approaches-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.approach-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.approach-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.approach-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.approach-tools {
+  background: var(--code-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+}
+
+.signals-advantages {
+  display: grid;
+  gap: 0.75rem;
+  margin: 2rem 0;
+}
+
+.advantage-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+}
+
+.advantage-item::before {
+  content: '⚡';
+  font-size: 1.25rem;
+}
+
+.when-to-use-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+.when-to-use-table th,
+.when-to-use-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.when-to-use-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+}

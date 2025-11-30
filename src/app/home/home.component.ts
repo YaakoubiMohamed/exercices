@@ -24,19 +24,19 @@ export class HomeComponent {
     {
       id: 1,
       title: 'Calculateur de Notes',
-      description: 'Apprenez les signals, computed signals et le two-way binding',
+      description: 'Apprenez les Reactive Forms et la validation',
       route: '/exercice1',
       difficulty: 'Débutant',
-      topics: ['Signals', 'Computed', 'FormsModule', 'Two-way binding'],
+      topics: ['Reactive Forms', 'Validation', 'FormBuilder', 'FormGroup'],
       icon: ''
     },
     {
       id: 2,
       title: 'Gestionnaire de Tâches',
-      description: 'Services injectables, architecture clean et nouveau control flow',
+      description: 'Services injectables, RxJS et nouveau control flow',
       route: '/exercice2',
       difficulty: 'Intermédiaire',
-      topics: ['Services', 'Dependency Injection', '@for/@if', 'State Management'],
+      topics: ['Services', 'RxJS', 'BehaviorSubject', '@for/@if'],
       icon: '✅'
     },
     {
@@ -51,10 +51,10 @@ export class HomeComponent {
     {
       id: 4,
       title: 'Application Météo (À venir)',
-      description: 'HttpClient, RxJS, toSignal() et gestion des états',
+      description: 'HttpClient, RxJS et gestion des états',
       route: '/exercice4',
       difficulty: 'Avancé',
-      topics: ['HttpClient', 'RxJS', 'toSignal()', 'Interceptors'],
+      topics: ['HttpClient', 'RxJS', 'Observables', 'Interceptors'],
       icon: '🌐'
     },
     {
@@ -69,10 +69,10 @@ export class HomeComponent {
     {
       id: 6,
       title: 'Formulaire de Facture',
-      description: 'Manipulation de tableaux avec signals, calculs en cascade',
+      description: 'FormArray, calculs réactifs et validation',
       route: '/exercice6',
       difficulty: 'Intermédiaire',
-      topics: ['Signals', 'Arrays', 'Computed', 'Currency Pipe'],
+      topics: ['FormArray', 'Reactive Forms', 'Validation', 'Currency Pipe'],
       icon: '📄'
     }
   ];

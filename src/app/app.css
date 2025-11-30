@@ -55,6 +55,16 @@
   font-weight: 600;
 }
 
+.nav-link-doc {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-link-doc:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
 .nav-dropdown {
   position: relative;
   display: inline-block;

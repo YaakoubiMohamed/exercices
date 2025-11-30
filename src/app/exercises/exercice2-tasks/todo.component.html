@@ -4,19 +4,19 @@
   <!-- Statistiques -->
   <div class="stats-header">
     <div class="stat-card">
-      <span class="stat-value">{{ taskService.stats().total }}</span>
+      <span class="stat-value">{{ stats.total }}</span>
       <span class="stat-label">Total</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ taskService.stats().completed }}</span>
+      <span class="stat-value">{{ stats.completed }}</span>
       <span class="stat-label">Terminées</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ taskService.stats().pending }}</span>
+      <span class="stat-value">{{ stats.pending }}</span>
       <span class="stat-label">En cours</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ taskService.stats().completionRate.toFixed(0) }}%</span>
+      <span class="stat-value">{{ stats.completionRate.toFixed(0) }}%</span>
       <span class="stat-label">Progression</span>
     </div>
   </div>
@@ -59,19 +59,19 @@
   <div class="filters">
     <button 
       class="filter-btn"
-      [class.active]="activeFilter() === 'all'"
+      [class.active]="activeFilter === 'all'"
       (click)="setFilter('all')">
       Toutes
     </button>
     <button 
       class="filter-btn"
-      [class.active]="activeFilter() === 'pending'"
+      [class.active]="activeFilter === 'pending'"
       (click)="setFilter('pending')">
       En cours
     </button>
     <button 
       class="filter-btn"
-      [class.active]="activeFilter() === 'completed'"
+      [class.active]="activeFilter === 'completed'"
       (click)="setFilter('completed')">
       Terminées
     </button>
@@ -79,7 +79,7 @@
 
   <!-- Liste des tâches -->
   <div class="tasks-list">
-    @for (task of displayedTasks(); track task.id) {
+    @for (task of displayedTasks; track task.id) {
       <div class="task-card" 
            [class.completed]="task.completed"
            [class.priority-high]="task.priority === 'high'"

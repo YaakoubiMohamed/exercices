@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../product.service';
@@ -11,15 +11,15 @@ import { Product } from '../product.service';
   styleUrl: './product-card.component.css'
 })
 export class ProductCardComponent {
-  product = input.required<Product>();
-  addToCart = output<{ product: Product; quantity: number }>();
+  @Input({ required: true }) product!: Product;
+  @Output() addToCart = new EventEmitter<{ product: Product; quantity: number }>();
   
-  quantity = signal(1);
+  quantity = 1;
   
   onAddClick(): void {
     this.addToCart.emit({
-      product: this.product(),
-      quantity: this.quantity()
+      product: this.product,
+      quantity: this.quantity
     });
   }
 }

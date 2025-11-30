@@ -1,0 +1,57 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.decorator-types-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.decorator-type-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.decorator-type-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.examples-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.decorator-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--code-bg);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  border: 1px solid var(--border-color);
+}
+
+.angular-decorators-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.decorator-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+}
+
+.decorator-name {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-family: 'Courier New', monospace;
+}

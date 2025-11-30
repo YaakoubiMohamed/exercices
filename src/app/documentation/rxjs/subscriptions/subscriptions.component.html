@@ -1,0 +1,510 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Subscriptions</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Gestion des Subscriptions</h1>
+            <p class="lead text-muted">
+                La gestion appropriée des souscriptions est cruciale pour éviter les fuites mémoire dans les
+                applications Angular.
+                Découvrez les différentes stratégies pour se désouscrire proprement des Observables.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Pourquoi Gérer les Subscriptions ?</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p>
+                        Lorsque vous souscrivez à un Observable, Angular ne se désabonne pas automatiquement (sauf avec
+                        AsyncPipe).
+                        Si vous ne gérez pas les souscriptions, elles continuent d'exister même après la destruction du
+                        composant,
+                        causant des <strong>fuites mémoire</strong> et des <strong>comportements inattendus</strong>.
+                    </p>
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Danger :</strong> Une souscription non gérée peut causer des problèmes graves :
+                        consommation excessive de mémoire, appels API multiples, état incohérent.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Signes de Memory Leaks -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Signes de Fuites Mémoire</h2>
+
+            <div class="row g-3 mb-4">
+                @for (sign of memoryLeakSigns; track sign) {
+                <div class="col-md-6">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <i class="bi bi-bug text-danger me-2"></i>
+                            <strong>{{ sign }}</strong>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple de fuite mémoire</span>
+                </div>
+                <pre><code class="language-typescript">// ❌ MAUVAIS - Fuite mémoire !
+&#64;Component({{ '{' }}...{{ '}' }})
+export class BadComponent implements OnInit {{ '{' }}
+  
+  ngOnInit() {{ '{' }}
+    // Cette souscription ne se termine jamais
+    interval(1000).subscribe(n => {{ '{' }}
+      console.log('Tick:', n);
+    {{ '}' }});
+  {{ '}' }}
+  
+  // Le composant est détruit mais le subscribe continue !
+  // Après 10 navigations, 10 timers actifs en même temps
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Patterns de Désouscription -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Patterns de Désouscription</h2>
+
+            <div class="row g-4 mb-4">
+                @for (pattern of unsubscribePatterns; track pattern.name) {
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-gear me-2"></i>{{ pattern.name }}
+                            </h5>
+                            <p><strong>Description :</strong> {{ pattern.description }}</p>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="alert alert-success mb-0 py-1 px-2">
+                                        <small><strong>Pros :</strong> {{ pattern.pros }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="alert alert-warning mb-0 py-1 px-2">
+                                        <small><strong>Cons :</strong> {{ pattern.cons }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Pattern 1: Manual Unsubscribe -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">1. Manual Unsubscribe</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Une souscription</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, OnInit, OnDestroy {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Subscription {{ '}' }} from 'rxjs';
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class UserComponent implements OnInit, OnDestroy {{ '{' }}
+  private subscription: Subscription;
+
+  ngOnInit() {{ '{' }}
+    this.subscription = this.userService.getUsers()
+      .subscribe(users => this.users = users);
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    // Se désouscrire manuellement
+    if (this.subscription) {{ '{' }}
+      this.subscription.unsubscribe();
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Multiples souscriptions</span>
+                </div>
+                <pre><code class="language-typescript">&#64;Component({{ '{' }}...{{ '}' }})
+export class DashboardComponent implements OnInit, OnDestroy {{ '{' }}
+  private subscriptions = new Subscription();
+
+  ngOnInit() {{ '{' }}
+    // Ajouter plusieurs souscriptions
+    this.subscriptions.add(
+      this.userService.getUsers().subscribe(u => this.users = u)
+    );
+    
+    this.subscriptions.add(
+      this.productService.getProducts().subscribe(p => this.products = p)
+    );
+    
+    this.subscriptions.add(
+      this.orderService.getOrders().subscribe(o => this.orders = o)
+    );
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    // Se désabonne de toutes les souscriptions en une fois
+    this.subscriptions.unsubscribe();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+        </section>
+
+        <!-- Pattern 2: takeUntil -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">2. takeUntil Pattern (Recommandé)</h2>
+
+            <p>
+                Le pattern <code>takeUntil</code> utilise un Subject qui émet lors de la destruction du composant,
+                déclenchant automatiquement la désouscription de tous les Observables.
+            </p>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">takeUntil Pattern</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, OnInit, OnDestroy {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Subject {{ '}' }} from 'rxjs';
+import {{ '{' }} takeUntil {{ '}' }} from 'rxjs/operators';
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class UserComponent implements OnInit, OnDestroy {{ '{' }}
+  private destroy$ = new Subject&lt;void&gt;();
+
+  ngOnInit() {{ '{' }}
+    // Toutes les souscriptions utilisent takeUntil
+    this.userService.getUsers().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(users => this.users = users);
+
+    this.productService.getProducts().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(products => this.products = products);
+
+    this.route.params.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => this.loadData(params));
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    // Émet une valeur pour déclencher takeUntil
+    this.destroy$.next();
+    this.destroy$.complete();
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong>Avantage :</strong> Centralisé, élégant, facile à maintenir. Un seul endroit pour gérer toutes
+                les désouscriptions.
+            </div>
+        </section>
+
+        <!-- Pattern 3: AsyncPipe -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">3. AsyncPipe (La Meilleure Solution)</h2>
+
+            <p>
+                Le <code>async pipe</code> gère automatiquement la souscription et la désouscription.
+                C'est la solution la plus simple et la plus sûre !
+            </p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-secondary h-100">
+                        <div class="card-header bg-secondary text-white">
+                            Sans AsyncPipe
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">// Component
+export class UserListComponent 
+  implements OnInit, OnDestroy {{ '{' }}
+  
+  users: User[] = [];
+  private destroy$ = new Subject&lt;void&gt;();
+
+  ngOnInit() {{ '{' }}
+    this.userService.getUsers().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(users => this.users = users);
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    this.destroy$.next();
+    this.destroy$.complete();
+  {{ '}' }}
+{{ '}' }}
+
+// Template
+&#64;for (user of users; track user.id) {{ '{' }}
+  &lt;div&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            Avec AsyncPipe ✅
+                        </div>
+                        <div class="card-body">
+                            <div class="code-example">
+                                <pre><code class="language-typescript">// Component
+export class UserListComponent {{ '{' }}
+  users$ = this.userService.getUsers();
+  
+  // Pas besoin de ngOnInit !
+  // Pas besoin de ngOnDestroy !
+  // Pas de gestion manuelle !
+{{ '}' }}
+
+// Template
+&#64;for (user of users$ | async; track user.id) {{ '{' }}
+  &lt;div&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/div&gt;
+{{ '}' }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success mt-4">
+                <i class="bi bi-star me-2"></i>
+                <strong>Recommandation :</strong> Utilisez AsyncPipe autant que possible. C'est la solution la plus
+                simple et la plus sûre.
+            </div>
+        </section>
+
+        <!-- Pattern 4: take(1) -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">4. take(1) - Pour Valeur Unique</h2>
+
+            <p>
+                Si vous savez qu'un Observable émet une seule valeur puis se termine, utilisez <code>take(1)</code>.
+            </p>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">take(1) pour HTTP requests</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} take {{ '}' }} from 'rxjs/operators';
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class ProductComponent {{ '{' }}
+  
+  loadProduct(id: number) {{ '{' }}
+    // HTTP request émet une seule valeur
+    this.productService.getProduct(id).pipe(
+      take(1)  // Se désabonne automatiquement après 1 émission
+    ).subscribe(product => {{ '{' }}
+      this.product = product;
+    {{ '}' }});
+  {{ '}' }}
+
+  // Pas besoin de ngOnDestroy pour ce cas
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note :</strong> Les requêtes HTTP d'Angular se terminent automatiquement après une émission,
+                mais <code>take(1)</code> rend l'intention explicite.
+            </div>
+        </section>
+
+        <!-- Cas Particuliers -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Cas Particuliers</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white">
+                            Pas Besoin de Désouscrire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Requêtes HTTP (se terminent automatiquement)</li>
+                                <li>Observables avec <code>take(n)</code></li>
+                                <li>Observables avec <code>first()</code></li>
+                                <li>AsyncPipe dans le template</li>
+                                <li><code>ActivatedRoute.snapshot</code> (pas un Observable)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-danger">
+                        <div class="card-header bg-danger text-white">
+                            Toujours Désouscrire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li><code>interval()</code> et <code>timer()</code></li>
+                                <li><code>fromEvent()</code> (événements DOM)</li>
+                                <li>Subjects personnalisés</li>
+                                <li><code>ActivatedRoute.params</code> / <code>queryParams</code></li>
+                                <li>Observables infinis (WebSocket, etc.)</li>
+                                <li>Observables de formulaires</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-3 mb-4">
+                @for (practice of bestPractices; track practice) {
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1 fs-5"></i>
+                        <div>
+                            <strong>{{ practice }}</strong>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser AsyncPipe par défaut</li>
+                                <li>takeUntil pour les souscriptions manuelles</li>
+                                <li>Implémenter OnDestroy si subscribe manuel</li>
+                                <li>Vérifier les DevTools pour les memory leaks</li>
+                                <li>take(1) pour valeurs uniques</li>
+                                <li>Tester la destruction des composants</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Ne jamais oublier de se désouscrire</li>
+                                <li>Éviter les subscribe dans subscribe (nested)</li>
+                                <li>Ne pas assumer que HTTP se désabonne</li>
+                                <li>Éviter les souscriptions dans les constructeurs</li>
+                                <li>Ne pas créer de nouvelles souscriptions dans ngOnChanges</li>
+                                <li>Éviter de stocker trop de Subscriptions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debugging -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Debugging et Détection</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Détecter les fuites avec finalize</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} finalize {{ '}' }} from 'rxjs/operators';
+
+&#64;Component({{ '{' }}...{{ '}' }})
+export class DebugComponent implements OnInit, OnDestroy {{ '{' }}
+  
+  ngOnInit() {{ '{' }}
+    this.dataService.getData().pipe(
+      finalize(() => console.log('Observable completed or unsubscribed'))
+    ).subscribe(data => console.log(data));
+  {{ '}' }}
+
+  ngOnDestroy() {{ '{' }}
+    console.log('Component destroyed');
+    // Si finalize n'est pas appelé, il y a un problème !
+  {{ '}' }}
+{{ '}' }}</code></pre>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-tools me-2"></i>
+                <strong>Outils :</strong> Utilisez Chrome DevTools Memory Profiler pour détecter les fuites mémoire et
+                vérifier
+                que les composants sont bien détruits.
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/best-practices/keep-up-to-date" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular Best Practices
+                </a>
+                <a href="https://rxjs.dev/api/index/class/Subscription" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>RxJS Documentation - Subscription
+                </a>
+                <a href="https://blog.angular.io/angular-tools-for-high-performance-6e10fb9a0f4a" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-newspaper me-2"></i>Angular Performance Tools
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/rxjs/operators" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Operators
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/http/http-client" class="btn btn-primary">
+                        Suivant: HttpClient<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

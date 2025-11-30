@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService, ProductCategory } from '../product.service';
 import { CartService } from '../cart.service';
@@ -17,20 +17,18 @@ export class ProductListComponent {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   
-  private selectedCategory = signal<ProductCategory | ''>('');
-  private searchQuery = signal('');
+  private selectedCategory: ProductCategory | '' = '';
+  private searchQuery = '';
   
-  filteredProducts = computed(() => {
-    let products = this.productService.allProducts();
+  get filteredProducts(): Product[] {
+    let products = this.productService.getAllProducts();
     
-    const category = this.selectedCategory();
-    if (category) {
-      products = products.filter(p => p.category === category);
+    if (this.selectedCategory) {
+      products = products.filter(p => p.category === this.selectedCategory);
     }
     
-    const query = this.searchQuery();
-    if (query) {
-      const lowerQuery = query.toLowerCase();
+    if (this.searchQuery) {
+      const lowerQuery = this.searchQuery.toLowerCase();
       products = products.filter(p =>
         p.name.toLowerCase().includes(lowerQuery) ||
         p.description.toLowerCase().includes(lowerQuery)
@@ -38,18 +36,20 @@ export class ProductListComponent {
     }
     
     return products;
-  });
+  }
   
-  productCount = computed(() => this.filteredProducts().length);
+  get productCount(): number {
+    return this.filteredProducts.length;
+  }
   
   onCategoryChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
-    this.selectedCategory.set(value as ProductCategory | '');
+    this.selectedCategory = value as ProductCategory | '';
   }
   
   onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
+    this.searchQuery = value;
   }
   
   onAddToCart(data: { product: Product; quantity: number }): void {

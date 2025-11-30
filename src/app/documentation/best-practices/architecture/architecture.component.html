@@ -1,0 +1,419 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Architecture</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Architecture Angular</h1>
+            <p class="lead text-muted">
+                Une architecture bien structurée est essentielle pour maintenir, faire évoluer et tester votre
+                application Angular.
+                Suivre les bonnes pratiques d'organisation facilite le travail en équipe et la scalabilité du projet.
+            </p>
+        </header>
+
+        <!-- Principes de Base -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Principes Architecturaux</h2>
+
+            <div class="row g-4">
+                @for (principle of architecturePrinciples; track principle.title) {
+                <div class="col-md-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-star text-warning me-2"></i>
+                                {{ principle.title }}
+                            </h5>
+                            <p class="card-text">{{ principle.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Structure de Dossiers -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Structure de Dossiers Recommandée</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Dossier</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Contenu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (folder of folderStructure; track folder.name) {
+                        <tr>
+                            <td><code>{{ folder.name }}</code></td>
+                            <td>{{ folder.description }}</td>
+                            <td>{{ folder.content }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">Bash</span>
+                    <span class="file-name">Structure de projet</span>
+                </div>
+                <pre><code>src/
+├── app/
+│   ├── core/                  # Singleton services, guards, interceptors
+│   │   ├── services/
+│   │   │   ├── auth.service.ts
+│   │   │   └── api.service.ts
+│   │   ├── guards/
+│   │   │   └── auth.guard.ts
+│   │   └── interceptors/
+│   │       └── auth.interceptor.ts
+│   │
+│   ├── shared/                # Composants, directives, pipes réutilisables
+│   │   ├── components/
+│   │   │   ├── button/
+│   │   │   └── modal/
+│   │   ├── directives/
+│   │   │   └── highlight.directive.ts
+│   │   └── pipes/
+│   │       └── truncate.pipe.ts
+│   │
+│   ├── features/              # Modules métier (lazy loaded)
+│   │   ├── products/
+│   │   │   ├── components/
+│   │   │   ├── services/
+│   │   │   ├── models/
+│   │   │   ├── product.routes.ts
+│   │   │   └── index.ts
+│   │   │
+│   │   └── users/
+│   │       ├── components/
+│   │       ├── services/
+│   │       ├── models/
+│   │       └── user.routes.ts
+│   │
+│   ├── layout/                # Layout components (header, footer, sidebar)
+│   │   ├── header/
+│   │   ├── footer/
+│   │   └── sidebar/
+│   │
+│   ├── models/                # Models et interfaces globaux
+│   │   ├── user.model.ts
+│   │   └── api-response.model.ts
+│   │
+│   ├── app.component.ts
+│   ├── app.routes.ts
+│   └── app.config.ts
+│
+├── assets/                    # Images, fonts, etc.
+├── environments/              # Configuration par environnement
+└── styles/                    # Styles globaux
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Core vs Shared -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Core vs Shared vs Features</h2>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-cpu me-2"></i>Core Module
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Principe :</strong> Importé UNE seule fois dans AppModule</p>
+                            <p class="mb-3"><strong>Contient :</strong></p>
+                            <ul class="mb-3">
+                                <li>Services singleton (AuthService, LoggerService)</li>
+                                <li>Guards globaux</li>
+                                <li>HTTP Interceptors</li>
+                                <li>Configuration globale</li>
+                            </ul>
+                            <div class="alert alert-warning small mb-0">
+                                <strong>Note :</strong> Ne pas importer dans feature modules!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-share me-2"></i>Shared Module
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Principe :</strong> Importé partout où nécessaire</p>
+                            <p class="mb-3"><strong>Contient :</strong></p>
+                            <ul class="mb-3">
+                                <li>Composants réutilisables (Button, Modal)</li>
+                                <li>Directives communes</li>
+                                <li>Pipes personnalisés</li>
+                                <li>Modules tiers (FormsModule, etc.)</li>
+                            </ul>
+                            <div class="alert alert-success small mb-0">
+                                <strong>Note :</strong> Pas de services avec état!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <i class="bi bi-puzzle me-2"></i>Feature Modules
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Principe :</strong> Lazy loaded par route</p>
+                            <p class="mb-3"><strong>Contient :</strong></p>
+                            <ul class="mb-3">
+                                <li>Composants métier spécifiques</li>
+                                <li>Services de feature (ProductService)</li>
+                                <li>Models du domaine</li>
+                                <li>Routes du module</li>
+                            </ul>
+                            <div class="alert alert-info small mb-0">
+                                <strong>Note :</strong> Auto-suffisants et isolés
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Standalone Components -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Architecture avec Standalone Components</h2>
+
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Depuis Angular 14+, les standalone components éliminent le besoin de NgModules dans la plupart des cas.
+            </div>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Structure moderne (Standalone)</span>
+                </div>
+                <pre><code class="language-typescript">// app.config.ts - Configuration centralisée
+export const appConfig: ApplicationConfig = {{ '{' }}
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideAnimations(),
+    // Services core
+    AuthService,
+    ApiService
+  ]
+{{ '}' }};
+
+// app.routes.ts - Routes avec lazy loading
+export const routes: Routes = [
+  {{ '{' }}
+    path: 'products',
+    loadComponent: () => import('./features/products/product-list.component')
+      .then(m => m.ProductListComponent)
+  {{ '}' }},
+  {{ '{' }}
+    path: 'users',
+    loadChildren: () => import('./features/users/user.routes')
+      .then(m => m.USER_ROUTES)
+  {{ '}' }}
+];
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Feature module standalone</span>
+                </div>
+                <pre><code class="language-typescript">// features/products/product-list.component.ts
+import {{ '{' }} Component {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} CommonModule {{ '}' }} from '&#64;angular/common';
+import {{ '{' }} ProductCardComponent {{ '}' }} from './product-card.component';
+import {{ '{' }} ProductService {{ '}' }} from './product.service';
+
+&#64;Component({{ '{' }}
+  selector: 'app-product-list',
+  standalone: true,
+  imports: [CommonModule, ProductCardComponent],
+  providers: [ProductService],  // Service au niveau du composant
+  template: `
+    &#64;for (product of products(); track product.id) {{ '{' }}
+      &lt;app-product-card [product]="product" /&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class ProductListComponent {{ '{' }}{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Patterns d'Architecture -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Patterns d'Architecture</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Smart vs Presentational Components</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Smart Component (Container)
+&#64;Component({{ '{' }}
+  selector: 'app-user-list-container',
+  template: `
+    &lt;app-user-list
+      [users]="users()"
+      [loading]="loading()"
+      (userSelected)="onUserSelected($event)"
+    /&gt;
+  `
+{{ '}' }})
+export class UserListContainerComponent {{ '{' }}
+  private userService = inject(UserService);
+  users = signal&lt;User[]&gt;([]);
+  loading = signal(false);
+
+  ngOnInit() {{ '{' }}
+    this.loadUsers();
+  {{ '}' }}
+{{ '}' }}
+
+// Presentational Component (Dumb)
+&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &#64;for (user of users; track user.id) {{ '{' }}
+      &lt;div (click)="userSelected.emit(user)"&gt;
+        {{ '{{' }} user.name {{ '}}' }}
+      &lt;/div&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class UserListComponent {{ '{' }}
+  &#64;Input() users: User[] = [];
+  &#64;Input() loading = false;
+  &#64;Output() userSelected = new EventEmitter&lt;User&gt;();
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Facade Pattern</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Facade simplifie l'accès à plusieurs services
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class UserFacade {{ '{' }}
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
+
+  // État centralisé
+  users$ = this.userService.getUsers();
+  currentUser$ = this.authService.currentUser$;
+
+  // Actions simplifiées
+  async createUser(user: User) {{ '{' }}
+    try {{ '{' }}
+      const newUser = await this.userService.create(user);
+      this.notificationService.success('Utilisateur créé');
+      return newUser;
+    {{ '}' }} catch (error) {{ '{' }}
+      this.notificationService.error('Erreur création');
+      throw error;
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser standalone components (Angular 14+)</li>
+                                <li>Lazy load les feature modules</li>
+                                <li>Séparer core, shared et features</li>
+                                <li>Un composant = une responsabilité</li>
+                                <li>Services singleton dans providedIn: 'root'</li>
+                                <li>Organiser par feature, pas par type</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Tout mettre dans app.component</li>
+                                <li>Services avec état dans shared/</li>
+                                <li>Importer core module partout</li>
+                                <li>Composants de 1000+ lignes</li>
+                                <li>Logique métier dans composants</li>
+                                <li>Dépendances circulaires entre features</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/style-guide" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular Style Guide
+                </a>
+                <a href="https://angular.dev/guide/standalone-components" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Standalone Components
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/typescript/decorators" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Décorateurs
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/best-practices/state-management" class="btn btn-primary">
+                        Suivant: State Management<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
++            </div>
+        </nav>
+    </div>
+</div>

@@ -1,6 +1,6 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, FormGroup, Validators, FormsModule } from '@angular/forms';
 
 interface InvoiceItem {
   id: number;
@@ -12,103 +12,111 @@ interface InvoiceItem {
 @Component({
   selector: 'app-invoice',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule ,ReactiveFormsModule],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css'
 })
 export class InvoiceComponent {
-  // Informations client
-  customerName = signal('');
-  customerEmail = signal('');
-  customerAddress = signal('');
+  private fb = new FormBuilder();
 
-  // Liste des articles (writable signal)
-  items = signal<InvoiceItem[]>([]);
+  // Formulaire principal
+  invoiceForm = this.fb.group({
+    // Informations client
+    customerName: ['', Validators.required],
+    customerEmail: ['', [Validators.required, Validators.email]],
+    customerAddress: [''],
+    
+    // Taux de TVA (par défaut 19%)
+    vatRate: [19, [Validators.required, Validators.min(0), Validators.max(100)]],
+    
+    // Liste des articles (FormArray)
+    items: this.fb.array([])
+  });
 
-  // Taux de TVA (par défaut 19%)
-  vatRate = signal(19);
-
-  // Pour le formulaire d'ajout d'article
-  newItemName = signal('');
-  newItemQuantity = signal(1);
-  newItemPrice = signal(0);
+  // Formulaire pour ajouter un nouvel article
+  newItemForm = this.fb.group({
+    name: ['', Validators.required],
+    quantity: [1, [Validators.required, Validators.min(1)]],
+    unitPrice: [0, [Validators.required, Validators.min(0)]]
+  });
 
   // Compteur pour les IDs uniques
   private nextId = 1;
 
-  // Computed signals pour les calculs
+  // Getter pour accéder au FormArray des articles
+  get itemsFormArray(): FormArray {
+    return this.invoiceForm.get('items') as FormArray;
+  }
 
   // Calcul du sous-total (somme de tous les articles)
-  subtotal = computed(() => {
-    return this.items().reduce((sum, item) => {
+  get subtotal(): number {
+    return this.itemsFormArray.controls.reduce((sum, control) => {
+      const item = control.value;
       return sum + (item.quantity * item.unitPrice);
     }, 0);
-  });
+  }
 
   // Calcul du montant de TVA
-  vatAmount = computed(() => {
-    return this.subtotal() * (this.vatRate() / 100);
-  });
+  get vatAmount(): number {
+    const vatRate = this.invoiceForm.get('vatRate')?.value || 0;
+    return this.subtotal * (vatRate / 100);
+  }
 
   // Calcul du total TTC
-  total = computed(() => {
-    return this.subtotal() + this.vatAmount();
-  });
+  get total(): number {
+    return this.subtotal + this.vatAmount;
+  }
 
   // Statistiques supplémentaires
-  itemCount = computed(() => this.items().length);
-  
-  totalQuantity = computed(() => {
-    return this.items().reduce((sum, item) => sum + item.quantity, 0);
-  });
+  get itemCount(): number {
+    return this.itemsFormArray.length;
+  }
+
+  get totalQuantity(): number {
+    return this.itemsFormArray.controls.reduce((sum, control) => {
+      return sum + (control.value.quantity || 0);
+    }, 0);
+  }
 
   // Ajouter un article
   addItem(): void {
-    const name = this.newItemName().trim();
-    
-    if (!name) {
-      alert('Le nom de l\'article est requis');
+    if (this.newItemForm.invalid) {
+      alert('Veuillez remplir tous les champs correctement');
       return;
     }
     
-    if (this.newItemQuantity() <= 0) {
-      alert('La quantité doit être supérieure à 0');
-      return;
-    }
+    const formValue = this.newItemForm.value;
+    const newItem = this.fb.group({
+      id: [this.nextId++],
+      name: [formValue.name, Validators.required],
+      quantity: [formValue.quantity, [Validators.required, Validators.min(1)]],
+      unitPrice: [formValue.unitPrice, [Validators.required, Validators.min(0)]]
+    });
     
-    if (this.newItemPrice() < 0) {
-      alert('Le prix ne peut pas être négatif');
-      return;
-    }
-    
-    const newItem: InvoiceItem = {
-      id: this.nextId++,
-      name: this.newItemName(),
-      quantity: this.newItemQuantity(),
-      unitPrice: this.newItemPrice()
-    };
-    
-    // Mise à jour immutable du signal
-    this.items.update(current => [...current, newItem]);
+    // Ajouter au FormArray
+    this.itemsFormArray.push(newItem);
     
     // Réinitialiser le formulaire
-    this.resetItemForm();
+    this.newItemForm.reset({
+      name: '',
+      quantity: 1,
+      unitPrice: 0
+    });
   }
 
   // Supprimer un article
-  removeItem(id: number): void {
-    this.items.update(current => current.filter(item => item.id !== id));
-  }
-
-  // Réinitialiser le formulaire d'article
-  resetItemForm(): void {
-    this.newItemName.set('');
-    this.newItemQuantity.set(1);
-    this.newItemPrice.set(0);
+  removeItem(index: number): void {
+    this.itemsFormArray.removeAt(index);
   }
 
   // Calculer le montant d'une ligne
-  getLineTotal(item: InvoiceItem): number {
+  getLineTotal(index: number): number {
+    const item = this.itemsFormArray.at(index).value;
     return item.quantity * item.unitPrice;
+  }
+
+  // Obtenir le FormGroup d'un article spécifique
+  getItemFormGroup(index: number): FormGroup {
+    return this.itemsFormArray.at(index) as FormGroup;
   }
 }

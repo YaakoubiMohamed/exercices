@@ -1,0 +1,448 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">Décorateurs TypeScript</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">Décorateurs TypeScript</h1>
+            <p class="lead text-muted">
+                Les décorateurs sont des fonctions spéciales qui permettent d'ajouter des métadonnées et de modifier le
+                comportement
+                des classes, méthodes, propriétés et paramètres. Ils sont fondamentaux dans Angular.
+            </p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Qu'est-ce qu'un Décorateur ?</h2>
+
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Un décorateur est une fonction qui commence par <code>@</code> et qui est appliquée à une classe,
+                méthode, propriété ou paramètre.
+                Il s'exécute au moment de la déclaration (pas à l'exécution).
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Syntaxe de base</span>
+                </div>
+                <pre><code class="language-typescript">// Décorateur simple
+function Component(config: any) {{ '{' }}
+  return function (target: any) {{ '{' }}
+    console.log('Component decorator called');
+  {{ '}' }};
+{{ '}' }}
+
+// Utilisation
+&#64;Component({{ '{' }}
+  selector: 'app-example',
+  template: '&lt;h1&gt;Hello&lt;/h1&gt;'
+{{ '}' }})
+class ExampleComponent {{ '{' }}{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Types de Décorateurs -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Types de Décorateurs</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Type</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Exemple Angular</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (type of decoratorTypes; track type.type) {
+                        <tr>
+                            <td><code>{{ type.type }}</code></td>
+                            <td>{{ type.description }}</td>
+                            <td><code class="small">{{ type.example }}</code></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Décorateurs de Classe -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Décorateurs de Classe</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Création d'un Décorateur</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Factory function qui retourne le décorateur
+function Sealed(constructor: Function) {{ '{' }}
+  Object.seal(constructor);
+  Object.seal(constructor.prototype);
+{{ '}' }}
+
+// Utilisation
+&#64;Sealed
+class BugReport {{ '{' }}
+  type = "report";
+  title: string;
+
+  constructor(t: string) {{ '{' }}
+    this.title = t;
+  {{ '}' }}
+{{ '}' }}
+
+// La classe est maintenant scellée
+BugReport.prototype.newProperty = 'test'; // ❌ Erreur
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Décorateur avec Paramètres</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// Factory avec paramètres
+function Component(config: {{ '{' }}
+  selector: string;
+  template: string;
+{{ '}' }}) {{ '{' }}
+  return function (constructor: Function) {{ '{' }}
+    constructor.prototype.selector = config.selector;
+    constructor.prototype.template = config.template;
+  {{ '}' }};
+{{ '}' }}
+
+&#64;Component({{ '{' }}
+  selector: 'app-user',
+  template: '&lt;h1&gt;User&lt;/h1&gt;'
+{{ '}' }})
+class UserComponent {{ '{' }}{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Décorateurs de Propriété -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Décorateurs de Propriété</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple: @ReadOnly</span>
+                </div>
+                <pre><code class="language-typescript">function ReadOnly(target: any, propertyKey: string) {{ '{' }}
+  Object.defineProperty(target, propertyKey, {{ '{' }}
+    writable: false
+  {{ '}' }});
+{{ '}' }}
+
+class Person {{ '{' }}
+  &#64;ReadOnly
+  name: string = 'John';
+{{ '}' }}
+
+const person = new Person();
+person.name = 'Jane';  // ❌ Erreur: property is read-only
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Exemple Angular: @Input()</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Component, Input {{ '}' }} from '&#64;angular/core';
+
+&#64;Component({{ '{' }}
+  selector: 'app-user-card',
+  template: `
+    &lt;div class="card"&gt;
+      &lt;h3&gt;{{ '{{' }} name {{ '}}' }}&lt;/h3&gt;
+      &lt;p&gt;{{ '{{' }} email {{ '}}' }}&lt;/p&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class UserCardComponent {{ '{' }}
+  &#64;Input() name!: string;
+  &#64;Input() email!: string;
+  
+  // Avec alias
+  &#64;Input('userName') displayName!: string;
+  
+  // Avec transformation
+  &#64;Input({{ '{' }} transform: (value: string) => value.toUpperCase() {{ '}' }})
+  title!: string;
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Décorateurs de Méthode -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Décorateurs de Méthode</h2>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Exemple: Logger</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">function Log(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {{ '{' }}
+  const originalMethod = descriptor.value;
+
+  descriptor.value = function (...args: any[]) {{ '{' }}
+    console.log(`Calling ${{ '{' }}propertyKey{{ '}' }} with`, args);
+    const result = originalMethod.apply(this, args);
+    console.log(`Result:`, result);
+    return result;
+  {{ '}' }};
+
+  return descriptor;
+{{ '}' }}
+
+class Calculator {{ '{' }}
+  &#64;Log
+  add(a: number, b: number): number {{ '{' }}
+    return a + b;
+  {{ '}' }}
+{{ '}' }}
+
+const calc = new Calculator();
+calc.add(2, 3);
+// Console: Calling add with [2, 3]
+// Console: Result: 5
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">Exemple: Debounce</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">function Debounce(delay: number) {{ '{' }}
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {{ '{' }}
+    const originalMethod = descriptor.value;
+    let timeout: any;
+
+    descriptor.value = function (...args: any[]) {{ '{' }}
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {{ '{' }}
+        originalMethod.apply(this, args);
+      {{ '}' }}, delay);
+    {{ '}' }};
+
+    return descriptor;
+  {{ '}' }};
+{{ '}' }}
+
+class SearchComponent {{ '{' }}
+  &#64;Debounce(500)
+  onSearch(query: string) {{ '{' }}
+    console.log('Searching for:', query);
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Décorateurs Angular -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Décorateurs Angular Principaux</h2>
+
+            <div class="row g-4">
+                @for (decorator of angularDecorators; track decorator.name) {
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <code>{{ decorator.name }}</code>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">{{ decorator.description }}</p>
+                            <div class="code-example small">
+                                <pre><code class="language-typescript">{{ decorator.example }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Décorateurs Personnalisés -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Créer des Décorateurs Personnalisés</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">measure-performance.decorator.ts</span>
+                </div>
+                <pre><code class="language-typescript">export function MeasurePerformance(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {{ '{' }}
+  const originalMethod = descriptor.value;
+
+  descriptor.value = async function (...args: any[]) {{ '{' }}
+    const start = performance.now();
+    
+    try {{ '{' }}
+      const result = await originalMethod.apply(this, args);
+      const end = performance.now();
+      console.log(`${{ '{' }}propertyKey{{ '}' }} took ${{ '{' }}(end - start).toFixed(2){{ '}' }}ms`);
+      return result;
+    {{ '}' }} catch (error) {{ '{' }}
+      const end = performance.now();
+      console.error(`${{ '{' }}propertyKey{{ '}' }} failed after ${{ '{' }}(end - start).toFixed(2){{ '}' }}ms`);
+      throw error;
+    {{ '}' }}
+  {{ '}' }};
+
+  return descriptor;
+{{ '}' }}
+
+// Utilisation
+class DataService {{ '{' }}
+  &#64;MeasurePerformance
+  async fetchUsers(): Promise&lt;User[]&gt; {{ '{' }}
+    const response = await fetch('/api/users');
+    return response.json();
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Ordre d'Exécution -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ordre d'Exécution des Décorateurs</h2>
+
+            <div class="alert alert-warning mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Les décorateurs sont évalués de bas en haut mais exécutés de haut en bas.
+            </div>
+
+            <div class="code-example">
+                <pre><code class="language-typescript">function First() {{ '{' }}
+  console.log("First(): factory evaluated");
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {{ '{' }}
+    console.log("First(): called");
+  {{ '}' }};
+{{ '}' }}
+
+function Second() {{ '{' }}
+  console.log("Second(): factory evaluated");
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {{ '{' }}
+    console.log("Second(): called");
+  {{ '}' }};
+{{ '}' }}
+
+class Example {{ '{' }}
+  &#64;First()
+  &#64;Second()
+  method() {{ '{' }}{{ '}' }}
+{{ '}' }}
+
+// Console output:
+// First(): factory evaluated
+// Second(): factory evaluated
+// Second(): called
+// First(): called
+</code></pre>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Activer experimentalDecorators dans tsconfig</li>
+                                <li>Documenter les décorateurs personnalisés</li>
+                                <li>Préserver le contexte (this) avec apply</li>
+                                <li>Utiliser factories pour paramètres</li>
+                                <li>Nommer clairement les décorateurs</li>
+                                <li>Tester les décorateurs séparément</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Logique métier complexe dans décorateurs</li>
+                                <li>Modifier excessivement le comportement</li>
+                                <li>Oublier de retourner le descriptor</li>
+                                <li>Casser le contexte d'exécution</li>
+                                <li>Créer des effets de bord non documentés</li>
+                                <li>Empiler trop de décorateurs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://www.typescriptlang.org/docs/handbook/decorators.html" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>TypeScript Handbook - Decorators
+                </a>
+                <a href="https://angular.dev/guide/components" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular - Component Decorators
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/typescript/generics" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Génériques
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/best-practices/architecture" class="btn btn-primary">
+                        Suivant: Architecture<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

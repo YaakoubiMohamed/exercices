@@ -1,0 +1,308 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Pipes</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🔄 Pipes Angular</h1>
+      <p class="doc-subtitle">Transformer les données dans les templates</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📋 Qu'est-ce qu'un Pipe ?</h2>
+      <div class="definition-box">
+        <p>Les <strong>pipes</strong> sont des fonctions simples utilisées dans les templates pour transformer les données affichées. Ils prennent une valeur en entrée et retournent une valeur transformée en sortie.</p>
+        <div class="syntax-highlight">
+          <code>{{ '{' }}{{ '{' }} value | pipeName:param1:param2 {{ '}' }}{{ '}' }}</code>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔧 Pipes Intégrés</h2>
+      <div class="pipes-grid">
+        @for (pipe of builtInPipes; track pipe.name) {
+          <div class="pipe-card">
+            <div class="pipe-header">
+              <h3>{{ pipe.name }}</h3>
+              <span class="category-badge" [ngClass]="pipe.category.toLowerCase()">{{ pipe.category }}</span>
+            </div>
+            <p class="description">{{ pipe.description }}</p>
+            <div class="syntax-box">
+              <strong>Syntaxe:</strong>
+              <code>{{ pipe.syntax }}</code>
+            </div>
+            <div class="example-section">
+              <div class="example-input">
+                <strong>Exemple:</strong>
+                <code>{{ pipe.example }}</code>
+              </div>
+              <div class="example-output">
+                <strong>Résultat:</strong>
+                <code>{{ pipe.output }}</code>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Démonstration Interactive</h2>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <h4>DatePipe</h4>
+          <div class="demo-content">
+            @for (format of dateFormats; track format.format) {
+              <div class="demo-row">
+                <span class="format-label">{{ format.format }}:</span>
+                <span class="format-result">{{ format.example | date:format.format }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <h4>Text Transformation</h4>
+          <div class="demo-content">
+            <div class="demo-row">
+              <span class="format-label">Original:</span>
+              <span class="format-result">{{ text }}</span>
+            </div>
+            <div class="demo-row">
+              <span class="format-label">uppercase:</span>
+              <span class="format-result">{{ text | uppercase }}</span>
+            </div>
+            <div class="demo-row">
+              <span class="format-label">lowercase:</span>
+              <span class="format-result">{{ text | lowercase }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <h4>Number Formatting</h4>
+          <div class="demo-content">
+            <div class="demo-row">
+              <span class="format-label">Currency:</span>
+              <span class="format-result">{{ price | currency:'USD' }}</span>
+            </div>
+            <div class="demo-row">
+              <span class="format-label">Decimal:</span>
+              <span class="format-result">{{ largeNumber | number:'1.2-2' }}</span>
+            </div>
+            <div class="demo-row">
+              <span class="format-label">Percent:</span>
+              <span class="format-result">{{ percentage | percent:'1.1-1' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <h4>AsyncPipe</h4>
+          <div class="demo-content">
+            <div class="demo-row">
+              <span class="format-label">Observable:</span>
+              <span class="format-result">{{ data$ | async }}</span>
+            </div>
+            <p class="pipe-note">Le pipe async gère automatiquement la souscription et le unsubscribe</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔗 Chaînage de Pipes</h2>
+      <div class="chaining-box">
+        <p>Les pipes peuvent être chaînés pour appliquer plusieurs transformations successives:</p>
+        <div class="chaining-example">
+          <div class="chain-step">
+            <strong>Entrée:</strong>
+            <code>{{ today }}</code>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-step">
+            <strong>Code:</strong>
+            <code>{{ '{' }}{{ '{' }} today | date:'fullDate' | uppercase {{ '}' }}{{ '}' }}</code>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-step">
+            <strong>Sortie:</strong>
+            <code>{{ today | date:'fullDate' | uppercase }}</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🛠️ Créer un Pipe Personnalisé</h2>
+      <div class="custom-pipe-box">
+        <h3>Pipe Simple</h3>
+        <pre><code>import {{ '{' }} Pipe, PipeTransform {{ '}' }} from '@angular/core';
+
+@Pipe({{ '{' }}
+  name: 'exponential',
+  standalone: true
+{{ '}' }})
+export class ExponentialPipe implements PipeTransform {{ '{' }}
+  transform(value: number, exponent: number = 2): number {{ '{' }}
+    return Math.pow(value, exponent);
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+{{ '{' }}{{ '{' }} 2 | exponential:3 {{ '}' }}{{ '}' }} // Output: 8</code></pre>
+      </div>
+
+      <div class="custom-pipe-box">
+        <h3>Pipe avec Paramètres Multiples</h3>
+        <pre><code>import {{ '{' }} Pipe, PipeTransform {{ '}' }} from '@angular/core';
+
+@Pipe({{ '{' }}
+  name: 'truncate',
+  standalone: true
+{{ '}' }})
+export class TruncatePipe implements PipeTransform {{ '{' }}
+  transform(value: string, limit: number = 50, trail: string = '...'): string {{ '{' }}
+    if (!value) return '';
+    return value.length > limit ? value.substring(0, limit) + trail : value;
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+{{ '{' }}{{ '{' }} longText | truncate:20:'...' {{ '}' }}{{ '}' }}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>⚡ Pure vs Impure Pipes</h2>
+      <div class="pure-impure-grid">
+        <div class="pipe-type-card pure">
+          <h3>✅ Pure Pipes (par défaut)</h3>
+          <div class="type-content">
+            <p><strong>Comportement:</strong></p>
+            <ul>
+              <li>Exécuté uniquement si la valeur d'entrée change</li>
+              <li>Ne détecte pas les changements internes des objets/arrays</li>
+              <li>Très performant</li>
+            </ul>
+            <div class="code-example">
+              <pre><code>@Pipe({{ '{' }}
+  name: 'myPipe',
+  standalone: true,
+  pure: true  // Par défaut
+{{ '}' }})</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-type-card impure">
+          <h3>⚠️ Impure Pipes</h3>
+          <div class="type-content">
+            <p><strong>Comportement:</strong></p>
+            <ul>
+              <li>Exécuté à chaque cycle de détection</li>
+              <li>Détecte tous les changements</li>
+              <li>Impact sur les performances</li>
+            </ul>
+            <div class="code-example">
+              <pre><code>@Pipe({{ '{' }}
+  name: 'myPipe',
+  standalone: true,
+  pure: false  // Impure
+{{ '}' }})</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <strong>⚠️ Attention:</strong> Utilisez les impure pipes avec précaution car ils peuvent impacter significativement les performances de votre application.
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📊 Comparaison avec les Méthodes</h2>
+      <div class="comparison-grid">
+        <div class="comparison-card pipes">
+          <h3>✓ Utiliser un Pipe</h3>
+          <pre><code>&lt;p&gt;{{ '{' }}{{ '{' }} price | currency:'USD' {{ '}' }}{{ '}' }}&lt;/p&gt;
+
+// Avantages:
+// - Performance optimisée
+// - Cache automatique
+// - Réutilisable
+// - Code propre</code></pre>
+        </div>
+
+        <div class="comparison-card methods">
+          <h3>✗ Utiliser une Méthode</h3>
+          <pre><code>&lt;p&gt;{{ '{' }}{{ '{' }} formatPrice(price) {{ '}' }}{{ '}' }}&lt;/p&gt;
+
+// Problèmes:
+// - Exécuté à chaque change detection
+// - Pas de cache
+// - Moins performant
+// - Code répétitif</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Préférer les pure pipes (par défaut)</li>
+            <li>Utiliser AsyncPipe pour les Observables/Promises</li>
+            <li>Créer des pipes réutilisables</li>
+            <li>Nommer les pipes de manière descriptive</li>
+            <li>Garder les pipes simples et sans effets de bord</li>
+            <li>Documenter les paramètres des pipes personnalisés</li>
+          </ul>
+        </div>
+
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Créer des impure pipes sans raison valable</li>
+            <li>Effectuer des opérations coûteuses dans un pipe</li>
+            <li>Modifier les données d'entrée dans un pipe</li>
+            <li>Appeler des méthodes dans les templates à la place des pipes</li>
+            <li>Oublier de gérer les valeurs null/undefined</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/pipes" target="_blank" class="resource-link">
+          📖 Guide des Pipes
+        </a>
+        <a href="https://angular.dev/guide/pipes/transform-data" target="_blank" class="resource-link">
+          🔄 Transformer les Données
+        </a>
+        <a href="https://angular.dev/api/common#pipes" target="_blank" class="resource-link">
+          📚 API Pipes Intégrés
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/directives" class="nav-btn prev">
+        ← Directives
+      </a>
+      <a routerLink="/documentation/fundamentals/lifecycle-hooks" class="nav-btn next">
+        Lifecycle Hooks →
+      </a>
+    </nav>
+  </article>
+</div>

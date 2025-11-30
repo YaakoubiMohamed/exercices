@@ -1,0 +1,275 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Validation</span>
+  </nav>
+
+  <header class="doc-header">
+    <h1>✓ Validation & Validators</h1>
+    <p class="lead">Validation robuste des formulaires avec validators intégrés et personnalisés</p>
+  </header>
+
+  <section class="doc-section">
+    <h2>Validators Intégrés</h2>
+    <p>Angular fournit un ensemble complet de validators prêts à l'emploi :</p>
+    
+    <div class="validators-grid">
+      @for (validator of builtInValidators; track validator.name) {
+        <div class="validator-card">
+          <h3>{{ validator.name }}</h3>
+          <p>{{ validator.description }}</p>
+          <div class="code-inline">
+            <code>{{ validator.example }}</code>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Utilisation des Validators</h2>
+    <div class="code-block">
+      <pre><code>// Un seul validator
+firstName: ['', Validators.required]
+
+// Plusieurs validators
+email: ['', [Validators.required, Validators.email]]
+
+// Validator avec paramètre
+username: ['', [
+  Validators.required,
+  Validators.minLength(3),
+  Validators.maxLength(20)
+]]
+
+// Validators complexes
+age: ['', [
+  Validators.required,
+  Validators.min(18),
+  Validators.max(120),
+  Validators.pattern(/^[0-9]+$/)
+]]</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Validators Personnalisés</h2>
+    <p>Créez vos propres validators pour des règles de validation spécifiques :</p>
+    
+    <div class="code-block">
+      <pre><code>// Fonction validator personnalisée
+function passwordStrengthValidator(
+  control: AbstractControl
+): ValidationErrors | null {{ '{' }}
+  const value = control.value;
+  if (!value) return null;
+
+  const hasNumber = /[0-9]/.test(value);
+  const hasUpper = /[A-Z]/.test(value);
+  const hasLower = /[a-z]/.test(value);
+  const hasSpecial = /[!&#64;#$%^&*()]/.test(value);
+
+  const valid = hasNumber && hasUpper && hasLower && hasSpecial;
+  
+  return valid ? null : {{ '{' }} passwordStrength: true {{ '}' }};
+{{ '}' }}
+
+// Utilisation
+password: ['', [
+  Validators.required,
+  Validators.minLength(8),
+  passwordStrengthValidator
+]]</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Afficher les Erreurs</h2>
+    <div class="code-block">
+      <pre><code>&lt;!-- Template --&gt;
+&lt;input formControlName="email"&gt;
+
+&lt;!-- Afficher les erreurs --&gt;
+&#64;if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {{ '{' }}
+  &lt;div class="error"&gt;
+    &#64;if (userForm.get('email')?.errors?.['required']) {{ '{' }}
+      L'email est requis
+    {{ '}' }}
+    &#64;if (userForm.get('email')?.errors?.['email']) {{ '{' }}
+      Format email invalide
+    {{ '}' }}
+  &lt;/div&gt;
+{{ '}' }}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <pre><code>// Méthode dans le composant
+getErrorMessage(controlName: string): string {{ '{' }}
+  const control = this.form.get(controlName);
+  if (!control || !control.errors || !control.touched) return '';
+
+  if (control.errors['required']) return 'Ce champ est obligatoire';
+  if (control.errors['email']) return 'Email invalide';
+  if (control.errors['minlength']) {{ '{' }}
+    return `Minimum ${{ '{' }}control.errors['minlength'].requiredLength{{ '}' }} caractères`;
+  {{ '}' }}
+  
+  return 'Erreur de validation';
+{{ '}' }}
+
+&lt;!-- Template --&gt;
+&lt;span class="error"&gt;{{ '{' }}{{ '{' }} getErrorMessage('email') {{ '}' }}{{ '}' }}&lt;/span&gt;</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Démo Interactive</h2>
+    <div class="demo-box">
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Nom d'utilisateur *</label>
+          <input formControlName="username" placeholder="3-20 caractères">
+          <span class="error">{{ getErrorMessage('username') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" placeholder="user&#64;example.com">
+          <span class="error">{{ getErrorMessage('email') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label>Mot de passe *</label>
+          <input type="password" formControlName="password" placeholder="Min 8 caractères">
+          <span class="error">{{ getErrorMessage('password') }}</span>
+          @if (registrationForm.get('password')?.errors?.['passwordStrength']) {
+            <div class="info-box-small">
+              Le mot de passe doit contenir :
+              <ul>
+                <li>Au moins une majuscule</li>
+                <li>Au moins une minuscule</li>
+                <li>Au moins un chiffre</li>
+                <li>Au moins un caractère spécial</li>
+              </ul>
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Confirmer le mot de passe *</label>
+          <input type="password" formControlName="confirmPassword">
+          <span class="error">{{ getErrorMessage('confirmPassword') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label>Âge *</label>
+          <input type="number" formControlName="age" placeholder="18-120">
+          <span class="error">{{ getErrorMessage('age') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label>Site web</label>
+          <input formControlName="website" placeholder="https://example.com">
+          <span class="error">{{ getErrorMessage('website') }}</span>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" formControlName="terms">
+            J'accepte les conditions d'utilisation *
+          </label>
+          <span class="error">{{ getErrorMessage('terms') }}</span>
+        </div>
+
+        <button type="submit" [disabled]="registrationForm.invalid">
+          S'inscrire
+        </button>
+      </form>
+
+      <div class="form-status">
+        <h4>État du formulaire :</h4>
+        <ul>
+          <li>Valide : <strong [class.text-success]="registrationForm.valid" [class.text-error]="registrationForm.invalid">{{ registrationForm.valid }}</strong></li>
+          <li>Touché : <strong>{{ registrationForm.touched }}</strong></li>
+          <li>Modifié : <strong>{{ registrationForm.dirty }}</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Validation Asynchrone</h2>
+    <p>Pour des validations qui nécessitent des appels serveur (ex: vérifier si un username existe) :</p>
+    
+    <div class="code-block">
+      <pre><code>// Validator asynchrone
+function usernameExistsValidator(
+  userService: UserService
+): AsyncValidatorFn {{ '{' }}
+  return (control: AbstractControl): Observable&lt;ValidationErrors | null&gt; => {{ '{' }}
+    if (!control.value) {{ '{' }}
+      return of(null);
+    {{ '}' }}
+    
+    return userService.checkUsername(control.value).pipe(
+      map(exists => exists ? {{ '{' }} usernameExists: true {{ '}' }} : null),
+      catchError(() => of(null))
+    );
+  {{ '}' }};
+{{ '}' }}
+
+// Utilisation (3ème paramètre = validators asynchrones)
+username: ['', 
+  [Validators.required],  // Sync validators
+  [usernameExistsValidator(this.userService)]  // Async validators
+]</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bonnes Pratiques</h2>
+    <div class="practices-container">
+      <div class="practice-card good">
+        <h3>✅ À Faire</h3>
+        <ul>
+          <li>Valider à la fois côté client ET serveur</li>
+          <li>Afficher les erreurs uniquement après touched</li>
+          <li>Créer des messages d'erreur clairs et utiles</li>
+          <li>Centraliser les validators personnalisés réutilisables</li>
+          <li>Désactiver le bouton submit si le formulaire est invalide</li>
+        </ul>
+      </div>
+
+      <div class="practice-card bad">
+        <h3>❌ À Éviter</h3>
+        <ul>
+          <li>Se fier uniquement à la validation côté client</li>
+          <li>Afficher toutes les erreurs dès le chargement</li>
+          <li>Messages d'erreur techniques incompréhensibles</li>
+          <li>Validators asynchrones trop fréquents (performance)</li>
+          <li>Oublier de gérer les erreurs des validators asynchrones</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Ressources</h2>
+    <div class="resources-list">
+      <a href="https://angular.dev/api/forms/Validators" target="_blank" class="resource-link">
+        📖 API Reference - Validators
+      </a>
+      <a href="https://angular.dev/guide/forms/form-validation" target="_blank" class="resource-link">
+        📖 Guide - Form Validation
+      </a>
+    </div>
+  </section>
+
+  <nav class="doc-navigation">
+    <a routerLink="/documentation/forms/form-builder" class="nav-button prev">← FormBuilder</a>
+    <a routerLink="/documentation/forms/form-array" class="nav-button next">FormArray →</a>
+  </nav>
+</div>

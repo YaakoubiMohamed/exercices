@@ -1,20 +1,20 @@
 # Exercices Angular 20 - Best Practices
 
-Ce document contient des exercices progressifs pour maîtriser les meilleures pratiques d'Angular 20, incluant les standalone components, signals, reactive forms, dependency injection, et les patterns modernes.
+Ce document contient des exercices progressifs pour maîtriser les meilleures pratiques d'Angular 20, incluant les standalone components, reactive forms, dependency injection, et les patterns modernes.
 
 ---
 
-##  Exercice 1 : Calculateur de Notes avec Signals
+##  Exercice 1 : Calculateur de Notes avec Reactive Forms
 
 ###  Objectifs pédagogiques
-- Utiliser les **signals** pour la gestion d'état réactive
+- Utiliser les **Reactive Forms** pour la gestion d'état
 - Créer un **standalone component**
-- Utiliser les **computed signals** pour les calculs dérivés
-- Implémenter le **two-way binding** avec `model()`
+- Utiliser les **FormBuilder** et **FormGroup**
+- Implémenter la **validation** de formulaire
 - Appliquer les bonnes pratiques de typage TypeScript
 
 ### 📋 Énoncé
-Créez un composant `NotesComponent` qui calcule automatiquement la moyenne d'un étudiant et détermine sa mention en utilisant les signals d'Angular 20.
+Créez un composant `NotesComponent` qui calcule automatiquement la moyenne d'un étudiant et détermine sa mention en utilisant les Reactive Forms d'Angular 20.
 
 ### 🔧 Fonctionnalités à implémenter
 
@@ -33,14 +33,14 @@ type Mention = 'Très Bien' | 'Bien' | 'Assez Bien' | 'Passable' | 'Insuffisant'
 
 #### 2. Structure du composant
 - Créer un **standalone component** avec `@Component({ standalone: true })`
-- Utiliser des **signals** pour chaque note et le nom
-- Créer un **computed signal** pour la moyenne
-- Créer un **computed signal** pour la mention
-- Importer `FormsModule` pour le two-way binding
+- Utiliser un **FormGroup** pour les notes et le nom
+- Créer des **getters** pour la moyenne
+- Créer des **getters** pour la mention
+- Importer `ReactiveFormsModule` pour les formulaires réactifs
 
 #### 3. Interface utilisateur
 **Formulaire avec :**
-- Input pour le nom de l'étudiant (two-way binding avec signal)
+- Input pour le nom de l'étudiant (FormControl)
 - Input type="number" pour chaque matière (min: 0, max: 20)
 - Validation visuelle (bordure rouge si note invalide)
 
@@ -56,44 +56,45 @@ type Mention = 'Très Bien' | 'Bien' | 'Assez Bien' | 'Passable' | 'Insuffisant'
 
 #### 4. Logique de calcul
 ```typescript
-// Computed signal pour la moyenne
-average = computed(() => {
-  const notes = [this.math(), this.french(), this.history(), this.science()];
+// Getter pour la moyenne
+get average(): number {
+  const form = this.notesForm.value;
+  const notes = [form.math || 0, form.french || 0, form.history || 0, form.science || 0];
   return notes.reduce((sum, note) => sum + note, 0) / notes.length;
-});
+}
 
-// Computed signal pour la mention
-mention = computed(() => {
-  const avg = this.average();
+// Getter pour la mention
+get mention(): string {
+  const avg = this.average;
   if (avg >= 16) return 'Très Bien';
   if (avg >= 14) return 'Bien';
   if (avg >= 12) return 'Assez Bien';
   if (avg >= 10) return 'Passable';
   return 'Insuffisant';
-});
+}
 ```
 
 ### ✅ Critères de réussite
 - [ ] Composant standalone fonctionnel
-- [ ] Utilisation exclusive de signals (pas de propriétés classiques)
-- [ ] Calculs automatiques via computed signals
+- [ ] Utilisation de Reactive Forms
+- [ ] Calculs automatiques via getters
 - [ ] Validation des notes (0-20)
 - [ ] Interface réactive et responsive
 - [ ] Code typé avec TypeScript strict
 
 ---
 
-## 🔀 Exercice 2 : Gestionnaire de Tâches avec Services et Signals
+## 🔀 Exercice 2 : Gestionnaire de Tâches avec Services et RxJS
 
 ###  Objectifs pédagogiques
 - Créer et injecter un **service** avec `inject()`
-- Utiliser les **signals** pour gérer une liste mutable
-- Implémenter des **computed signals** pour les statistiques
+- Utiliser **RxJS** et **BehaviorSubject** pour gérer une liste mutable
+- Implémenter des **observables** pour les statistiques
 - Utiliser `@for` et `@if` (nouveau control flow Angular 20)
 - Séparer la logique métier du composant (architecture clean)
 
 ### 📋 Énoncé
-Développez un gestionnaire de tâches complet avec service dédié, gestion d'état par signals et interface moderne.
+Développez un gestionnaire de tâches complet avec service dédié, gestion d'état avec RxJS et interface moderne.
 
 ### 🔧 Fonctionnalités à implémenter
 
@@ -122,31 +123,33 @@ interface TaskStats {
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class TaskService {
-  private tasks = signal<Task[]>([]);
+  private tasksSubject = new BehaviorSubject<Task[]>([]);
   
-  // Getters en lecture seule
-  readonly allTasks = this.tasks.asReadonly();
+  // Observable pour toutes les tâches
+  readonly allTasks$: Observable<Task[]> = this.tasksSubject.asObservable();
   
-  // Computed signals pour les filtres
-  readonly completedTasks = computed(() => 
-    this.tasks().filter(t => t.completed)
+  // Observable pour les tâches complétées
+  readonly completedTasks$: Observable<Task[]> = this.allTasks$.pipe(
+    map(tasks => tasks.filter(t => t.completed))
   );
   
-  readonly pendingTasks = computed(() => 
-    this.tasks().filter(t => !t.completed)
+  // Observable pour les tâches en cours
+  readonly pendingTasks$: Observable<Task[]> = this.allTasks$.pipe(
+    map(tasks => tasks.filter(t => !t.completed))
   );
   
-  // Computed signal pour les statistiques
-  readonly stats = computed<TaskStats>(() => {
-    const tasks = this.tasks();
-    const completed = tasks.filter(t => t.completed).length;
-    return {
-      total: tasks.length,
-      completed,
-      pending: tasks.length - completed,
-      completionRate: tasks.length ? (completed / tasks.length) * 100 : 0
-    };
-  });
+  // Observable pour les statistiques
+  readonly stats$: Observable<TaskStats> = this.allTasks$.pipe(
+    map(tasks => {
+      const completed = tasks.filter(t => t.completed).length;
+      return {
+        total: tasks.length,
+        completed,
+        pending: tasks.length - completed,
+        completionRate: tasks.length ? (completed / tasks.length) * 100 : 0
+      };
+    })
+  );
   
   // Méthodes CRUD
   addTask(title: string, description: string, priority: TaskPriority): void
@@ -158,7 +161,7 @@ export class TaskService {
 
 #### 3. Composant TodoComponent
 - Injecter le service avec `private taskService = inject(TaskService)`
-- Utiliser les signals du service (pas de duplication d'état)
+- Utiliser les observables du service (pas de duplication d'état)
 - Formulaire réactif avec validation
 - Filtres : Toutes / En cours / Terminées
 
@@ -195,7 +198,7 @@ export class TaskService {
 
 **Filtres :**
 - Boutons radio ou tabs : All / Pending / Completed
-- Utilisation d'un signal pour le filtre actif
+- Utilisation d'une propriété pour le filtre actif
 
 #### 5. Styles conditionnels
 ```css
@@ -214,9 +217,9 @@ export class TaskService {
 ```
 
 ### ✅ Critères de réussite
-- [ ] Service injectable avec signals
+- [ ] Service injectable avec RxJS
 - [ ] Separation of concerns (service vs component)
-- [ ] Computed signals pour statistiques
+- [ ] Observables pour statistiques
 - [ ] Nouveau control flow (@for, @if, @empty)
 - [ ] Gestion immutable du state
 - [ ] Interface responsive
@@ -229,7 +232,7 @@ export class TaskService {
 ###  Objectifs pédagogiques
 - Utiliser les **Reactive Forms** avec FormBuilder
 - Implémenter des **validators personnalisés**
-- Créer des **computed signals complexes**
+- Créer des **getters et méthodes** pour les calculs
 - Architecture multi-services et multi-composants
 - Communication parent-child avec **input()** et **output()**
 - Utiliser les **pipes** Angular (currency, decimal, date)
@@ -278,7 +281,7 @@ interface CartSummary {
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private products = signal<Product[]>([
+  private productsSubject = new BehaviorSubject<Product[]>([
     {
       id: 1,
       name: 'MacBook Pro',
@@ -315,8 +318,8 @@ export class ProductService {
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartItems = signal<CartItem[]>([]);
-  private appliedDiscountCode = signal<string>('');
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  private appliedDiscountCode = '';
   
   private readonly VALID_CODES: DiscountCode[] = [
     { code: 'WELCOME10', percentage: 10, minAmount: 50 },
@@ -324,51 +327,55 @@ export class CartService {
     { code: 'STUDENT15', percentage: 15, minAmount: 0 }
   ];
   
-  readonly items = this.cartItems.asReadonly();
+  readonly items$ = this.cartItemsSubject.asObservable();
   
-  // Computed signals pour calculs financiers
-  readonly itemCount = computed(() => 
-    this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  // Observables pour calculs financiers
+  readonly itemCount$ = this.items$.pipe(
+    map(items => items.reduce((sum, item) => sum + item.quantity, 0))
   );
   
-  readonly subtotal = computed(() => 
-    this.cartItems().reduce((sum, item) => 
+  readonly subtotal$ = this.items$.pipe(
+    map(items => items.reduce((sum, item) => 
       sum + (item.product.price * item.quantity), 0
-    )
+    ))
   );
   
-  readonly discount = computed(() => {
-    const code = this.appliedDiscountCode();
-    if (!code) return 0;
-    
-    const coupon = this.VALID_CODES.find(c => c.code === code);
-    if (!coupon) return 0;
-    
-    const subtotal = this.subtotal();
-    if (subtotal < coupon.minAmount) return 0;
-    
-    return (subtotal * coupon.percentage) / 100;
-  });
-  
-  readonly tax = computed(() => (this.subtotal() - this.discount()) * 0.20);
-  
-  readonly total = computed(() => 
-    this.subtotal() - this.discount() + this.tax()
+  readonly discount$ = combineLatest([this.subtotal$]).pipe(
+    map(([subtotal]) => {
+      const code = this.appliedDiscountCode;
+      if (!code) return 0;
+      
+      const coupon = this.VALID_CODES.find(c => c.code === code);
+      if (!coupon) return 0;
+      
+      if (subtotal < coupon.minAmount) return 0;
+      
+      return (subtotal * coupon.percentage) / 100;
+    })
   );
   
-  readonly summary = computed<CartSummary>(() => ({
-    subtotal: this.subtotal(),
-    discount: this.discount(),
-    tax: this.tax(),
-    total: this.total(),
-    itemCount: this.itemCount()
-  }));
+  readonly tax$ = combineLatest([this.subtotal$, this.discount$]).pipe(
+    map(([subtotal, discount]) => (subtotal - discount) * 0.20)
+  );
+  
+  readonly total$ = combineLatest([this.subtotal$, this.discount$, this.tax$]).pipe(
+    map(([subtotal, discount, tax]) => subtotal - discount + tax)
+  );
+  
+  readonly summary$ = combineLatest([
+    this.subtotal$, this.discount$, this.tax$, this.total$, this.itemCount$
+  ]).pipe(
+    map(([subtotal, discount, tax, total, itemCount]) => ({
+      subtotal, discount, tax, total, itemCount
+    }))
+  );
   
   // Méthodes CRUD
   addToCart(product: Product, quantity: number): boolean {
     if (product.stock < quantity) return false;
     
-    const existing = this.cartItems().find(
+    const currentItems = this.cartItemsSubject.value;
+    const existing = currentItems.find(
       item => item.product.id === product.id
     );
     
@@ -377,7 +384,7 @@ export class CartService {
       if (newQty > product.stock) return false;
       this.updateQuantity(product.id, newQty);
     } else {
-      this.cartItems.update(items => [...items, { product, quantity }]);
+      this.cartItemsSubject.next([...currentItems, { product, quantity }]);
     }
     
     this.saveToLocalStorage();
@@ -385,20 +392,22 @@ export class CartService {
   }
   
   removeFromCart(productId: number): void {
-    this.cartItems.update(items => 
-      items.filter(item => item.product.id !== productId)
+    const currentItems = this.cartItemsSubject.value;
+    this.cartItemsSubject.next(
+      currentItems.filter(item => item.product.id !== productId)
     );
     this.saveToLocalStorage();
   }
   
   updateQuantity(productId: number, quantity: number): boolean {
-    const item = this.cartItems().find(i => i.product.id === productId);
+    const currentItems = this.cartItemsSubject.value;
+    const item = currentItems.find(i => i.product.id === productId);
     if (!item || quantity > item.product.stock || quantity < 1) {
       return false;
     }
     
-    this.cartItems.update(items =>
-      items.map(item =>
+    this.cartItemsSubject.next(
+      currentItems.map(item =>
         item.product.id === productId
           ? { ...item, quantity }
           : item
@@ -413,26 +422,26 @@ export class CartService {
     const coupon = this.VALID_CODES.find(c => c.code === upperCode);
     
     if (!coupon) return false;
-    if (this.subtotal() < coupon.minAmount) return false;
+    // Note: You would need to get current subtotal value here
     
-    this.appliedDiscountCode.set(upperCode);
+    this.appliedDiscountCode = upperCode;
     return true;
   }
   
   clearCart(): void {
-    this.cartItems.set([]);
-    this.appliedDiscountCode.set('');
+    this.cartItemsSubject.next([]);
+    this.appliedDiscountCode = '';
     this.saveToLocalStorage();
   }
   
   private saveToLocalStorage(): void {
-    localStorage.setItem('cart', JSON.stringify(this.cartItems()));
+    localStorage.setItem('cart', JSON.stringify(this.cartItemsSubject.value));
   }
   
   loadFromLocalStorage(): void {
     const stored = localStorage.getItem('cart');
     if (stored) {
-      this.cartItems.set(JSON.parse(stored));
+      this.cartItemsSubject.next(JSON.parse(stored));
     }
   }
 }
@@ -462,7 +471,7 @@ export class CartService {
     </div>
     
     <div class="product-grid">
-      @for (product of filteredProducts(); track product.id) {
+      @for (product of filteredProducts; track product.id) {
         <app-product-card 
           [product]="product"
           (addToCart)="onAddToCart($event)" />
@@ -476,36 +485,34 @@ export class ProductListComponent {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   
-  private selectedCategory = signal<ProductCategory | ''>('');
-  private searchQuery = signal('');
+  private selectedCategory: ProductCategory | '' = '';
+  private searchQuery = '';
   
-  filteredProducts = computed(() => {
-    let products = this.productService.allProducts();
+  get filteredProducts(): Product[] {
+    let products = this.productService.allProducts;
     
-    const category = this.selectedCategory();
-    if (category) {
-      products = products.filter(p => p.category === category);
+    if (this.selectedCategory) {
+      products = products.filter(p => p.category === this.selectedCategory);
     }
     
-    const query = this.searchQuery();
-    if (query) {
-      const lowerQuery = query.toLowerCase();
+    if (this.searchQuery) {
+      const lowerQuery = this.searchQuery.toLowerCase();
       products = products.filter(p =>
         p.name.toLowerCase().includes(lowerQuery)
       );
     }
     
     return products;
-  });
+  }
   
   onCategoryChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
-    this.selectedCategory.set(value as ProductCategory | '');
+    this.selectedCategory = value as ProductCategory | '';
   }
   
   onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
+    this.searchQuery = value;
   }
   
   onAddToCart(data: { product: Product; quantity: number }): void {
@@ -560,12 +567,12 @@ export class ProductCardComponent {
   product = input.required<Product>();
   addToCart = output<{ product: Product; quantity: number }>();
   
-  quantity = signal(1);
+  quantity = 1;
   
   onAddClick(): void {
     this.addToCart.emit({
       product: this.product(),
-      quantity: this.quantity()
+      quantity: this.quantity
     });
   }
 }
@@ -591,7 +598,7 @@ export class CartComponent implements OnInit {
     ]]
   });
   
-  promoMessage = signal('');
+  promoMessage = '';
   
   ngOnInit(): void {
     this.cartService.loadFromLocalStorage();
@@ -617,10 +624,10 @@ export class CartComponent implements OnInit {
     const success = this.cartService.applyDiscount(code);
     
     if (success) {
-      this.promoMessage.set('✓ Code appliqué avec succès');
+      this.promoMessage = '✓ Code appliqué avec succès';
       this.promoForm.reset();
     } else {
-      this.promoMessage.set('✗ Code invalide ou montant minimum non atteint');
+      this.promoMessage = '✗ Code invalide ou montant minimum non atteint';
       this.promoForm.controls.code.setErrors({ invalidCode: true });
     }
   }
@@ -636,13 +643,13 @@ export class CartComponent implements OnInit {
 #### 5. Template CartComponent
 ```html
 <div class="cart-container">
-  <h2>Panier ({{ cartService.itemCount() }} articles)</h2>
+  <h2>Panier ({{ cartService.itemCount$ | async }} articles)</h2>
   
-  @if (cartService.items().length === 0) {
+  @if ((cartService.items$ | async)?.length === 0) {
     <p class="empty-cart">Votre panier est vide</p>
   } @else {
     <div class="cart-items">
-      @for (item of cartService.items(); track item.product.id) {
+      @for (item of cartService.items$ | async; track item.product.id) {
         <div class="cart-item">
           <img [src]="item.product.imageUrl" [alt]="item.product.name">
           
@@ -683,10 +690,10 @@ export class CartComponent implements OnInit {
         </button>
       </form>
       
-      @if (promoMessage()) {
+      @if (promoMessage) {
         <p class="promo-message" 
-           [class.success]="promoMessage().includes('✓')">
-          {{ promoMessage() }}
+           [class.success]="promoMessage.includes('✓')">
+          {{ promoMessage }}
         </p>
       }
       
@@ -701,24 +708,24 @@ export class CartComponent implements OnInit {
       
       <div class="summary-line">
         <span>Sous-total</span>
-        <span>{{ cartService.summary().subtotal | currency:'EUR' }}</span>
+        <span>{{ cartService.subtotal$ | async | currency:'EUR' }}</span>
       </div>
       
-      @if (cartService.summary().discount > 0) {
+      @if ((cartService.discount$ | async) > 0) {
         <div class="summary-line discount">
           <span>Remise</span>
-          <span>-{{ cartService.summary().discount | currency:'EUR' }}</span>
+          <span>-{{ cartService.discount$ | async | currency:'EUR' }}</span>
         </div>
       }
       
       <div class="summary-line">
         <span>TVA (20%)</span>
-        <span>{{ cartService.summary().tax | currency:'EUR' }}</span>
+        <span>{{ cartService.tax$ | async | currency:'EUR' }}</span>
       </div>
       
       <div class="summary-line total">
         <strong>TOTAL</strong>
-        <strong>{{ cartService.summary().total | currency:'EUR' }}</strong>
+        <strong>{{ cartService.total$ | async | currency:'EUR' }}</strong>
       </div>
       
       <button class="btn-checkout">Valider la commande</button>
@@ -744,7 +751,7 @@ export const routes: Routes = [
 <nav>
   <a routerLink="/products">Produits</a>
   <a routerLink="/cart">
-    Panier ({{ cartService.itemCount() }})
+    Panier ({{ cartService.itemCount$ | async }})
   </a>
 </nav>
 <router-outlet />
@@ -753,7 +760,7 @@ export const routes: Routes = [
 ### ✅ Critères de réussite
 - [ ] Architecture multi-services (ProductService + CartService)
 - [ ] Reactive Forms avec validation complète
-- [ ] Computed signals pour tous les calculs financiers
+- [ ] Observables et getters pour tous les calculs financiers
 - [ ] Communication parent-child (input/output)
 - [ ] Utilisation correcte des pipes (currency, decimal)
 - [ ] Gestion du stock (validation avant ajout)
@@ -770,9 +777,8 @@ export const routes: Routes = [
 ## 🌐 Exercice 4 : Application Météo avec HttpClient et RxJS
 
 ###  Objectifs pédagogiques
-- Utiliser **HttpClient** avec signals
+- Utiliser **HttpClient** avec observables
 - Maîtriser **RxJS** et les observables
-- Implémenter le pattern **toSignal()** pour convertir Observable → Signal
 - Gérer les **états de chargement** et les **erreurs**
 - Créer des **pipes personnalisés**
 - Utiliser les **Interceptors** HTTP
@@ -814,7 +820,7 @@ interface WeatherState {
 }
 ```
 
-#### 2. WeatherService avec toSignal()
+#### 2. WeatherService avec RxJS
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
@@ -822,21 +828,18 @@ export class WeatherService {
   private readonly API_KEY = 'YOUR_API_KEY';
   private readonly BASE_URL = 'https://api.openweathermap.org/data/2.5';
   
-  // Signal pour la ville recherchée
-  private cityQuery = signal('Paris');
+  // Subject pour la ville recherchée
+  private cityQuerySubject = new BehaviorSubject<string>('Paris');
   
-  // Convertir Observable en Signal avec toSignal()
-  weatherData = toSignal(
-    toObservable(this.cityQuery).pipe(
-      debounceTime(500),
-      distinctUntilChanged(),
-      switchMap(city => this.fetchWeather(city)),
-      catchError(error => {
-        console.error('Weather fetch error:', error);
-        return of(null);
-      })
-    ),
-    { initialValue: null }
+  // Observable pour les données météo
+  weatherData$ = this.cityQuerySubject.pipe(
+    debounceTime(500),
+    distinctUntilChanged(),
+    switchMap(city => this.fetchWeather(city)),
+    catchError(error => {
+      console.error('Weather fetch error:', error);
+      return of(null);
+    })
   );
   
   private fetchWeather(city: string): Observable<WeatherData> {
@@ -854,7 +857,7 @@ export class WeatherService {
   }
   
   searchCity(city: string): void {
-    this.cityQuery.set(city);
+    this.cityQuerySubject.next(city);
   }
   
   getForecast(city: string): Observable<ForecastDay[]> {
@@ -896,39 +899,41 @@ export class WeatherService {
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
-  private favorites = signal<string[]>([]);
+  private favoritesSubject = new BehaviorSubject<string[]>([]);
   
-  readonly favoriteCities = this.favorites.asReadonly();
+  readonly favoriteCities$ = this.favoritesSubject.asObservable();
   
   constructor() {
     this.loadFavorites();
   }
   
   addFavorite(city: string): void {
-    if (!this.favorites().includes(city)) {
-      this.favorites.update(favs => [...favs, city]);
+    const currentFavorites = this.favoritesSubject.value;
+    if (!currentFavorites.includes(city)) {
+      this.favoritesSubject.next([...currentFavorites, city]);
       this.saveFavorites();
     }
   }
   
   removeFavorite(city: string): void {
-    this.favorites.update(favs => favs.filter(f => f !== city));
+    const currentFavorites = this.favoritesSubject.value;
+    this.favoritesSubject.next(currentFavorites.filter(f => f !== city));
     this.saveFavorites();
   }
   
   isFavorite(city: string): boolean {
-    return this.favorites().includes(city);
+    return this.favoritesSubject.value.includes(city);
   }
   
   private saveFavorites(): void {
     localStorage.setItem('weather-favorites', 
-      JSON.stringify(this.favorites()));
+      JSON.stringify(this.favoritesSubject.value));
   }
   
   private loadFavorites(): void {
     const stored = localStorage.getItem('weather-favorites');
     if (stored) {
-      this.favorites.set(JSON.parse(stored));
+      this.favoritesSubject.next(JSON.parse(stored));
     }
   }
 }
@@ -996,7 +1001,7 @@ export const appConfig: ApplicationConfig = {
              placeholder="Rechercher une ville..."
              autocomplete="off">
       
-      @if (isSearching()) {
+      @if (isSearching) {
         <span class="spinner">🔄</span>
       }
     </div>
@@ -1006,15 +1011,15 @@ export class WeatherSearchComponent implements OnInit {
   private weatherService = inject(WeatherService);
   
   searchControl = new FormControl('');
-  isSearching = signal(false);
+  isSearching = false;
   
   ngOnInit(): void {
     this.searchControl.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       filter(query => query !== null && query.length >= 3),
-      tap(() => this.isSearching.set(true)),
-      finalize(() => this.isSearching.set(false))
+      tap(() => this.isSearching = true),
+      finalize(() => this.isSearching = false)
     ).subscribe(city => {
       if (city) {
         this.weatherService.searchCity(city);
@@ -1031,12 +1036,12 @@ export class WeatherSearchComponent implements OnInit {
   standalone: true,
   imports: [CommonModule, TemperaturePipe],
   template: `
-    @if (weather(); as data) {
+    @if (weather$ | async; as data) {
       <div class="weather-card">
         <div class="location">
           <h2>{{ data.city }}, {{ data.country }}</h2>
-          <button (click)="toggleFavorite()">
-            {{ isFavorite() ? '⭐' : '☆' }}
+          <button (click)="toggleFavorite(data.city)">
+            {{ isFavorite(data.city) ? '⭐' : '☆' }}
           </button>
         </div>
         
@@ -1077,21 +1082,17 @@ export class WeatherDisplayComponent {
   private weatherService = inject(WeatherService);
   private favoritesService = inject(FavoritesService);
   
-  weather = this.weatherService.weatherData;
+  weather$ = this.weatherService.weatherData$;
   
-  isFavorite = computed(() => {
-    const data = this.weather();
-    return data ? this.favoritesService.isFavorite(data.city) : false;
-  });
+  isFavorite(city: string): boolean {
+    return this.favoritesService.isFavorite(city);
+  }
   
-  toggleFavorite(): void {
-    const data = this.weather();
-    if (!data) return;
-    
-    if (this.isFavorite()) {
-      this.favoritesService.removeFavorite(data.city);
+  toggleFavorite(city: string): void {
+    if (this.isFavorite(city)) {
+      this.favoritesService.removeFavorite(city);
     } else {
-      this.favoritesService.addFavorite(data.city);
+      this.favoritesService.addFavorite(city);
     }
   }
   
@@ -1111,11 +1112,11 @@ export class WeatherDisplayComponent {
     <div class="favorites-panel">
       <h3>Villes favorites</h3>
       
-      @if (favorites().length === 0) {
+      @if ((favorites$ | async)?.length === 0) {
         <p class="empty">Aucune ville favorite</p>
       } @else {
         <ul class="favorites-list">
-          @for (city of favorites(); track city) {
+          @for (city of favorites$ | async; track city) {
             <li>
               <button (click)="selectCity(city)">
                 {{ city }}
@@ -1135,7 +1136,7 @@ export class FavoritesComponent {
   private weatherService = inject(WeatherService);
   private favoritesService = inject(FavoritesService);
   
-  favorites = this.favoritesService.favoriteCities;
+  favorites$ = this.favoritesService.favoriteCities$;
   
   selectCity(city: string): void {
     this.weatherService.searchCity(city);
@@ -1149,7 +1150,6 @@ export class FavoritesComponent {
 
 ### ✅ Critères de réussite
 - [ ] HttpClient configuré avec provideHttpClient()
-- [ ] Utilisation de toSignal() pour Observable → Signal
 - [ ] RxJS operators: debounceTime, switchMap, catchError
 - [ ] HTTP Interceptor fonctionnel
 - [ ] Pipe personnalisé pour la température
@@ -1157,7 +1157,7 @@ export class FavoritesComponent {
 - [ ] Gestion des erreurs HTTP
 - [ ] LocalStorage pour les favoris
 - [ ] Interface réactive avec debounce sur la recherche
-- [ ] Computed signals pour les données dérivées
+- [ ] Observables pour les données dérivées
 - [ ] API réelle (OpenWeatherMap ou équivalent)
 
 ---
@@ -1168,7 +1168,7 @@ export class FavoritesComponent {
 - Implémenter l'**authentification** avec JWT
 - Créer des **Route Guards** fonctionnels
 - Utiliser les **Interceptors** pour les tokens
-- Gérer l'état d'authentification avec signals
+- Gérer l'état d'authentification avec RxJS
 - Implémenter le **lazy loading** des modules
 - Créer des **directives structurelles personnalisées**
 
@@ -1213,15 +1213,15 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   
-  private authState = signal<AuthState>({
+  private authStateSubject = new BehaviorSubject<AuthState>({
     user: null,
     token: null,
     isAuthenticated: false
   });
   
-  readonly currentUser = computed(() => this.authState().user);
-  readonly isAuthenticated = computed(() => this.authState().isAuthenticated);
-  readonly userRole = computed(() => this.authState().user?.role ?? 'guest');
+  readonly currentUser$ = this.authStateSubject.pipe(map(state => state.user));
+  readonly isAuthenticated$ = this.authStateSubject.pipe(map(state => state.isAuthenticated));
+  readonly userRole$ = this.authStateSubject.pipe(map(state => state.user?.role ?? 'guest'));
   
   constructor() {
     this.loadAuthFromStorage();
@@ -1237,7 +1237,7 @@ export class AuthService {
   }
   
   logout(): void {
-    this.authState.set({
+    this.authStateSubject.next({
       user: null,
       token: null,
       isAuthenticated: false
@@ -1253,11 +1253,19 @@ export class AuthService {
   }
   
   hasRole(role: UserRole): boolean {
-    return this.userRole() === role;
+    return this.authStateSubject.value.user?.role === role;
+  }
+  
+  get isAuthenticated(): boolean {
+    return this.authStateSubject.value.isAuthenticated;
+  }
+  
+  get userRole(): UserRole {
+    return this.authStateSubject.value.user?.role ?? 'guest';
   }
   
   private setAuthData(response: AuthResponse): void {
-    this.authState.set({
+    this.authStateSubject.next({
       user: response.user,
       token: response.token,
       isAuthenticated: true
@@ -1275,7 +1283,7 @@ export class AuthService {
     const userData = localStorage.getItem('user_data');
     
     if (token && userData) {
-      this.authState.set({
+      this.authStateSubject.next({
         user: JSON.parse(userData),
         token,
         isAuthenticated: true
@@ -1289,7 +1297,7 @@ export class AuthService {
 ```typescript
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.currentUser() ? 
+  const token = authService.isAuthenticated ? 
     localStorage.getItem('auth_token') : null;
   
   if (token && !req.url.includes('/auth/')) {
@@ -1317,7 +1325,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
   
-  if (authService.isAuthenticated()) {
+  if (authService.isAuthenticated) {
     return true;
   }
   
@@ -1335,11 +1343,11 @@ export const roleGuard = (allowedRoles: UserRole[]): CanActivateFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
     
-    if (!authService.isAuthenticated()) {
+    if (!authService.isAuthenticated) {
       return router.createUrlTree(['/login']);
     }
     
-    const userRole = authService.userRole();
+    const userRole = authService.userRole;
     if (allowedRoles.includes(userRole)) {
       return true;
     }
@@ -1391,9 +1399,9 @@ export const routes: Routes = [
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <h2>Connexion</h2>
         
-        @if (errorMessage()) {
+        @if (errorMessage) {
           <div class="alert alert-error">
-            {{ errorMessage() }}
+            {{ errorMessage }}
           </div>
         }
         
@@ -1424,8 +1432,8 @@ export const routes: Routes = [
         </div>
         
         <button type="submit" 
-                [disabled]="loginForm.invalid || isLoading()">
-          @if (isLoading()) {
+                [disabled]="loginForm.invalid || isLoading">
+          @if (isLoading) {
             Connexion en cours...
           } @else {
             Se connecter
@@ -1446,8 +1454,8 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   
-  isLoading = signal(false);
-  errorMessage = signal('');
+  isLoading = false;
+  errorMessage = '';
   
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -1456,7 +1464,7 @@ export class LoginComponent implements OnInit {
   
   ngOnInit(): void {
     // Si déjà connecté, rediriger
-    if (this.authService.isAuthenticated()) {
+    if (this.authService.isAuthenticated) {
       this.router.navigate(['/dashboard']);
     }
   }
@@ -1464,8 +1472,8 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.invalid) return;
     
-    this.isLoading.set(true);
-    this.errorMessage.set('');
+    this.isLoading = true;
+    this.errorMessage = '';
     
     const credentials = this.loginForm.value as LoginCredentials;
     
@@ -1475,13 +1483,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate([returnUrl]);
       },
       error: (error) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(
-          error.message || 'Erreur de connexion'
-        );
+        this.isLoading = false;
+        this.errorMessage = error.message || 'Erreur de connexion';
       },
       complete: () => {
-        this.isLoading.set(false);
+        this.isLoading = false;
       }
     });
   }
@@ -1502,8 +1508,8 @@ export class HasRoleDirective implements OnInit {
   @Input() hasRole!: UserRole | UserRole[];
   
   ngOnInit(): void {
-    effect(() => {
-      const userRole = this.authService.userRole();
+    // Subscribe to user role changes
+    this.authService.userRole$.subscribe(userRole => {
       const allowedRoles = Array.isArray(this.hasRole) 
         ? this.hasRole 
         : [this.hasRole];
@@ -1533,7 +1539,7 @@ export class HasRoleDirective implements OnInit {
 ```
 
 ### ✅ Critères de réussite
-- [ ] AuthService avec signals pour l'état
+- [ ] AuthService avec BehaviorSubject pour l'état
 - [ ] Login/Logout fonctionnels
 - [ ] JWT Token storage (localStorage)
 - [ ] HTTP Interceptor pour ajouter le token
@@ -1551,15 +1557,15 @@ export class HasRoleDirective implements OnInit {
 ##  Exercice 6 : Formulaire de Facture (Mini Défi)
 
 ###  Objectifs pédagogiques
-- Utiliser les **signals** pour gérer un tableau d'éléments dynamiques
-- Créer des **computed signals** pour les calculs en cascade
-- Manipuler des **arrays avec signals** (ajout/suppression)
+- Utiliser les **Reactive Forms** pour gérer un tableau d'éléments dynamiques
+- Créer des **getters** pour les calculs en cascade
+- Manipuler des **FormArray** (ajout/suppression)
 - Implémenter la **validation de formulaire**
-- Utiliser le **two-way binding** avec `[(ngModel)]`
-- Appliquer les **bonnes pratiques de calcul réactif**
+- Utiliser les **FormBuilder** et **FormGroup**
+- Appliquer les **bonnes pratiques de formulaires réactifs**
 
 ### 📋 Énoncé
-Créez un composant `InvoiceComponent` qui génère automatiquement une facture avec calcul de TVA et total, en utilisant les signals d'Angular 20 pour une réactivité optimale.
+Créez un composant `InvoiceComponent` qui génère automatiquement une facture avec calcul de TVA et total, en utilisant les Reactive Forms d'Angular 20 pour une réactivité optimale.
 
 ### 🔧 Fonctionnalités à implémenter
 
@@ -1586,49 +1592,66 @@ interface InvoiceCalculations {
 ```
 
 #### 2. Structure du composant
-**Signals de base :**
+**FormGroup principal :**
 ```typescript
-// Informations client
-customerName = signal('');
-customerEmail = signal('');
-customerAddress = signal('');
+// Formulaire principal
+invoiceForm = this.fb.group({
+  // Informations client
+  customerName: ['', Validators.required],
+  customerEmail: ['', [Validators.required, Validators.email]],
+  customerAddress: [''],
+  
+  // Taux de TVA (par défaut 19%)
+  vatRate: [19, [Validators.required, Validators.min(0), Validators.max(100)]],
+  
+  // Liste des articles (FormArray)
+  items: this.fb.array([])
+});
 
-// Liste des articles (writable signal)
-items = signal<InvoiceItem[]>([]);
-
-// Taux de TVA (par défaut 19%)
-vatRate = signal(19);
-
-// Pour le formulaire d'ajout d'article
-newItemName = signal('');
-newItemQuantity = signal(1);
-newItemPrice = signal(0);
+// Formulaire pour ajouter un nouvel article
+newItemForm = this.fb.group({
+  name: ['', Validators.required],
+  quantity: [1, [Validators.required, Validators.min(1)]],
+  unitPrice: [0, [Validators.required, Validators.min(0)]]
+});
 ```
 
-**Computed signals pour les calculs :**
+**Getters pour les calculs :**
 ```typescript
+// Getter pour accéder au FormArray des articles
+get itemsFormArray(): FormArray {
+  return this.invoiceForm.get('items') as FormArray;
+}
+
 // Calcul du sous-total (somme de tous les articles)
-subtotal = computed(() => {
-  return this.items().reduce((sum, item) => {
+get subtotal(): number {
+  return this.itemsFormArray.controls.reduce((sum, control) => {
+    const item = control.value;
     return sum + (item.quantity * item.unitPrice);
   }, 0);
-});
+}
 
 // Calcul du montant de TVA
-vatAmount = computed(() => {
-  return this.subtotal() * (this.vatRate() / 100);
-});
+get vatAmount(): number {
+  const vatRate = this.invoiceForm.get('vatRate')?.value || 0;
+  return this.subtotal * (vatRate / 100);
+}
 
 // Calcul du total TTC
-total = computed(() => {
-  return this.subtotal() + this.vatAmount();
-});
+get total(): number {
+  return this.subtotal + this.vatAmount;
+}
 
 // Statistiques supplémentaires
-itemCount = computed(() => this.items().length);
-totalQuantity = computed(() => {
-  return this.items().reduce((sum, item) => sum + item.quantity, 0);
-});
+get itemCount(): number {
+  return this.itemsFormArray.length;
+}
+
+get totalQuantity(): number {
+  return this.itemsFormArray.controls.reduce((sum, control) => {
+    return sum + (control.value.quantity || 0);
+  }, 0);
+}
 ```
 
 #### 3. Méthodes du composant
@@ -1638,52 +1661,44 @@ private nextId = 1;
 
 // Ajouter un article
 addItem(): void {
-  const name = this.newItemName().trim();
-  
-  if (!name) {
-    alert('Le nom de l\'article est requis');
+  if (this.newItemForm.invalid) {
+    alert('Veuillez remplir tous les champs correctement');
     return;
   }
   
-  if (this.newItemQuantity() <= 0) {
-    alert('La quantité doit être supérieure à 0');
-    return;
-  }
+  const formValue = this.newItemForm.value;
+  const newItem = this.fb.group({
+    id: [this.nextId++],
+    name: [formValue.name, Validators.required],
+    quantity: [formValue.quantity, [Validators.required, Validators.min(1)]],
+    unitPrice: [formValue.unitPrice, [Validators.required, Validators.min(0)]]
+  });
   
-  if (this.newItemPrice() < 0) {
-    alert('Le prix ne peut pas être négatif');
-    return;
-  }
-  
-  const newItem: InvoiceItem = {
-    id: this.nextId++,
-    name: this.newItemName(),
-    quantity: this.newItemQuantity(),
-    unitPrice: this.newItemPrice()
-  };
-  
-  // Mise à jour immutable du signal
-  this.items.update(current => [...current, newItem]);
+  // Ajouter au FormArray
+  this.itemsFormArray.push(newItem);
   
   // Réinitialiser le formulaire
-  this.resetItemForm();
+  this.newItemForm.reset({
+    name: '',
+    quantity: 1,
+    unitPrice: 0
+  });
 }
 
 // Supprimer un article
-removeItem(id: number): void {
-  this.items.update(current => current.filter(item => item.id !== id));
-}
-
-// Réinitialiser le formulaire d'article
-resetItemForm(): void {
-  this.newItemName.set('');
-  this.newItemQuantity.set(1);
-  this.newItemPrice.set(0);
+removeItem(index: number): void {
+  this.itemsFormArray.removeAt(index);
 }
 
 // Calculer le montant d'une ligne
-getLineTotal(item: InvoiceItem): number {
+getLineTotal(index: number): number {
+  const item = this.itemsFormArray.at(index).value;
   return item.quantity * item.unitPrice;
+}
+
+// Obtenir le FormGroup d'un article spécifique
+getItemFormGroup(index: number): FormGroup {
+  return this.itemsFormArray.at(index) as FormGroup;
 }
 ```
 
@@ -1698,7 +1713,7 @@ getLineTotal(item: InvoiceItem): number {
     <label>Nom du client *</label>
     <input 
       type="text"
-      [(ngModel)]="customerName"
+      formControlName="customerName"
       placeholder="Nom complet"
       class="input-field">
   </div>
@@ -1706,8 +1721,8 @@ getLineTotal(item: InvoiceItem): number {
   <div class="form-group">
     <label>Email / Téléphone *</label>
     <input 
-      type="text"
-      [(ngModel)]="customerEmail"
+      type="email"
+      formControlName="customerEmail"
       placeholder="contact@exemple.com"
       class="input-field">
   </div>
@@ -1715,7 +1730,7 @@ getLineTotal(item: InvoiceItem): number {
   <div class="form-group">
     <label>Adresse (optionnelle)</label>
     <textarea 
-      [(ngModel)]="customerAddress"
+      formControlName="customerAddress"
       placeholder="Adresse complète..."
       rows="2"
       class="input-field"></textarea>
@@ -1728,48 +1743,50 @@ getLineTotal(item: InvoiceItem): number {
 <section class="items-section">
   <h3>🛒 Articles</h3>
   
-  <div class="add-item-form">
+  <form [formGroup]="newItemForm" class="add-item-form">
     <input 
       type="text"
-      [(ngModel)]="newItemName"
+      formControlName="name"
       placeholder="Nom de l'article"
       class="input-name">
     
     <input 
       type="number"
-      [(ngModel)]="newItemQuantity"
+      formControlName="quantity"
       min="1"
       placeholder="Qté"
       class="input-quantity">
     
     <input 
       type="number"
-      [(ngModel)]="newItemPrice"
+      formControlName="unitPrice"
       min="0"
       step="0.01"
       placeholder="Prix unitaire"
       class="input-price">
     
-    <button (click)="addItem()" class="btn-add">
+    <button type="button" (click)="addItem()" 
+            [disabled]="newItemForm.invalid" 
+            class="btn-add">
       ➕ Ajouter
     </button>
-  </div>
+  </form>
   
   <!-- Liste des articles -->
   <div class="items-list">
-    @for (item of items(); track item.id) {
+    @for (itemControl of itemsFormArray.controls; track $index) {
       <div class="item-row">
         <div class="item-info">
-          <span class="item-name">{{ item.name }}</span>
+          <span class="item-name">{{ itemControl.value.name }}</span>
           <span class="item-details">
-            {{ item.quantity }} × {{ item.unitPrice | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ itemControl.value.quantity }} × {{ itemControl.value.unitPrice | currency:'EUR':'symbol':'1.2-2':'fr' }}
           </span>
         </div>
         <div class="item-actions">
           <span class="item-total">
-            {{ getLineTotal(item) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ getLineTotal($index) | currency:'EUR':'symbol':'1.2-2':'fr' }}
           </span>
-          <button (click)="removeItem(item.id)" class="btn-remove">
+          <button (click)="removeItem($index)" class="btn-remove">
             🗑️
           </button>
         </div>
@@ -1790,7 +1807,7 @@ getLineTotal(item: InvoiceItem): number {
     <label>Taux de TVA (%)</label>
     <input 
       type="number"
-      [(ngModel)]="vatRate"
+      formControlName="vatRate"
       min="0"
       max="100"
       step="0.5"
@@ -1800,27 +1817,27 @@ getLineTotal(item: InvoiceItem): number {
   <div class="summary">
     <div class="summary-row">
       <span>Articles :</span>
-      <span>{{ itemCount() }} article(s)</span>
+      <span>{{ itemCount }} article(s)</span>
     </div>
     
     <div class="summary-row">
       <span>Quantité totale :</span>
-      <span>{{ totalQuantity() }}</span>
+      <span>{{ totalQuantity }}</span>
     </div>
     
     <div class="summary-row subtotal">
       <span>Sous-total HT :</span>
-      <span>{{ subtotal() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+      <span>{{ subtotal | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
     </div>
     
     <div class="summary-row vat">
-      <span>TVA ({{ vatRate() }}%) :</span>
-      <span>{{ vatAmount() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+      <span>TVA ({{ invoiceForm.get('vatRate')?.value }}%) :</span>
+      <span>{{ vatAmount | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
     </div>
     
     <div class="summary-row total">
       <span>Total TTC :</span>
-      <span>{{ total() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+      <span>{{ total | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
     </div>
   </div>
 </section>
@@ -1988,49 +2005,49 @@ h3 {
 ```
 
 ### ✅ Critères de réussite
-- [ ] Signals pour les infos client (nom, email, adresse)
-- [ ] Signal writable pour le tableau d'articles
-- [ ] Signal pour le taux de TVA
-- [ ] Computed signal pour le sous-total
-- [ ] Computed signal pour le montant TVA
-- [ ] Computed signal pour le total TTC
+- [ ] FormGroup pour les infos client (nom, email, adresse)
+- [ ] FormArray pour le tableau d'articles
+- [ ] FormControl pour le taux de TVA
+- [ ] Getter pour le sous-total
+- [ ] Getter pour le montant TVA
+- [ ] Getter pour le total TTC
 - [ ] Formulaire d'ajout d'article avec validation
-- [ ] Fonction addItem() avec mise à jour immutable
+- [ ] Fonction addItem() avec FormArray
 - [ ] Fonction removeItem() pour supprimer un article
 - [ ] Affichage dynamique de tous les articles avec @for
 - [ ] Calcul automatique du montant par ligne
 - [ ] Mise à jour instantanée des calculs
 - [ ] Interface professionnelle et responsive
 - [ ] Utilisation du pipe currency pour le formatage
-- [ ] Gestion des cas limites (quantité <= 0, prix négatif)
+- [ ] Validation de formulaire complète
 - [ ] État vide géré avec @empty
 
 ### 💡 Points d'attention
-1. **Immutabilité** : Toujours utiliser `.update()` avec spread operator pour modifier le tableau
-2. **Validation** : Vérifier les valeurs avant d'ajouter un article
+1. **FormArray** : Utiliser FormArray pour gérer la liste dynamique d'articles
+2. **Validation** : Implémenter la validation sur tous les FormControl
 3. **IDs uniques** : Utiliser un compteur pour les IDs des articles
-4. **Calculs en cascade** : Les computed signals se mettent à jour automatiquement
-5. **Performance** : Les computed ne recalculent que si leurs dépendances changent
+4. **Calculs réactifs** : Les getters se mettent à jour automatiquement
+5. **Performance** : Les getters recalculent à chaque détection de changement
 6. **UX** : Réinitialiser le formulaire après ajout
 7. **Formatage** : Utiliser le pipe `currency` avec locale 'fr'
 
 ### 🎓 Concepts Angular 20 illustrés
-- ✅ **Signals writables** pour les données mutables
-- ✅ **Computed signals** pour les calculs dérivés
-- ✅ **Signal updates immutables** avec spread operator
-- ✅ **Two-way binding** avec `[(ngModel)]`
+- ✅ **Reactive Forms** avec FormBuilder
+- ✅ **FormArray** pour les listes dynamiques
+- ✅ **Getters** pour les calculs dérivés
+- ✅ **FormControl binding** avec formControlName
 - ✅ **Control flow** avec `@for` et `@empty`
 - ✅ **Pipes** pour le formatage (currency)
-- ✅ **Validation de formulaire** côté composant
-- ✅ **Reactive programming** avec dépendances automatiques
+- ✅ **Validation de formulaire** intégrée
+- ✅ **Reactive programming** avec formulaires réactifs
 
 ---
 
 ##  Progression suggérée
 
-1. **Exercice 1** : Maîtriser les bases des signals et computed
+1. **Exercice 1** : Maîtriser les bases des Reactive Forms
 2. **Exercice 2** : Comprendre les services et l'injection de dépendances
-3. **Exercice 6** : Approfondir la manipulation de tableaux avec signals
+3. **Exercice 6** : Approfondir la manipulation de tableaux avec FormArray
 4. **Exercice 3** : Explorer les formulaires réactifs avancés
 5. **Exercice 4** : Intégrer des APIs avec HttpClient
 6. **Exercice 5** : Sécuriser l'application avec authentification

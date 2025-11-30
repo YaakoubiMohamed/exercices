@@ -1,0 +1,253 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Quand Utiliser Angular</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>🎯 Quand Utiliser Angular ?</h1>
+      <p class="doc-subtitle">Guide de décision pour choisir Angular (ou non)</p>
+    </header>
+
+    <section class="doc-section">
+      <div class="decision-intro">
+        <p>
+          Angular n'est pas la solution universelle pour tous les projets web.
+          Voici un guide pratique pour déterminer si Angular est le bon choix pour votre projet.
+        </p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Angular est Excellent Pour</h2>
+      <div class="usecases-grid good">
+        @for (useCase of goodUseCases; track useCase.title) {
+          <div class="usecase-card good">
+            <div class="usecase-header">
+              <span class="usecase-icon">{{ useCase.icon }}</span>
+              <h3>{{ useCase.title }}</h3>
+            </div>
+            <p class="usecase-description">{{ useCase.description }}</p>
+            
+            <div class="usecase-section">
+              <h4>Pourquoi Angular ?</h4>
+              <ul class="reasons-list">
+                @for (reason of useCase.reasons; track reason) {
+                  <li>{{ reason }}</li>
+                }
+              </ul>
+            </div>
+
+            <div class="usecase-section">
+              <h4>Exemples Concrets</h4>
+              <div class="examples-tags">
+                @for (example of useCase.examples; track example) {
+                  <span class="example-tag">{{ example }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>❌ Angular n'est PAS Recommandé Pour</h2>
+      <div class="usecases-grid bad">
+        @for (useCase of badUseCases; track useCase.title) {
+          <div class="usecase-card bad">
+            <div class="usecase-header">
+              <span class="usecase-icon">{{ useCase.icon }}</span>
+              <h3>{{ useCase.title }}</h3>
+            </div>
+            <p class="usecase-description">{{ useCase.description }}</p>
+            
+            <div class="usecase-section">
+              <h4>Pourquoi Éviter Angular ?</h4>
+              <ul class="reasons-list">
+                @for (reason of useCase.reasons; track reason) {
+                  <li>{{ reason }}</li>
+                }
+              </ul>
+            </div>
+
+            <div class="usecase-section">
+              <h4>Exemples à Éviter</h4>
+              <div class="examples-tags">
+                @for (example of useCase.examples; track example) {
+                  <span class="example-tag bad">{{ example }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🤔 Arbre de Décision</h2>
+      <div class="decision-tree">
+        <div class="decision-node root">
+          <div class="decision-question">
+            Votre application est-elle complexe avec beaucoup de logique métier ?
+          </div>
+          <div class="decision-branches">
+            <div class="branch">
+              <div class="branch-label yes">OUI ✓</div>
+              <div class="decision-node">
+                <div class="decision-question">
+                  Avez-vous une équipe de 5+ développeurs ?
+                </div>
+                <div class="decision-branches">
+                  <div class="branch">
+                    <div class="branch-label yes">OUI ✓</div>
+                    <div class="decision-result angular">
+                      <strong>Angular</strong><br>
+                      Parfait pour grandes équipes
+                    </div>
+                  </div>
+                  <div class="branch">
+                    <div class="branch-label no">NON ✗</div>
+                    <div class="decision-result maybe">
+                      <strong>Angular ou React</strong><br>
+                      Les deux sont viables
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label no">NON ✗</div>
+              <div class="decision-node">
+                <div class="decision-question">
+                  C'est un site majoritairement statique ?
+                </div>
+                <div class="decision-branches">
+                  <div class="branch">
+                    <div class="branch-label yes">OUI ✓</div>
+                    <div class="decision-result no-angular">
+                      <strong>Next.js / Astro</strong><br>
+                      Pas Angular
+                    </div>
+                  </div>
+                  <div class="branch">
+                    <div class="branch-label no">NON ✗</div>
+                    <div class="decision-result vue">
+                      <strong>Vue ou React</strong><br>
+                      Plus légers
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📊 Matrice de Décision Rapide</h2>
+      <div class="decision-matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Critère</th>
+              <th>Utiliser Angular</th>
+              <th>Éviter Angular</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Taille Équipe</strong></td>
+              <td class="yes">5+ développeurs</td>
+              <td class="no">1-3 développeurs</td>
+            </tr>
+            <tr>
+              <td><strong>Complexité</strong></td>
+              <td class="yes">Application enterprise</td>
+              <td class="no">Site vitrine simple</td>
+            </tr>
+            <tr>
+              <td><strong>Durée Projet</strong></td>
+              <td class="yes">Long terme (2+ ans)</td>
+              <td class="no">Court terme (MVP rapide)</td>
+            </tr>
+            <tr>
+              <td><strong>TypeScript</strong></td>
+              <td class="yes">Obligatoire</td>
+              <td class="no">Non souhaité</td>
+            </tr>
+            <tr>
+              <td><strong>Bundle Size</strong></td>
+              <td class="yes">Acceptable (150-300KB)</td>
+              <td class="no">Critique (&lt;50KB)</td>
+            </tr>
+            <tr>
+              <td><strong>SEO</strong></td>
+              <td class="yes">Acceptable (avec SSR)</td>
+              <td class="no">Critique (sites statiques)</td>
+            </tr>
+            <tr>
+              <td><strong>Expertise</strong></td>
+              <td class="yes">Équipe expérimentée</td>
+              <td class="no">Débutants absolus</td>
+            </tr>
+            <tr>
+              <td><strong>Budget Formation</strong></td>
+              <td class="yes">Disponible</td>
+              <td class="no">Limité</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>💡 Recommandations Finales</h2>
+      <div class="recommendations">
+        <div class="recommendation-card strong">
+          <h3>🎯 Fortement Recommandé</h3>
+          <ul>
+            <li>Applications enterprise avec équipes 10+ personnes</li>
+            <li>Projets long terme (3+ ans) nécessitant stabilité</li>
+            <li>Applications critiques nécessitant typage fort</li>
+            <li>Organisations avec standards stricts</li>
+          </ul>
+        </div>
+
+        <div class="recommendation-card moderate">
+          <h3>⚖️ Recommandé avec Conditions</h3>
+          <ul>
+            <li>SPAs moyennes avec équipes 5-10 personnes</li>
+            <li>PWAs nécessitant fonctionnalités offline</li>
+            <li>Migration d'AngularJS existant</li>
+            <li>Équipes maîtrisant déjà Angular</li>
+          </ul>
+        </div>
+
+        <div class="recommendation-card avoid">
+          <h3>⚠️ À Éviter</h3>
+          <ul>
+            <li>Sites vitrines et blogs</li>
+            <li>MVPs nécessitant délivrance rapide</li>
+            <li>Projets avec contraintes bundle size strictes</li>
+            <li>Équipes sans expérience TypeScript ni budget formation</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/intro/ecosystem" class="nav-btn prev">
+        ← Écosystème
+      </a>
+      <a routerLink="/documentation" class="nav-btn next">
+        Retour au Plan de Cours →
+      </a>
+    </nav>
+  </article>
+</div>

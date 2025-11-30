@@ -1,0 +1,57 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.benefit-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-align: center;
+  border-top: 3px solid var(--success-color);
+}
+
+.benefit-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.strategies-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.strategy-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.strategy-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.preloading-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+.preloading-table th,
+.preloading-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preloading-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+}

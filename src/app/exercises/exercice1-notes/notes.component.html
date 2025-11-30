@@ -2,13 +2,13 @@
   <h1> Calculateur de Notes</h1>
 
   <!-- Formulaire de saisie -->
-  <div class="form-section">
+  <form [formGroup]="notesForm" class="form-section">
     <div class="form-group">
       <label for="studentName">Nom de l'étudiant</label>
       <input 
         id="studentName" 
         type="text"
-        [(ngModel)]="studentName"
+        formControlName="studentName"
         placeholder="Entrez le nom de l'étudiant">
     </div>
 
@@ -17,7 +17,7 @@
       <input 
         id="math" 
         type="number"
-        [(ngModel)]="math"
+        formControlName="math"
         min="0"
         max="20"
         step="0.5"
@@ -29,7 +29,7 @@
       <input 
         id="french" 
         type="number"
-        [(ngModel)]="french"
+        formControlName="french"
         min="0"
         max="20"
         step="0.5"
@@ -41,7 +41,7 @@
       <input 
         id="history" 
         type="number"
-        [(ngModel)]="history"
+        formControlName="history"
         min="0"
         max="20"
         step="0.5"
@@ -53,46 +53,46 @@
       <input 
         id="science" 
         type="number"
-        [(ngModel)]="science"
+        formControlName="science"
         min="0"
         max="20"
         step="0.5"
         placeholder="Note sur 20">
     </div>
 
-    <button class="btn-calculate" (click)="calculateResults()">
+    <button type="button" class="btn-calculate" (click)="calculateResults()" [disabled]="notesForm.invalid">
        Calculer la moyenne et la mention
     </button>
-  </div>
+  </form>
 
   <!-- Affichage des résultats -->
-  @if (showResults()) {
+  @if (showResults) {
   <div class="results-section">
     <h2> Résultats</h2>
     
     <div class="result-card">
       <div class="result-item">
         <strong>Étudiant :</strong> 
-        <span>{{ studentName() || 'Non renseigné' }}</span>
+        <span>{{ notesForm.get('studentName')?.value || 'Non renseigné' }}</span>
       </div>
 
       <div class="notes-display">
         <h3>Notes par matière</h3>
         <div class="note-item">
           <span>Mathématiques :</span>
-          <strong>{{ math() }}/20</strong>
+          <strong>{{ notesForm.get('math')?.value }}/20</strong>
         </div>
         <div class="note-item">
           <span>Français :</span>
-          <strong>{{ french() }}/20</strong>
+          <strong>{{ notesForm.get('french')?.value }}/20</strong>
         </div>
         <div class="note-item">
           <span>Histoire :</span>
-          <strong>{{ history() }}/20</strong>
+          <strong>{{ notesForm.get('history')?.value }}/20</strong>
         </div>
         <div class="note-item">
           <span>Sciences :</span>
-          <strong>{{ science() }}/20</strong>
+          <strong>{{ notesForm.get('science')?.value }}/20</strong>
         </div>
       </div>
 
@@ -103,12 +103,12 @@
 
       <div class="result-item average">
         <strong>Moyenne générale :</strong> 
-        <span class="average-value">{{ average().toFixed(2) }}/20</span>
+        <span class="average-value">{{ average.toFixed(2) }}/20</span>
       </div>
 
       <div class="result-item mention-result">
         <strong>Mention :</strong> 
-        <span [class]="getMentionClass()">{{ mention() }}</span>
+        <span [class]="getMentionClass()">{{ mention }}</span>
       </div>
     </div>
   </div>

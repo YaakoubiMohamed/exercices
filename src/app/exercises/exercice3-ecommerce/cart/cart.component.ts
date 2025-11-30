@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -24,8 +24,8 @@ export class CartComponent implements OnInit {
     ]]
   });
   
-  promoMessage = signal('');
-  showPromoHint = signal(false);
+  promoMessage = '';
+  showPromoHint = false;
   
   ngOnInit(): void {
     this.cartService.loadFromLocalStorage();
@@ -41,7 +41,7 @@ export class CartComponent implements OnInit {
     if (!success) {
       alert('⚠️ Quantité invalide ou stock insuffisant');
       // Réinitialiser la valeur
-      const item = this.cartService.items().find(i => i.product.id === productId);
+      const item = this.cartService.items.find((i: any) => i.product.id === productId);
       if (item) {
         input.value = item.quantity.toString();
       }
@@ -56,7 +56,7 @@ export class CartComponent implements OnInit {
   
   applyPromoCode(): void {
     if (this.promoForm.invalid) {
-      this.promoMessage.set('❌ Code invalide');
+      this.promoMessage = '❌ Code invalide';
       return;
     }
     
@@ -64,11 +64,11 @@ export class CartComponent implements OnInit {
     const success = this.cartService.applyDiscount(code);
     
     if (success) {
-      this.promoMessage.set('✅ Code promo appliqué avec succès !');
+      this.promoMessage = '✅ Code promo appliqué avec succès !';
       this.promoForm.reset();
-      setTimeout(() => this.promoMessage.set(''), 3000);
+      setTimeout(() => this.promoMessage = '', 3000);
     } else {
-      this.promoMessage.set('❌ Code invalide ou montant minimum non atteint');
+      this.promoMessage = '❌ Code invalide ou montant minimum non atteint';
       this.promoForm.controls.code.setErrors({ invalidCode: true });
     }
   }
@@ -80,6 +80,6 @@ export class CartComponent implements OnInit {
   }
   
   togglePromoHint(): void {
-    this.showPromoHint.update(value => !value);
+    this.showPromoHint = !this.showPromoHint;
   }
 }

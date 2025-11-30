@@ -1,0 +1,40 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.config-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.config-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.config-property {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-family: 'Courier New', monospace;
+}
+
+.navigation-methods-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.nav-method-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-top: 3px solid var(--primary-color);
+}
+
+.nav-method-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}

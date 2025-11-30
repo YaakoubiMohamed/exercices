@@ -1,0 +1,281 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Content Projection</span>
+  </nav>
+
+  <article class="doc-content">
+    <header class="doc-header">
+      <h1>📦 Content Projection</h1>
+      <p class="doc-subtitle">Projeter du contenu dans les composants avec ng-content</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>📋 Qu'est-ce que la Content Projection ?</h2>
+      <div class="definition-box">
+        <p>La <strong>content projection</strong> (ou transclusion) permet d'insérer du contenu HTML depuis le composant parent dans des emplacements spécifiques du template du composant enfant using <code>&lt;ng-content&gt;</code>.</p>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Types de Projection</h2>
+      <div class="types-grid">
+        @for (pattern of patterns; track pattern.name) {
+          <div class="type-card">
+            <h3>{{ pattern.name }}</h3>
+            <span class="type-badge">{{ pattern.type }}</span>
+            <p class="description">{{ pattern.description }}</p>
+            <div class="usecase">
+              <strong>Use Case:</strong> {{ pattern.useCase }}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📍 Single-slot Projection</h2>
+      <div class="code-section">
+        <h3>Composant Enfant (Card)</h3>
+        <pre><code>@Component({{ '{' }}
+  selector: 'app-card',
+  template: `
+    &lt;div class="card"&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class CardComponent {{ '{' }}{{ '}' }}</code></pre>
+
+        <h3>Utilisation dans le Parent</h3>
+        <pre><code>&lt;app-card&gt;
+  &lt;h2&gt;Titre de la card&lt;/h2&gt;
+  &lt;p&gt;Contenu personnalisé&lt;/p&gt;
+  &lt;button&gt;Action&lt;/button&gt;
+&lt;/app-card&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎯 Multi-slot Projection</h2>
+      <div class="code-section">
+        <h3>Composant Enfant (Dialog)</h3>
+        <pre><code>@Component({{ '{' }}
+  selector: 'app-dialog',
+  template: `
+    &lt;div class="dialog"&gt;
+      &lt;header&gt;
+        &lt;ng-content select="[header]"&gt;&lt;/ng-content&gt;
+      &lt;/header&gt;
+      
+      &lt;main&gt;
+        &lt;ng-content select="[body]"&gt;&lt;/ng-content&gt;
+      &lt;/main&gt;
+      
+      &lt;footer&gt;
+        &lt;ng-content select="[footer]"&gt;&lt;/ng-content&gt;
+      &lt;/footer&gt;
+      
+      &lt;!-- Contenu sans selector = fallback --&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class DialogComponent {{ '{' }}{{ '}' }}</code></pre>
+
+        <h3>Utilisation dans le Parent</h3>
+        <pre><code>&lt;app-dialog&gt;
+  &lt;h2 header&gt;Confirmation&lt;/h2&gt;
+  
+  &lt;div body&gt;
+    &lt;p&gt;Êtes-vous sûr de vouloir continuer ?&lt;/p&gt;
+  &lt;/div&gt;
+  
+  &lt;div footer&gt;
+    &lt;button&gt;Annuler&lt;/button&gt;
+    &lt;button&gt;Confirmer&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/app-dialog&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔍 Sélecteurs ng-content</h2>
+      <div class="selectors-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Sélecteur</th>
+              <th>Description</th>
+              <th>Exemple</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>select="tag"</code></td>
+              <td>Sélectionne par tag HTML</td>
+              <td><code>&lt;ng-content select="h2"&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>select=".class"</code></td>
+              <td>Sélectionne par classe CSS</td>
+              <td><code>&lt;ng-content select=".header"&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>select="#id"</code></td>
+              <td>Sélectionne par ID</td>
+              <td><code>&lt;ng-content select="#main"&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>select="[attr]"</code></td>
+              <td>Sélectionne par attribut</td>
+              <td><code>&lt;ng-content select="[header]"&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>select="comp"</code></td>
+              <td>Sélectionne par composant</td>
+              <td><code>&lt;ng-content select="app-item"&gt;</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔄 Projection Conditionnelle</h2>
+      <div class="code-section">
+        <h3>Avec &#64;if</h3>
+        <pre><code>@Component({{ '{' }}
+  selector: 'app-panel',
+  template: `
+    &lt;div class="panel"&gt;
+      &#64;if (showHeader) {{ '{' }}
+        &lt;header&gt;
+          &lt;ng-content select="[header]"&gt;&lt;/ng-content&gt;
+        &lt;/header&gt;
+      {{ '}' }}
+      
+      &lt;main&gt;
+        &lt;ng-content&gt;&lt;/ng-content&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class PanelComponent {{ '{' }}
+  &#64;Input() showHeader = true;
+{{ '}' }}</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🔎 Accéder au Contenu Projeté</h2>
+      <div class="code-section">
+        <h3>Avec @ContentChild</h3>
+        <pre><code>import {{ '{' }} Component, ContentChild, AfterContentInit, ElementRef {{ '}' }} from '@angular/core';
+
+@Component({{ '{' }}
+  selector: 'app-wrapper',
+  template: `
+    &lt;div class="wrapper"&gt;
+      &lt;ng-content&gt;&lt;/ng-content&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class WrapperComponent implements AfterContentInit {{ '{' }}
+  &#64;ContentChild('projectedElement') element!: ElementRef;
+  
+  ngAfterContentInit() {{ '{' }}
+    // Accéder au contenu projeté
+    console.log(this.element.nativeElement);
+  {{ '}' }}
+{{ '}' }}
+
+// Usage
+&lt;app-wrapper&gt;
+  &lt;div #projectedElement&gt;Contenu projeté&lt;/div&gt;
+&lt;/app-wrapper&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>🎨 ng-template avec Projection</h2>
+      <div class="code-section">
+        <pre><code>@Component({{ '{' }}
+  selector: 'app-list',
+  template: `
+    &lt;div class="list"&gt;
+      &#64;for (item of items; track item.id) {{ '{' }}
+        &lt;ng-container *ngTemplateOutlet="itemTemplate; context: {{ '{' }}$implicit: item{{ '}' }}"&gt;&lt;/ng-container&gt;
+      {{ '}' }}
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class ListComponent {{ '{' }}
+  &#64;Input() items: any[] = [];
+  &#64;ContentChild(TemplateRef) itemTemplate!: TemplateRef&lt;any&gt;;
+{{ '}' }}
+
+// Usage
+&lt;app-list [items]="users"&gt;
+  &lt;ng-template let-user&gt;
+    &lt;div class="user-item"&gt;
+      &lt;h3&gt;{{ '{' }}{{ '{' }} user.name {{ '}' }}{{ '}' }}&lt;/h3&gt;
+      &lt;p&gt;{{ '{' }}{{ '{' }} user.email {{ '}' }}{{ '}' }}&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/ng-template&gt;
+&lt;/app-list&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>✅ Bonnes Pratiques</h2>
+      <div class="best-practices">
+        <div class="practice-card good">
+          <h3>✓ À Faire</h3>
+          <ul>
+            <li>Utiliser des attributs descriptifs pour select=""</li>
+            <li>Fournir un contenu par défaut dans ng-content</li>
+            <li>Documenter les slots attendus</li>
+            <li>Utiliser @ContentChild dans ngAfterContentInit</li>
+            <li>Combiner avec ng-template pour plus de flexibilité</li>
+          </ul>
+        </div>
+
+        <div class="practice-card bad">
+          <h3>✗ À Éviter</h3>
+          <ul>
+            <li>Accéder à @ContentChild dans ngOnInit</li>
+            <li>Utiliser trop de slots (complexité)</li>
+            <li>Oublier de documenter les zones de projection</li>
+            <li>Dupliquer ng-content avec le même select</li>
+            <li>Modifier le contenu projeté directement</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section">
+      <h2>📚 Ressources Officielles</h2>
+      <div class="resources">
+        <a href="https://angular.dev/guide/components/content-projection" target="_blank" class="resource-link">
+          📖 Guide Content Projection
+        </a>
+        <a href="https://angular.dev/api/core/ContentChild" target="_blank" class="resource-link">
+          🔍 API ContentChild
+        </a>
+      </div>
+    </section>
+
+    <nav class="doc-navigation">
+      <a routerLink="/documentation/fundamentals/input-output" class="nav-btn prev">
+        ← Input/Output
+      </a>
+      <a routerLink="/documentation/fundamentals/viewchild-contentchild" class="nav-btn next">
+        ViewChild/ContentChild →
+      </a>
+    </nav>
+  </article>
+</div>

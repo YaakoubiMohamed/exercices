@@ -1,0 +1,160 @@
+@import '../../intro/what-is-angular/what-is-angular.component.css';
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+}
+
+.form-group .error {
+  display: block;
+  margin-top: 0.5rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.form-actions button {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-actions button[type="submit"] {
+  background: var(--primary-color);
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.form-actions button[type="submit"]:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.form-actions button[type="button"] {
+  background: white;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.form-actions button[type="button"]:hover {
+  background: var(--bg-secondary);
+}
+
+.demo-box {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.form-state {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+
+.form-state h4 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.form-state ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.form-state ul li {
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.advantages-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.advantage-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--success-color);
+}
+
+.advantage-card .check-icon {
+  font-size: 1.5rem;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.data-table th,
+.data-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.data-table code {
+  background: var(--code-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+}

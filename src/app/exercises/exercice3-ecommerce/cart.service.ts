@@ -1,4 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Product } from './product.service';
 
 export interface CartItem {
@@ -22,8 +24,8 @@ export interface CartSummary {
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartItems = signal<CartItem[]>([]);
-  private appliedDiscountCode = signal<string>('');
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  private appliedDiscountCodeSubject = new BehaviorSubject<string>('');
   
   private readonly VALID_CODES: DiscountCode[] = [
     { code: 'WELCOME10', percentage: 10, minAmount: 50 },
@@ -31,51 +33,65 @@ export class CartService {
     { code: 'STUDENT15', percentage: 15, minAmount: 0 }
   ];
   
-  readonly items = this.cartItems.asReadonly();
+  readonly items$: Observable<CartItem[]> = this.cartItemsSubject.asObservable();
   
-  // Computed signals pour calculs financiers
-  readonly itemCount = computed(() => 
-    this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  get items(): CartItem[] {
+    return this.cartItemsSubject.value;
+  }
+  
+  readonly itemCount$: Observable<number> = this.items$.pipe(
+    map(items => items.reduce((sum, item) => sum + item.quantity, 0))
   );
   
-  readonly subtotal = computed(() => 
-    this.cartItems().reduce((sum, item) => 
-      sum + (item.product.price * item.quantity), 0
-    )
+  get itemCount(): number {
+    return this.items.reduce((sum, item) => sum + item.quantity, 0);
+  }
+  
+  readonly subtotal$: Observable<number> = this.items$.pipe(
+    map(items => items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0))
   );
   
-  readonly discount = computed(() => {
-    const code = this.appliedDiscountCode();
+  get subtotal(): number {
+    return this.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  }
+  
+  get discount(): number {
+    const code = this.appliedDiscountCodeSubject.value;
     if (!code) return 0;
     
     const coupon = this.VALID_CODES.find(c => c.code === code);
     if (!coupon) return 0;
     
-    const subtotal = this.subtotal();
+    const subtotal = this.subtotal;
     if (subtotal < coupon.minAmount) return 0;
     
     return (subtotal * coupon.percentage) / 100;
-  });
+  }
   
-  readonly tax = computed(() => (this.subtotal() - this.discount()) * 0.20);
+  get tax(): number {
+    return (this.subtotal - this.discount) * 0.20;
+  }
   
-  readonly total = computed(() => 
-    this.subtotal() - this.discount() + this.tax()
-  );
+  get total(): number {
+    return this.subtotal - this.discount + this.tax;
+  }
   
-  readonly summary = computed<CartSummary>(() => ({
-    subtotal: this.subtotal(),
-    discount: this.discount(),
-    tax: this.tax(),
-    total: this.total(),
-    itemCount: this.itemCount()
-  }));
+  get summary(): CartSummary {
+    return {
+      subtotal: this.subtotal,
+      discount: this.discount,
+      tax: this.tax,
+      total: this.total,
+      itemCount: this.itemCount
+    };
+  }
   
   // Méthodes CRUD
   addToCart(product: Product, quantity: number): boolean {
     if (product.stock < quantity) return false;
     
-    const existing = this.cartItems().find(
+    const currentItems = this.cartItemsSubject.value;
+    const existing = currentItems.find(
       item => item.product.id === product.id
     );
     
@@ -84,7 +100,7 @@ export class CartService {
       if (newQty > product.stock) return false;
       this.updateQuantity(product.id, newQty);
     } else {
-      this.cartItems.update(items => [...items, { product, quantity }]);
+      this.cartItemsSubject.next([...currentItems, { product, quantity }]);
     }
     
     this.saveToLocalStorage();
@@ -92,25 +108,26 @@ export class CartService {
   }
   
   removeFromCart(productId: number): void {
-    this.cartItems.update(items => 
-      items.filter(item => item.product.id !== productId)
+    const currentItems = this.cartItemsSubject.value;
+    this.cartItemsSubject.next(
+      currentItems.filter(item => item.product.id !== productId)
     );
     this.saveToLocalStorage();
   }
   
   updateQuantity(productId: number, quantity: number): boolean {
-    const item = this.cartItems().find(i => i.product.id === productId);
+    const currentItems = this.cartItemsSubject.value;
+    const item = currentItems.find(i => i.product.id === productId);
     if (!item || quantity > item.product.stock || quantity < 1) {
       return false;
     }
     
-    this.cartItems.update(items =>
-      items.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity }
-          : item
-      )
+    const updatedItems = currentItems.map(item =>
+      item.product.id === productId
+        ? { ...item, quantity }
+        : item
     );
+    this.cartItemsSubject.next(updatedItems);
     this.saveToLocalStorage();
     return true;
   }
@@ -120,27 +137,27 @@ export class CartService {
     const coupon = this.VALID_CODES.find(c => c.code === upperCode);
     
     if (!coupon) return false;
-    if (this.subtotal() < coupon.minAmount) return false;
+    if (this.subtotal < coupon.minAmount) return false;
     
-    this.appliedDiscountCode.set(upperCode);
+    this.appliedDiscountCodeSubject.next(upperCode);
     return true;
   }
   
   clearCart(): void {
-    this.cartItems.set([]);
-    this.appliedDiscountCode.set('');
+    this.cartItemsSubject.next([]);
+    this.appliedDiscountCodeSubject.next('');
     this.saveToLocalStorage();
   }
   
   private saveToLocalStorage(): void {
-    localStorage.setItem('cart', JSON.stringify(this.cartItems()));
+    localStorage.setItem('cart', JSON.stringify(this.cartItemsSubject.value));
   }
   
   loadFromLocalStorage(): void {
     const stored = localStorage.getItem('cart');
     if (stored) {
       try {
-        this.cartItems.set(JSON.parse(stored));
+        this.cartItemsSubject.next(JSON.parse(stored));
       } catch (error) {
         console.error('Error loading cart from localStorage:', error);
       }

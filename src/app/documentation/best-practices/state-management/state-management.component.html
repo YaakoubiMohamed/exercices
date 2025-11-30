@@ -1,0 +1,566 @@
+<div class="doc-container">
+    <nav class="breadcrumb">
+        <a routerLink="/home">🏠 Accueil</a>
+        <span class="separator">›</span>
+        <a routerLink="/documentation">📚 Documentation</a>
+        <span class="separator">›</span>
+        <span class="current">State Management</span>
+    </nav>
+
+    <div class="doc-content">
+        <header class="doc-header">
+            <h1 class="display-4 mb-3">State Management</h1>
+            <p class="lead text-muted">
+                La gestion d'état est cruciale pour maintenir la cohérence des données dans votre application.
+                Angular offre plusieurs approches, des Signals natifs aux solutions avancées comme NgRx.
+            </p>
+        </header>
+
+        <!-- Approches de State Management -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Approches de State Management</h2>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 25%">Approche</th>
+                            <th style="width: 40%">Description</th>
+                            <th>Complexité</th>
+                            <th>Quand l'utiliser</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (approach of approaches; track approach.name) {
+                        <tr>
+                            <td><strong>{{ approach.name }}</strong></td>
+                            <td>{{ approach.description }}</td>
+                            <td>
+                                <span class="badge"
+                                    [class]="approach.complexity === 'Faible' ? 'bg-success' : approach.complexity === 'Moyenne' ? 'bg-warning' : 'bg-danger'">
+                                    {{ approach.complexity }}
+                                </span>
+                            </td>
+                            <td>{{ approach.useCase }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Signals (Angular 16+) -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Signals - État Réactif Natif</h2>
+
+            <div class="alert alert-success mb-4">
+                <i class="bi bi-star me-2"></i>
+                <strong>Recommandé pour nouveaux projets :</strong> Les Signals sont la solution native d'Angular pour
+                la gestion d'état réactive.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Service avec Signals</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Injectable, signal, computed {{ '}' }} from '&#64;angular/core';
+
+interface CartItem {{ '{' }}
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class CartService {{ '{' }}
+  // État privé avec signals
+  private items = signal&lt;CartItem[]&gt;([]);
+
+  // Signals dérivés (computed)
+  itemCount = computed(() => this.items().length);
+  total = computed(() => 
+    this.items().reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    )
+  );
+
+  // État exposé en lecture seule
+  readonly cartItems = this.items.asReadonly();
+
+  // Actions
+  addItem(item: CartItem) {{ '{' }}
+    this.items.update(items => [...items, item]);
+  {{ '}' }}
+
+  removeItem(id: number) {{ '{' }}
+    this.items.update(items => 
+      items.filter(item => item.id !== id)
+    );
+  {{ '}' }}
+
+  updateQuantity(id: number, quantity: number) {{ '{' }}
+    this.items.update(items =>
+      items.map(item =>
+        item.id === id ? {{ '{' }} ...item, quantity {{ '}' }} : item
+      )
+    );
+  {{ '}' }}
+
+  clear() {{ '{' }}
+    this.items.set([]);
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">Utilisation dans Composant</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">import {{ '{' }} Component, inject {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} CartService {{ '}' }} from './cart.service';
+
+&#64;Component({{ '{' }}
+  selector: 'app-cart',
+  template: `
+    &lt;div class="cart"&gt;
+      &lt;h2&gt;Panier ({{ '{{' }} cartService.itemCount() {{ '}}' }})&lt;/h2&gt;
+      
+      &#64;for (item of cartService.cartItems(); track item.id) {{ '{' }}
+        &lt;div class="cart-item"&gt;
+          &lt;span&gt;{{ '{{' }} item.name {{ '}}' }}&lt;/span&gt;
+          &lt;input
+            type="number"
+            [value]="item.quantity"
+            (change)="updateQuantity(item.id, $any($event.target).value)"
+          /&gt;
+          &lt;button (click)="removeItem(item.id)"&gt;
+            Supprimer
+          &lt;/button&gt;
+        &lt;/div&gt;
+      {{ '}' }}
+      
+      &lt;div class="total"&gt;
+        Total: {{ '{{' }} cartService.total() | currency:'EUR' {{ '}}' }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  `
+{{ '}' }})
+export class CartComponent {{ '{' }}
+  cartService = inject(CartService);
+
+  updateQuantity(id: number, qty: string) {{ '{' }}
+    this.cartService.updateQuantity(id, +qty);
+  {{ '}' }}
+
+  removeItem(id: number) {{ '{' }}
+    this.cartService.removeItem(id);
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RxJS BehaviorSubject -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">BehaviorSubject - Approche Classique</h2>
+
+            <div class="code-example mb-4">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">user.service.ts</span>
+                </div>
+                <pre><code class="language-typescript">import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} BehaviorSubject, Observable {{ '}' }} from 'rxjs';
+import {{ '{' }} map {{ '}' }} from 'rxjs/operators';
+
+interface User {{ '{' }}
+  id: number;
+  name: string;
+  email: string;
+{{ '}' }}
+
+&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})
+export class UserService {{ '{' }}
+  // État privé
+  private userSubject = new BehaviorSubject&lt;User | null&gt;(null);
+  private loadingSubject = new BehaviorSubject&lt;boolean&gt;(false);
+
+  // État exposé en Observable
+  user$ = this.userSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable();
+  
+  // Sélecteurs dérivés
+  isAuthenticated$ = this.user$.pipe(
+    map(user => user !== null)
+  );
+  userName$ = this.user$.pipe(
+    map(user => user?.name || 'Guest')
+  );
+
+  // Actions
+  setUser(user: User) {{ '{' }}
+    this.userSubject.next(user);
+  {{ '}' }}
+
+  clearUser() {{ '{' }}
+    this.userSubject.next(null);
+  {{ '}' }}
+
+  setLoading(loading: boolean) {{ '{' }}
+    this.loadingSubject.next(loading);
+  {{ '}' }}
+
+  // Getter pour valeur actuelle
+  get currentUser(): User | null {{ '{' }}
+    return this.userSubject.value;
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="language-badge">TypeScript</span>
+                    <span class="file-name">Component avec AsyncPipe</span>
+                </div>
+                <pre><code class="language-typescript">&#64;Component({{ '{' }}
+  selector: 'app-user-profile',
+  template: `
+    &#64;if (userService.user$ | async; as user) {{ '{' }}
+      &lt;div class="profile"&gt;
+        &lt;h2&gt;{{ '{{' }} user.name {{ '}}' }}&lt;/h2&gt;
+        &lt;p&gt;{{ '{{' }} user.email {{ '}}' }}&lt;/p&gt;
+      &lt;/div&gt;
+    {{ '}' }} &#64;else {{ '{' }}
+      &lt;p&gt;Non connecté&lt;/p&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class UserProfileComponent {{ '{' }}
+  userService = inject(UserService);
+{{ '}' }}
+</code></pre>
+            </div>
+        </section>
+
+        <!-- NgRx Store -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">NgRx - State Management Avancé</h2>
+
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                NgRx est recommandé pour les applications complexes nécessitant un état centralisé, du time-travel
+                debugging, et une architecture stricte.
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="h5 mb-3">1. Actions</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// store/user.actions.ts
+import {{ '{' }} createAction, props {{ '}' }} from '&#64;ngrx/store';
+import {{ '{' }} User {{ '}' }} from '../models/user.model';
+
+export const loadUsers = createAction('[User] Load Users');
+
+export const loadUsersSuccess = createAction(
+  '[User] Load Users Success',
+  props&lt;{{ '{' }} users: User[] {{ '}' }}&gt;()
+);
+
+export const loadUsersFailure = createAction(
+  '[User] Load Users Failure',
+  props&lt;{{ '{' }} error: string {{ '}' }}&gt;()
+);
+
+export const addUser = createAction(
+  '[User] Add User',
+  props&lt;{{ '{' }} user: User {{ '}' }}&gt;()
+);
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">2. Reducer</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// store/user.reducer.ts
+import {{ '{' }} createReducer, on {{ '}' }} from '&#64;ngrx/store';
+import * as UserActions from './user.actions';
+
+export interface UserState {{ '{' }}
+  users: User[];
+  loading: boolean;
+  error: string | null;
+{{ '}' }}
+
+const initialState: UserState = {{ '{' }}
+  users: [],
+  loading: false,
+  error: null
+{{ '}' }};
+
+export const userReducer = createReducer(
+  initialState,
+  on(UserActions.loadUsers, state => ({{ '{' }}
+    ...state,
+    loading: true,
+    error: null
+  {{ '}' }})),
+  on(UserActions.loadUsersSuccess, (state, {{ '{' }} users {{ '}' }}) => ({{ '{' }}
+    ...state,
+    users,
+    loading: false
+  {{ '}' }})),
+  on(UserActions.loadUsersFailure, (state, {{ '{' }} error {{ '}' }}) => ({{ '{' }}
+    ...state,
+    error,
+    loading: false
+  {{ '}' }})),
+  on(UserActions.addUser, (state, {{ '{' }} user {{ '}' }}) => ({{ '{' }}
+    ...state,
+    users: [...state.users, user]
+  {{ '}' }}))
+);
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">3. Selectors</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// store/user.selectors.ts
+import {{ '{' }} createFeatureSelector, createSelector {{ '}' }} from '&#64;ngrx/store';
+
+export const selectUserState = createFeatureSelector&lt;UserState&gt;('users');
+
+export const selectAllUsers = createSelector(
+  selectUserState,
+  state => state.users
+);
+
+export const selectUsersLoading = createSelector(
+  selectUserState,
+  state => state.loading
+);
+
+export const selectUsersError = createSelector(
+  selectUserState,
+  state => state.error
+);
+
+export const selectUserById = (id: number) => createSelector(
+  selectAllUsers,
+  users => users.find(user => user.id === id)
+);
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">4. Effects (pour opérations asynchrones)</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">// store/user.effects.ts
+import {{ '{' }} Injectable {{ '}' }} from '&#64;angular/core';
+import {{ '{' }} Actions, createEffect, ofType {{ '}' }} from '&#64;ngrx/effects';
+import {{ '{' }} of {{ '}' }} from 'rxjs';
+import {{ '{' }} map, catchError, switchMap {{ '}' }} from 'rxjs/operators';
+import * as UserActions from './user.actions';
+
+&#64;Injectable()
+export class UserEffects {{ '{' }}
+  loadUsers$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserActions.loadUsers),
+      switchMap(() =>
+        this.userService.getUsers().pipe(
+          map(users => UserActions.loadUsersSuccess({{ '{' }} users {{ '}' }})),
+          catchError(error =>
+            of(UserActions.loadUsersFailure({{ '{' }} error: error.message {{ '}' }}))
+          )
+        )
+      )
+    )
+  );
+
+  constructor(
+    private actions$: Actions,
+    private userService: UserService
+  ) {{ '{' }}{{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <h3 class="h5 mb-3">5. Utilisation dans Composant</h3>
+                    <div class="code-example">
+                        <pre><code class="language-typescript">&#64;Component({{ '{' }}
+  selector: 'app-user-list',
+  template: `
+    &#64;if (loading$ | async) {{ '{' }}
+      &lt;div&gt;Chargement...&lt;/div&gt;
+    {{ '}' }}
+    
+    &#64;for (user of users$ | async; track user.id) {{ '{' }}
+      &lt;div&gt;{{ '{{' }} user.name {{ '}}' }}&lt;/div&gt;
+    {{ '}' }}
+  `
+{{ '}' }})
+export class UserListComponent {{ '{' }}
+  private store = inject(Store);
+
+  users$ = this.store.select(selectAllUsers);
+  loading$ = this.store.select(selectUsersLoading);
+
+  ngOnInit() {{ '{' }}
+    this.store.dispatch(loadUsers());
+  {{ '}' }}
+
+  addUser(user: User) {{ '{' }}
+    this.store.dispatch(addUser({{ '{' }} user {{ '}' }}));
+  {{ '}' }}
+{{ '}' }}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparaison -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Comparaison des Approches</h2>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>Critère</th>
+                            <th>Signals</th>
+                            <th>BehaviorSubject</th>
+                            <th>NgRx</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Complexité</strong></td>
+                            <td><span class="badge bg-success">Faible</span></td>
+                            <td><span class="badge bg-warning">Moyenne</span></td>
+                            <td><span class="badge bg-danger">Élevée</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Courbe d'apprentissage</strong></td>
+                            <td>Rapide</td>
+                            <td>Moyenne</td>
+                            <td>Longue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Boilerplate</strong></td>
+                            <td>Minimal</td>
+                            <td>Moyen</td>
+                            <td>Important</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Excellente (change detection optimisée)</td>
+                            <td>Bonne</td>
+                            <td>Bonne</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DevTools</strong></td>
+                            <td>Basic</td>
+                            <td>Aucun natif</td>
+                            <td>Redux DevTools (time-travel)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cas d'usage</strong></td>
+                            <td>Petites/moyennes apps</td>
+                            <td>Apps moyennes</td>
+                            <td>Apps complexes/enterprise</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Bonnes Pratiques</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>À Faire
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Utiliser Signals pour nouveaux projets</li>
+                                <li>État immuable (ne pas muter directement)</li>
+                                <li>Un seul service pour un domaine</li>
+                                <li>Exposer état en readonly</li>
+                                <li>Utiliser computed pour valeurs dérivées</li>
+                                <li>Centraliser la logique métier dans services</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                        <div class="card-header bg-danger text-white">
+                            <i class="bi bi-x-circle me-2"></i>À Éviter
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>État local dans composants partagés</li>
+                                <li>Muter l'état directement</li>
+                                <li>NgRx pour petites applications</li>
+                                <li>Mixte Signals + RxJS sans raison</li>
+                                <li>Trop de niveaux d'imbrication</li>
+                                <li>État dupliqué entre services</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="doc-section mb-5">
+            <h2 class="section-title">Ressources</h2>
+            <div class="list-group">
+                <a href="https://angular.dev/guide/signals" target="_blank"
+                    class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Angular - Signals
+                </a>
+                <a href="https://ngrx.io/" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>NgRx Documentation
+                </a>
+                <a href="https://www.learnrxjs.io/" target="_blank" class="list-group-item list-group-item-action">
+                    <i class="bi bi-book me-2"></i>Learn RxJS
+                </a>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="doc-navigation mt-5 pt-4 border-top">
+            <div class="row">
+                <div class="col-6">
+                    <a routerLink="/documentation/best-practices/architecture" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Précédent: Architecture
+                    </a>
+                </div>
+                <div class="col-6 text-end">
+                    <a routerLink="/documentation/best-practices/performance" class="btn btn-primary">
+                        Suivant: Performance<i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

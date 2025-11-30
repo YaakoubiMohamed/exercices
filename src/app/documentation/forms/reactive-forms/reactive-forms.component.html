@@ -1,0 +1,247 @@
+<div class="doc-container">
+  <nav class="breadcrumb">
+    <a routerLink="/home">🏠 Accueil</a>
+    <span class="separator">›</span>
+    <a routerLink="/documentation">📚 Documentation</a>
+    <span class="separator">›</span>
+    <span class="current">Reactive Forms</span>
+  </nav>
+
+  <header class="doc-header">
+    <h1>📝 Reactive Forms</h1>
+    <p class="lead">Formulaires réactifs basés sur RxJS pour une gestion d'état prévisible</p>
+  </header>
+
+  <section class="doc-section">
+    <h2>Qu'est-ce qu'un Reactive Form ?</h2>
+    <p>
+      Les <strong>Reactive Forms</strong> (formulaires réactifs) fournissent une approche basée sur les modèles pour gérer les entrées de formulaire dont les valeurs changent au fil du temps. Ils utilisent une approche explicite et immutable pour gérer l'état des formulaires à un moment donné.
+    </p>
+    
+    <div class="info-box">
+      <h3>🎯 Principes Clés</h3>
+      <ul>
+        <li><strong>Model-driven</strong> : La logique du formulaire est définie dans le composant TypeScript</li>
+        <li><strong>Reactive</strong> : Utilise des Observables pour gérer l'état du formulaire</li>
+        <li><strong>Immutable</strong> : Chaque changement produit un nouvel état</li>
+        <li><strong>Testable</strong> : Pas de dépendance au DOM, facile à tester</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Classes Principales</h2>
+    <div class="card-grid">
+      <div class="feature-card">
+        <h3>FormControl</h3>
+        <p>Représente un seul champ de formulaire. Gère la valeur, l'état de validation et les interactions utilisateur.</p>
+        <div class="code-block">
+          <pre><code>const name = new FormControl('John', Validators.required);</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>FormGroup</h3>
+        <p>Groupe plusieurs contrôles ensemble. Représente l'ensemble du formulaire ou une section.</p>
+        <div class="code-block">
+          <pre><code>const form = new FormGroup({{ '{' }}
+  name: new FormControl(''),
+  email: new FormControl('')
+{{ '}' }});</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>FormArray</h3>
+        <p>Gère un tableau de contrôles. Utile pour les listes dynamiques.</p>
+        <div class="code-block">
+          <pre><code>const skills = new FormArray([
+  new FormControl('Angular'),
+  new FormControl('TypeScript')
+]);</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Configuration de Base</h2>
+    <div class="code-block">
+      <pre><code>// 1. Import ReactiveFormsModule
+import {{ '{' }} ReactiveFormsModule {{ '}' }} from '&#64;angular/forms';
+
+&#64;Component({{ '{' }}
+  selector: 'app-my-form',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './my-form.component.html'
+{{ '}' }})
+export class MyFormComponent {{ '{' }}
+  // 2. Create form model
+  userForm = new FormGroup({{ '{' }}
+    firstName: new FormControl('', Validators.required),
+    lastName: new FormControl('', Validators.required),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email
+    ])
+  {{ '}' }});
+
+  // 3. Handle submission
+  onSubmit() {{ '{' }}
+    if (this.userForm.valid) {{ '{' }}
+      console.log(this.userForm.value);
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <pre><code>&lt;!-- Template --&gt;
+&lt;form [formGroup]="userForm" (ngSubmit)="onSubmit()"&gt;
+  &lt;input formControlName="firstName" placeholder="Prénom"&gt;
+  &lt;input formControlName="lastName" placeholder="Nom"&gt;
+  &lt;input formControlName="email" placeholder="Email"&gt;
+  &lt;button type="submit" [disabled]="userForm.invalid"&gt;
+    Soumettre
+  &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>États du Formulaire</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Propriété</th>
+          <th>Description</th>
+          <th>Opposé</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (state of formStates; track state.property) {
+          <tr>
+            <td><code>{{ state.property }}</code></td>
+            <td>{{ state.description }}</td>
+            <td>
+              @if (state.property === 'valid') { <code>invalid</code> }
+              @if (state.property === 'pristine') { <code>dirty</code> }
+              @if (state.property === 'touched') { <code>untouched</code> }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="demo-box">
+      <h3>🎮 Démo Interactive</h3>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Prénom *</label>
+          <input type="text" formControlName="firstName" placeholder="John">
+          @if (userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched) {
+            <span class="error">Minimum 2 caractères requis</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Nom *</label>
+          <input type="text" formControlName="lastName" placeholder="Doe">
+        </div>
+
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" placeholder="john&#64;example.com">
+          @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+            <span class="error">Email invalide</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Âge</label>
+          <input type="number" formControlName="age" placeholder="25">
+          @if (userForm.get('age')?.invalid && userForm.get('age')?.touched) {
+            <span class="error">Âge entre 18 et 100</span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="userForm.invalid">Soumettre</button>
+          <button type="button" (click)="resetForm()">Réinitialiser</button>
+        </div>
+      </form>
+
+      <div class="form-state">
+        <h4>État actuel :</h4>
+        <ul>
+          <li>Valid: <strong>{{ userForm.valid }}</strong></li>
+          <li>Pristine: <strong>{{ userForm.pristine }}</strong></li>
+          <li>Touched: <strong>{{ userForm.touched }}</strong></li>
+        </ul>
+        <div class="code-block">
+          <pre>{{ userForm.value | json }}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Avantages des Reactive Forms</h2>
+    <div class="advantages-grid">
+      @for (advantage of advantages; track advantage) {
+        <div class="advantage-card">
+          <span class="check-icon">✓</span>
+          <p>{{ advantage }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bonnes Pratiques</h2>
+    <div class="practices-container">
+      <div class="practice-card good">
+        <h3>✅ À Faire</h3>
+        <ul>
+          <li>Définir les contrôles dans le composant TypeScript</li>
+          <li>Utiliser des validators pour la validation</li>
+          <li>Gérer les erreurs de manière centralisée</li>
+          <li>Désactiver le bouton submit si le formulaire est invalide</li>
+          <li>Utiliser FormBuilder pour simplifier la création</li>
+        </ul>
+      </div>
+
+      <div class="practice-card bad">
+        <h3>❌ À Éviter</h3>
+        <ul>
+          <li>Mélanger reactive forms et template-driven forms</li>
+          <li>Accéder directement au DOM pour récupérer les valeurs</li>
+          <li>Oublier de désouscrire des observables</li>
+          <li>Ne pas valider les données côté serveur</li>
+          <li>Créer des formulaires trop complexes (diviser en sous-composants)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Ressources</h2>
+    <div class="resources-list">
+      <a href="https://angular.dev/guide/forms/reactive-forms" target="_blank" class="resource-link">
+        📖 Documentation Officielle - Reactive Forms
+      </a>
+      <a href="https://angular.dev/api/forms/FormControl" target="_blank" class="resource-link">
+        📖 API Reference - FormControl
+      </a>
+      <a href="https://angular.dev/api/forms/FormGroup" target="_blank" class="resource-link">
+        📖 API Reference - FormGroup
+      </a>
+    </div>
+  </section>
+
+  <nav class="doc-navigation">
+    <a routerLink="/documentation" class="nav-button prev">← Documentation</a>
+    <a routerLink="/documentation/forms/form-builder" class="nav-button next">FormBuilder →</a>
+  </nav>
+</div>
