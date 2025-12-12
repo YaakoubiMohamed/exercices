@@ -37,6 +37,14 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'exercice4',
+    loadComponent: () => import('./exercises/exercice4-weather/weather.component.js').then(m => m.WeatherComponent)
+  },
+  {
+    path: 'exercice4/explanation',
+    loadComponent: () => import('./exercises/exercice4-weather/components/weather-explanation.component.js').then(m => m.WeatherExplanationComponent)
+  },
+  {
     path: 'exercice6',
     loadComponent: () => import('./exercises/exercice6-invoice/invoice.component.js').then(m => m.InvoiceComponent)
   },

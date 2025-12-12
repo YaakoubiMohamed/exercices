@@ -50,12 +50,12 @@ export class HomeComponent {
     },
     {
       id: 4,
-      title: 'Application Météo (À venir)',
+      title: 'Application Météo',
       description: 'HttpClient, RxJS et gestion des états',
       route: '/exercice4',
       difficulty: 'Avancé',
       topics: ['HttpClient', 'RxJS', 'Observables', 'Interceptors'],
-      icon: '🌐'
+      icon: '🌤️'
     },
     {
       id: 5,

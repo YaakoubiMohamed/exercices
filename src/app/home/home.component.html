@@ -40,7 +40,7 @@
     <div class="exercises-grid">
       @for (exercise of exercises; track exercise.id) {
         <div class="exercise-card" 
-             [class.disabled]="exercise.route === '/exercice4' || exercise.route === '/exercice5'">
+             [class.disabled]="exercise.route === '/exercice5'">
           <div class="exercise-header">
             <span class="exercise-icon">{{ exercise.icon }}</span>
             <span class="difficulty-badge" [class]="getDifficultyClass(exercise.difficulty)">
@@ -57,7 +57,7 @@
             }
           </div>
           
-          @if (exercise.route === '/exercice1' || exercise.route === '/exercice2' || exercise.route === '/exercice3' || exercise.route === '/exercice6') {
+          @if (exercise.route === '/exercice1' || exercise.route === '/exercice2' || exercise.route === '/exercice3' || exercise.route === '/exercice4' || exercise.route === '/exercice6') {
             <a [routerLink]="exercise.route" class="btn-start">
               Commencer l'exercice →
             </a>

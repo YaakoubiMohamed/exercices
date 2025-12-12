@@ -1,0 +1,74 @@
+<div class="weather-app">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <a routerLink="/home" class="back-link">
+        ← Retour
+      </a>
+      <div class="title-section">
+        <h1>
+          <span class="icon">🌤️</span>
+          Application Météo
+        </h1>
+        <p class="subtitle">Recherchez la météo de n'importe quelle ville dans le monde</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Zone de recherche -->
+  <section class="search-section">
+    <app-weather-search />
+  </section>
+
+  <!-- Contenu principal -->
+  <main class="main-content">
+    <div class="content-grid">
+      <!-- Colonne principale - Météo actuelle -->
+      <div class="main-column">
+        <app-weather-display />
+        
+        <!-- Prévisions -->
+        <div class="forecast-section">
+          <app-weather-forecast />
+        </div>
+      </div>
+
+      <!-- Sidebar - Favoris -->
+      <aside class="sidebar">
+        <app-favorites />
+        
+        <!-- Villes populaires -->
+        <div class="popular-cities">
+          <h3>
+            <span class="icon">🌍</span>
+            Villes populaires
+          </h3>
+          <div class="cities-list">
+            <button class="city-btn" (click)="searchCity('Paris')">Paris</button>
+            <button class="city-btn" (click)="searchCity('London')">Londres</button>
+            <button class="city-btn" (click)="searchCity('New York')">New York</button>
+            <button class="city-btn" (click)="searchCity('Tokyo')">Tokyo</button>
+            <button class="city-btn" (click)="searchCity('Sydney')">Sydney</button>
+            <button class="city-btn" (click)="searchCity('Dubai')">Dubai</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer avec infos -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>
+        <strong>💡 Exercice 4:</strong> 
+        HttpClient, RxJS (debounceTime, switchMap, catchError), Pipes personnalisés, Interceptors
+      </p>
+      <a routerLink="/exercice4/explanation" class="explanation-link">
+        📚 Voir le guide pas à pas
+      </a>
+      <p class="api-info">
+        Données fournies par <a href="https://openweathermap.org" target="_blank">OpenWeatherMap</a>
+      </p>
+    </div>
+  </footer>
+</div>

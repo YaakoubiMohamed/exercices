@@ -1,0 +1,290 @@
+<div class="explanation-container">
+  <!-- Header -->
+  <header class="explanation-header">
+    <a routerLink="/exercice4" class="back-link">← Retour à l'application</a>
+    <h1>
+      <span class="icon">📚</span>
+      Guide Pas à Pas : Application Météo
+    </h1>
+    <p class="subtitle">
+      Comprendre la construction d'une application Angular avec HttpClient, RxJS et architecture moderne
+    </p>
+  </header>
+
+  <!-- Concepts clés -->
+  <section class="key-concepts">
+    <h2>🎯 Concepts Clés Couverts</h2>
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <span class="concept-icon">🌐</span>
+        <h3>HttpClient</h3>
+        <p>Appels API REST avec Angular</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-icon">🔄</span>
+        <h3>RxJS</h3>
+        <p>Opérateurs: debounceTime, switchMap, catchError</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-icon">🛡️</span>
+        <h3>Interceptors</h3>
+        <p>Gestion centralisée des erreurs HTTP</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-icon">🔧</span>
+        <h3>Pipes</h3>
+        <p>Transformation de données personnalisée</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-icon">💾</span>
+        <h3>LocalStorage</h3>
+        <p>Persistance des favoris</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-icon">📊</span>
+        <h3>State Management</h3>
+        <p>BehaviorSubject pour l'état</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="architecture-section">
+    <h2>🏗️ Architecture de l'Application</h2>
+    <div class="architecture-diagram">
+      <pre>{{ architectureDiagram }}</pre>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section class="steps-section">
+    <h2>📋 Étapes de Développement</h2>
+    
+    @for (step of steps; track step.number) {
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">{{ step.number }}</div>
+          <div class="step-title-section">
+            <span class="step-icon">{{ step.icon }}</span>
+            <h3>{{ step.title }}</h3>
+          </div>
+        </div>
+        
+        <p class="step-description">{{ step.description }}</p>
+        
+        <div class="step-concepts">
+          @for (concept of step.concepts; track concept) {
+            <span class="concept-tag">{{ concept }}</span>
+          }
+        </div>
+        
+        <details class="code-details">
+          <summary>Voir le code</summary>
+          <pre class="code-block"><code>{{ step.code }}</code></pre>
+        </details>
+      </div>
+    }
+  </section>
+
+  <!-- Flux de données -->
+  <section class="data-flow-section">
+    <h2>🔀 Flux de Données</h2>
+    
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-icon">👤</div>
+        <div class="flow-content">
+          <h4>1. Utilisateur tape une ville</h4>
+          <p>Input avec FormControl</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">⏱️</div>
+        <div class="flow-content">
+          <h4>2. Debounce (500ms)</h4>
+          <p>Évite les requêtes inutiles</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">🔄</div>
+        <div class="flow-content">
+          <h4>3. switchMap</h4>
+          <p>Annule la requête précédente, lance la nouvelle</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">🌐</div>
+        <div class="flow-content">
+          <h4>4. HttpClient GET</h4>
+          <p>Requête à OpenWeatherMap API</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">🛡️</div>
+        <div class="flow-content">
+          <h4>5. Interceptor</h4>
+          <p>Log + gestion erreurs centralisée</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">🔧</div>
+        <div class="flow-content">
+          <h4>6. Transform (map)</h4>
+          <p>API response → WeatherData</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">📊</div>
+        <div class="flow-content">
+          <h4>7. BehaviorSubject</h4>
+          <p>Met à jour l'état (loading/success/error)</p>
+        </div>
+      </div>
+      
+      <div class="flow-arrow">↓</div>
+      
+      <div class="flow-step">
+        <div class="flow-icon">🖥️</div>
+        <div class="flow-content">
+          <h4>8. Async Pipe</h4>
+          <p>Affichage dans le template</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Résumé RxJS -->
+  <section class="rxjs-section">
+    <h2>🔄 Opérateurs RxJS Utilisés</h2>
+    
+    <div class="operators-grid">
+      <div class="operator-card">
+        <h4>debounceTime(500)</h4>
+        <p>Attend 500ms après la dernière émission avant de continuer. Évite les requêtes à chaque frappe.</p>
+        <code>input: a-b-c----d-e-f----<br>output: --------c--------f</code>
+      </div>
+      
+      <div class="operator-card">
+        <h4>distinctUntilChanged()</h4>
+        <p>N'émet que si la valeur est différente de la précédente.</p>
+        <code>input: a-a-b-b-b-c-a<br>output: a---b-----c-a</code>
+      </div>
+      
+      <div class="operator-card">
+        <h4>switchMap()</h4>
+        <p>Annule la requête précédente et switch vers la nouvelle. Idéal pour les recherches.</p>
+        <code>Requête 1 en cours...<br>Nouvelle recherche → Annule 1, lance 2</code>
+      </div>
+      
+      <div class="operator-card">
+        <h4>catchError()</h4>
+        <p>Intercepte les erreurs et permet de les gérer proprement sans casser le flux.</p>
+        <code>error → return of(fallbackValue)</code>
+      </div>
+      
+      <div class="operator-card">
+        <h4>map()</h4>
+        <p>Transforme chaque valeur émise. Utilisé pour convertir la réponse API.</p>
+        <code>apiResponse → WeatherData</code>
+      </div>
+      
+      <div class="operator-card">
+        <h4>shareReplay(1)</h4>
+        <p>Partage le résultat entre tous les abonnés. Évite les requêtes multiples.</p>
+        <code>1 requête → N abonnés</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fichiers du projet -->
+  <section class="files-section">
+    <h2>📁 Structure des Fichiers</h2>
+    
+    <div class="file-tree">
+      <pre>
+exercice4-weather/
+├── 📁 models/
+│   └── weather.models.ts        # Interfaces TypeScript
+├── 📁 services/
+│   ├── weather.service.ts       # Logique API + RxJS
+│   └── favorites.service.ts     # Gestion favoris + LocalStorage
+├── 📁 pipes/
+│   └── temperature.pipe.ts      # Pipe °C/°F
+├── 📁 interceptors/
+│   └── weather.interceptor.ts   # Gestion erreurs HTTP
+├── 📁 components/
+│   ├── weather-search.component.ts
+│   ├── weather-display.component.ts
+│   ├── favorites.component.ts
+│   ├── weather-forecast.component.ts
+│   └── weather-explanation.component.ts
+├── weather.component.ts         # Composant principal
+├── weather.component.html
+└── weather.component.css
+      </pre>
+    </div>
+  </section>
+
+  <!-- KEYWORDS GLOSSARY -->
+  <section class="keywords-section">
+    <h2>📖 Glossaire des Mots-Clés</h2>
+    <p class="keywords-intro">
+      Explication détaillée de tous les mots-clés Angular, RxJS et TypeScript utilisés dans cet exercice.
+    </p>
+    
+    @for (category of keywords; track category.category) {
+      <div class="keyword-category">
+        <h3 class="category-title">{{ category.category }}</h3>
+        
+        @for (item of category.items; track item.keyword) {
+          <div class="keyword-card">
+            <div class="keyword-header">
+              <code class="keyword-name">{{ item.keyword }}</code>
+            </div>
+            
+            <div class="keyword-body">
+              <p class="keyword-description">{{ item.description }}</p>
+              
+              <details class="keyword-details">
+                <summary>📝 Exemple de code</summary>
+                <pre class="keyword-code"><code>{{ item.example }}</code></pre>
+              </details>
+              
+              <div class="keyword-usage">
+                <strong>💡 Utilisation :</strong> {{ item.usage }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Footer -->
+  <footer class="explanation-footer">
+    <a routerLink="/exercice4" class="btn-back">
+      ← Retour à l'Application Météo
+    </a>
+    <a routerLink="/home" class="btn-home">
+      🏠 Accueil
+    </a>
+  </footer>
+</div>
